@@ -235,16 +235,6 @@
 <script>
 const adminToken = () => localStorage.getItem('km_admin_token');
 
-function setAdminToken(t) { localStorage.setItem('km_admin_token', t); }
-function clearAdminToken() { localStorage.removeItem('km_admin_token'); }
-
-// Override api headers for admin
-const _origHeaders = api._headers.bind(api);
-api._headers = function() {
-  const t = adminToken();
-  return t ? { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` } : _origHeaders();
-};
-
 function checkAdminAuth() {
   if (adminToken()) {
     document.getElementById('admin-login-gate').classList.add('hidden');
@@ -261,7 +251,7 @@ document.getElementById('admin-login-btn').addEventListener('click', async () =>
   btn.textContent = 'Signing in...'; btn.disabled = true;
   const res = await api.auth.adminLogin(email, password);
   if (res.success) {
-    setAdminToken(res.token);
+    localStorage.setItem('km_admin_token', res.token);
     document.getElementById('admin-login-gate').classList.add('hidden');
     loadDashboard();
   } else {
@@ -272,7 +262,7 @@ document.getElementById('admin-login-btn').addEventListener('click', async () =>
 });
 
 document.getElementById('admin-logout-btn').addEventListener('click', () => {
-  clearAdminToken();
+  localStorage.removeItem('km_admin_token');
   document.getElementById('admin-login-gate').classList.remove('hidden');
 });
 

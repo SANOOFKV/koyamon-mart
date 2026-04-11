@@ -324,6 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const orderId = params.get('orderId');
   if (orderId) {
     loadOrder(orderId);
+    // Poll for updates every 15 seconds
+    setInterval(() => loadOrder(orderId), 15000);
   } else {
     showSearch();
   }
