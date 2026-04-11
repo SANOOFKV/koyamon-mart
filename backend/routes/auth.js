@@ -11,7 +11,8 @@ const OTP_EXPIRY_MINUTES = 10;
 router.post('/send-otp', async (req, res) => {
   try {
     const { phone } = req.body;
-    if (!phone || !/^\+?[6-9]\d{9}$/.test(phone.replace(/\s/g, ''))) {
+    const cleanPhone = phone.replace(/\s/g, '').replace(/^\+?91/, '');
+    if (!phone || !/^[6-9]\d{9}$/.test(cleanPhone)) {
       return res.status(400).json({ success: false, message: 'Invalid phone number' });
     }
 
