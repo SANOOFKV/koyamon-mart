@@ -277,11 +277,9 @@ function initLiveMap(order) {
     attribution: '&copy; OpenStreetMap &copy; CARTO'
   }).addTo(window.kmMap);
 
-  // Padikkal default store coordinates
-  const storeCoords = [11.0825, 75.9083];
-  
   // Draw Route Line
   const routeLine = L.polyline([storeCoords, destCoords], { color: '#006947', weight: 4, dashArray: '10, 10' }).addTo(window.kmMap);
+
   window.kmMap.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
 
   // Store Icon
