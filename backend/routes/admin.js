@@ -238,6 +238,37 @@ router.patch('/users/:id/role', async (req, res) => {
   }
 });
 
+router.post('/users', async (req, res) => {
+  try {
+    const { phone, name, role } = req.body;
+    const cleanPhone = phone.replace(/\s/g, '').replace(/^\+?91/, '');
+    
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return res.status(400).json({ success: false, message: 'Invalid 10-digit phone number' });
+    }
+
+    let user = await User.findOne({ phone: cleanPhone });
+    if (user) {
+      // Update existing user to staff role
+      user.name = name || user.name;
+      user.role = role || 'delivery';
+      await user.save();
+      return res.json({ success: true, message: 'Existing user promoted to staff', user });
+    }
+
+    user = await User.create({
+      phone: cleanPhone,
+      name: name || 'Staff Member',
+      role: role || 'delivery'
+    });
+
+    res.status(201).json({ success: true, message: 'Staff member created successfully', user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+
 router.get('/delivery-boys', async (req, res) => {
   try {
     const users = await User.find({ role: 'delivery' }).select('name phone _id');

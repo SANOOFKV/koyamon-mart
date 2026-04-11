@@ -111,6 +111,7 @@ const api = {
     },
     staff: {
       listUsers: (params) => { const qs = new URLSearchParams(params).toString(); return api.get(`/admin/users?${qs}`); },
+      createMember: (body) => api.post('/admin/users', body),
       updateRole: (userId, role) => api.patch(`/admin/users/${userId}/role`, { role }),
       listDeliveryBoys: () => api.get('/admin/delivery-boys'),
     },

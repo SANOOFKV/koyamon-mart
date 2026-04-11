@@ -228,11 +228,46 @@
   <!-- User Management Modal -->
   <div id="user-mgmt-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-      <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-        <h2 class="text-xl font-bold font-headline">Staff & User Management</h2>
-        <button onclick="toggleUserModal(false)" class="p-2 hover:bg-slate-100 rounded-full transition-colors"><span class="material-symbols-outlined">close</span></button>
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div>
+          <h2 class="text-xl font-bold font-headline">Staff & User Management</h2>
+          <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Manage riders and internal roles</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="toggleStaffForm(true)" class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-xs font-bold hover:brightness-110 shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-sm">person_add</span> Add New Member
+          </button>
+          <button onclick="toggleUserModal(false)" class="p-2 hover:bg-slate-200 rounded-full transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
       </div>
+
+      <!-- Quick Add Staff Form (Hidden by default) -->
+      <div id="staff-add-form" class="hidden p-6 bg-emerald-50 border-b border-emerald-100 animate-in fade-in slide-in-from-top-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div>
+            <label class="block text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
+            <input id="new-staff-name" type="text" placeholder="Driver Name" class="w-full bg-white border-emerald-100 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1.5 ml-1">Phone Number (10 Digits)</label>
+            <input id="new-staff-phone" type="tel" placeholder="9876543210" class="w-full bg-white border-emerald-100 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1.5 ml-1">Internal Role</label>
+            <select id="new-staff-role" class="w-full bg-white border-emerald-100 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-primary/40">
+              <option value="delivery">Delivery Rider</option>
+              <option value="admin">System Admin</option>
+            </select>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="saveNewStaff()" id="save-staff-btn" class="flex-1 bg-primary text-white font-bold py-2 rounded-lg text-sm shadow-md hover:brightness-110">Save Member</button>
+            <button onclick="toggleStaffForm(false)" class="bg-white text-slate-500 border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold">Cancel</button>
+          </div>
+        </div>
+      </div>
+
       <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+
         <div class="flex gap-4 mb-6">
           <input id="user-search" oninput="loadUsers()" type="text" placeholder="Search by phone..." class="flex-1 bg-surface-container border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
           <select id="user-role-filter" onchange="loadUsers()" class="bg-surface-container border-none rounded-xl px-4 py-2 text-sm">
@@ -480,11 +515,40 @@ async function updateUserRole(id, role) {
   } catch(e) { showToast('Update failed', 'error'); }
 }
 
+async function saveNewStaff() {
+  const name = document.getElementById('new-staff-name').value.trim();
+  const phone = document.getElementById('new-staff-phone').value.trim();
+  const role = document.getElementById('new-staff-role').value;
+  const btn = document.getElementById('save-staff-btn');
+
+  if (!name || !/^\d{10}$/.test(phone)) return showToast('Valid name and 10-digit phone required', 'error');
+
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    await api.admin.staff.createMember({ name, phone, role });
+    showToast('Staff member added successfully ✓', 'success');
+    toggleStaffForm(false);
+    loadUsers();
+    // Clear inputs
+    document.getElementById('new-staff-name').value = '';
+    document.getElementById('new-staff-phone').value = '';
+  } catch(e) { 
+    showToast(e.message || 'Failed to add staff member', 'error'); 
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Member';
+  }
+}
+
+function toggleStaffForm(show) {
+  document.getElementById('staff-add-form').classList.toggle('hidden', !show);
+}
+
 function toggleUserModal(show) {
   const modal = document.getElementById('user-mgmt-modal');
   modal.classList.toggle('hidden', !show);
   if (show) loadUsers();
 }
+
 
 function showToast(msg, type = '') {
   const el = Object.assign(document.createElement('div'), { textContent: msg });
