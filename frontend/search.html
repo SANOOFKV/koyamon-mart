@@ -212,12 +212,17 @@ async function doSearch(q) {
     if (selectedCat) params.category = selectedCat;
 
     const data = await api.products.list(params);
+    console.log('Search API Result:', data); // Debugging
     document.getElementById('km-search-loading').classList.add('hidden');
     const products = data.products || [];
 
     if (products.length > 0) {
       document.getElementById('km-results-header').classList.remove('hidden');
-      document.getElementById('km-results-query').textContent = q ? `"${q}"` : 'All Products';
+      
+      const catParam = new URLSearchParams(window.location.search).get('catName') || (selectedCat ? selectedCat.charAt(0).toUpperCase() + selectedCat.slice(1) : '');
+      const headerTitle = q ? `"${q}"` : (catParam || 'All Products');
+      
+      document.getElementById('km-results-query').textContent = headerTitle;
       document.getElementById('km-results-count').textContent = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
       document.getElementById('km-results-grid').innerHTML = products.map(p => productCard(p, lang)).join('');
       document.getElementById('km-results-grid').classList.remove('hidden');
@@ -225,6 +230,7 @@ async function doSearch(q) {
       showEmptyState(q, lang);
       loadRecommendations(lang);
     }
+
 
   } catch {
     document.getElementById('km-search-loading').classList.add('hidden');

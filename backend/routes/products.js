@@ -16,9 +16,10 @@ router.get('/', async (req, res) => {
       } else {
         const cat = await Category.findOne({ slug: category.toLowerCase() });
         if (cat) filter.category = cat._id;
-        else filter.category = null;
+        else console.warn(`Category slug not found: ${category}`);
       }
     }
+
 
     if (inStock === 'true') filter['variants.stock'] = { $gt: 0 };
 
