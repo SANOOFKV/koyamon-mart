@@ -157,7 +157,12 @@
         <!-- Details -->
         <div class="grid grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Category <span class="text-red-500">*</span></label>
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Category <span class="text-red-500">*</span></label>
+              <button type="button" onclick="quickAddCategory()" class="text-xs font-bold text-primary hover:underline">
+                + New Category
+              </button>
+            </div>
             <select id="pf-category" required class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40">
               <option value="">Select Category...</option>
             </select>
@@ -234,6 +239,23 @@ async function loadCategories() {
       fSelect.add(opt2);
     });
   } catch(e) { console.error('Failed to load categories', e); }
+}
+
+async function quickAddCategory() {
+  const nameEn = prompt('Enter new category name (English):');
+  if (!nameEn) return;
+  try {
+    const res = await api.admin.categories.create({ name: { en: nameEn, ml: nameEn }, slug: nameEn.toLowerCase().replace(/[^a-z0-9]+/g, '-') });
+    if (res.success) {
+      showToast('Category created!', 'success');
+      await loadCategories();
+      document.getElementById('pf-category').value = res.category._id;
+    } else {
+      showToast(res.message || 'Failed to create category', 'error');
+    }
+  } catch (err) {
+    showToast('Network error creating category', 'error');
+  }
 }
 
 async function loadProducts() {
