@@ -159,20 +159,23 @@ function showSearch() {
   document.getElementById('km-track-error-state').classList.add('hidden');
 }
 
-async function loadOrder(orderId) {
-  document.getElementById('km-track-search').classList.add('hidden');
-  document.getElementById('km-track-content').classList.add('hidden');
-  document.getElementById('km-track-loading').classList.remove('hidden');
-  document.getElementById('km-track-error-state').classList.add('hidden');
+async function loadOrder(orderId, silent = false) {
+  if (!silent) {
+    document.getElementById('km-track-search').classList.add('hidden');
+    document.getElementById('km-track-content').classList.add('hidden');
+    document.getElementById('km-track-loading').classList.remove('hidden');
+    document.getElementById('km-track-error-state').classList.add('hidden');
+  }
 
   try {
     const data = await api.orders.track(orderId);
-    if (!data.success || !data.order) { showError(); return; }
+    if (!data.success || !data.order) { if (!silent) showError(); return; }
     renderOrder(data.order);
   } catch {
-    showError();
+    if (!silent) showError();
   }
 }
+
 
 function showError() {
   document.getElementById('km-track-loading').classList.add('hidden');
@@ -252,8 +255,22 @@ function initLiveMap(order) {
   const mapEl = document.getElementById('km-live-map');
   if (!mapEl) return;
   
-  if (window.kmMap) { window.kmMap.remove(); }
-  window.kmMap = L.map('km-live-map', { zoomControl: false, scrollWheelZoom: false }).setView([11.0825, 75.9083], 13);
+  // Padikkal default store coordinates
+  const storeCoords = [11.0825, 75.9083];
+  
+  // User coordinates
+  const destCoords = order.deliveryAddress?.lat && order.deliveryAddress?.lng 
+    ? [order.deliveryAddress.lat, order.deliveryAddress.lng] 
+    : [11.1040, 75.9180];
+
+  if (window.kmMap) {
+    // Update marker positions instead of recreating map
+    updateBikeMarker(order, storeCoords, destCoords);
+    return;
+  }
+
+  window.kmMap = L.map('km-live-map', { zoomControl: false, scrollWheelZoom: false }).setView(storeCoords, 13);
+
   
   // Use a beautifully stylized bright base map from Carto
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -263,42 +280,43 @@ function initLiveMap(order) {
   // Padikkal default store coordinates
   const storeCoords = [11.0825, 75.9083];
   
-  // User coordinates (fallback slightly north if location ping failed during checkout)
-  const destCoords = order.deliveryAddress?.lat && order.deliveryAddress?.lng 
-    ? [order.deliveryAddress.lat, order.deliveryAddress.lng] 
-    : [11.1040, 75.9180];
-
   // Draw Route Line
   const routeLine = L.polyline([storeCoords, destCoords], { color: '#006947', weight: 4, dashArray: '10, 10' }).addTo(window.kmMap);
   window.kmMap.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
 
   // Store Icon
-  const storeIcon = L.divIcon({ html: \`<div class="w-10 h-10 bg-emerald-900 text-white rounded-full flex justify-center items-center shadow-lg border-[3px] border-white"><span class="material-symbols-outlined text-lg">store</span></div>\`, className: '' });
+  const storeIcon = L.divIcon({ html: `<div class="w-10 h-10 bg-emerald-900 text-white rounded-full flex justify-center items-center shadow-lg border-[3px] border-white"><span class="material-symbols-outlined text-lg">store</span></div>`, className: '' });
   L.marker(storeCoords, {icon: storeIcon}).addTo(window.kmMap);
 
   // Home Icon
-  const homeIcon = L.divIcon({ html: \`<div class="w-10 h-10 bg-emerald-100 text-emerald-800 rounded-full flex justify-center items-center shadow-lg border-[3px] border-white text-xs font-bold leading-none">HOME</div>\`, className: '' });
+  const homeIcon = L.divIcon({ html: `<div class="w-10 h-10 bg-emerald-100 text-emerald-800 rounded-full flex justify-center items-center shadow-lg border-[3px] border-white text-xs font-bold leading-none">HOME</div>`, className: '' });
   L.marker(destCoords, {icon: homeIcon}).addTo(window.kmMap);
 
-  // Interpolate simulated bike position based on order status!
+  updateBikeMarker(order, storeCoords, destCoords);
+}
+
+function updateBikeMarker(order, storeCoords, destCoords) {
   let bikePos = storeCoords;
+  
   if (order.status === 'packed') {
     bikePos = [storeCoords[0] + (destCoords[0]-storeCoords[0])*0.1, storeCoords[1] + (destCoords[1]-storeCoords[1])*0.1];
   } else if (order.status === 'out_for_delivery') {
-    // Simulate they are dynamically moving
     bikePos = [storeCoords[0] + (destCoords[0]-storeCoords[0])*0.6, storeCoords[1] + (destCoords[1]-storeCoords[1])*0.6];
   } else if (order.status === 'delivered') {
     bikePos = destCoords;
   }
 
-  // Delivery Bike
-  window.bikeIconMaker = L.divIcon({ html: \`<div class="w-14 h-14 bg-white rounded-full flex justify-center items-center shadow-[0_4px_20px_rgba(0,105,71,0.4)] border-4 border-primary text-primary transition-all"><span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">two_wheeler</span></div>\`, className: '' });
-  window.bikeMarker = L.marker(bikePos, {icon: window.bikeIconMaker, zIndexOffset: 1000}).addTo(window.kmMap);
+  if (window.bikeMarker) {
+    window.bikeMarker.setLatLng(bikePos);
+  } else {
+    window.bikeIconMaker = L.divIcon({ html: `<div class="w-14 h-14 bg-white rounded-full flex justify-center items-center shadow-[0_4px_20px_rgba(0,105,71,0.4)] border-4 border-primary text-primary transition-all"><span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">two_wheeler</span></div>`, className: '' });
+    window.bikeMarker = L.marker(bikePos, {icon: window.bikeIconMaker, zIndexOffset: 1000}).addTo(window.kmMap);
+  }
 
-  // Make it gently pulse if out for delivery
-  if (order.status === 'out_for_delivery') {
+  // Handle pulse
+  if (order.status === 'out_for_delivery' && !window.pulseInterval) {
     let phase = 0;
-    setInterval(() => {
+    window.pulseInterval = setInterval(() => {
       phase += 0.05;
       const wiggleLat = bikePos[0] + (Math.sin(phase)*0.0003);
       const wiggleLng = bikePos[1] + (Math.cos(phase)*0.0003);
@@ -324,9 +342,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const orderId = params.get('orderId');
   if (orderId) {
     loadOrder(orderId);
-    // Poll for updates every 15 seconds
-    setInterval(() => loadOrder(orderId), 15000);
+    // Poll for updates every 15 seconds silently
+    setInterval(() => loadOrder(orderId, true), 15000);
   } else {
+
     showSearch();
   }
 });

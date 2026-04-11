@@ -5,8 +5,8 @@ const Product = require('../models/Product');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 const { calculateDeliveryFee, haversineKm } = require('../utils/delivery');
 
-const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.1234;
-const STORE_LNG = parseFloat(process.env.STORE_LNG) || 76.1234;
+const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.0825;
+const STORE_LNG = parseFloat(process.env.STORE_LNG) || 75.9083;
 
 // ── POST /api/orders ── Place order (logged in or guest) ──────────────────────
 router.post('/', optionalAuth, async (req, res) => {

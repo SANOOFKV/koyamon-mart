@@ -2,11 +2,11 @@
 <html class="light" lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
   <meta name="description" content="Koyamon Mart — Fresh groceries, vegetables, fruits and daily essentials delivered in minutes to Padikkal, Velimukku, Malappuram."/>
-  <title>Koyamon Mart - Freshly Curated Hyperlocal Mart</title>
+  <title>Koyamon Mart | Fresh & Fast</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script id="tailwind-config">
     tailwind.config = {
@@ -14,346 +14,188 @@
       theme: {
         extend: {
           colors: {
-            "surface-container": "#edeeef",
-            "surface-dim": "#d9dadb",
-            "secondary-fixed": "#ffdbcb",
-            "on-primary-fixed": "#002113",
-            "surface": "#f8f9fa",
-            "on-primary-container": "#f5fff6",
-            "primary-container": "#00855b",
-            "surface-container-highest": "#e1e3e4",
-            "inverse-on-surface": "#f0f1f2",
-            "on-secondary-container": "#562000",
-            "primary": "#006947",
-            "outline": "#6d7a71",
-            "error-container": "#ffdad6",
-            "surface-bright": "#f8f9fa",
-            "secondary-container": "#fd6c00",
-            "primary-fixed": "#8bf8c3",
-            "outline-variant": "#bccabf",
-            "on-tertiary-container": "#fbfdff",
-            "on-primary": "#ffffff",
-            "on-error": "#ffffff",
-            "on-tertiary": "#ffffff",
-            "surface-tint": "#006c49",
-            "background": "#f8f9fa",
-            "surface-container-high": "#e7e8e9",
-            "on-tertiary-fixed": "#0e1d25",
-            "secondary-fixed-dim": "#ffb692",
-            "on-secondary-fixed": "#341100",
-            "surface-container-low": "#f3f4f5",
-            "on-primary-fixed-variant": "#005236",
-            "on-tertiary-fixed-variant": "#3a4951",
-            "surface-container-lowest": "#ffffff",
-            "inverse-primary": "#6fdba8",
-            "tertiary-fixed": "#d5e5ef",
-            "on-background": "#191c1d",
-            "tertiary": "#4f5e67",
-            "error": "#ba1a1a",
-            "surface-variant": "#e1e3e4",
-            "inverse-surface": "#2e3132",
-            "on-surface-variant": "#3d4a41",
-            "tertiary-container": "#677780",
-            "on-error-container": "#93000a",
-            "secondary": "#9f4200",
-            "on-secondary": "#ffffff",
-            "on-surface": "#191c1d",
-            "primary-fixed-dim": "#6fdba8",
-            "on-secondary-fixed-variant": "#7a3000",
-            "tertiary-fixed-dim": "#b9c9d3"
+            "primary": "#006947", "primary-container": "#00855b", "primary-fixed": "#8bf8c3",
+            "secondary": "#9f4200", "secondary-container": "#fd6c00", "secondary-fixed": "#ffdbcb",
+            "surface": "#f8f9fa", "surface-dim": "#d9dadb", "surface-bright": "#f8f9fa",
+            "surface-container": "#edeeef", "surface-container-lowest": "#ffffff", "surface-container-low": "#f3f4f5", "surface-container-high": "#e7e8e9", "surface-container-highest": "#e1e3e4",
+            "on-surface": "#191c1d", "on-surface-variant": "#3d4a41", "outline": "#6d7a71", "outline-variant": "#bccabf"
           },
           borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-          fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Inter"], "label": ["Inter"], "malayalam": ["Noto Sans Malayalam"] }
+          fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Inter"], "malayalam": ["Noto Sans Malayalam"] }
         },
       },
     }
   </script>
   <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .editorial-gradient { background: linear-gradient(135deg, #006947 0%, #00855b 100%); }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     [lang="ml"] body, .ml-text { font-family: 'Noto Sans Malayalam', sans-serif; }
+    body { min-height: max(384px, 100dvh); }
+    .editorial-gradient { background: linear-gradient(135deg, #006947 0%, #00855b 100%); }
   </style>
 </head>
-<body class="bg-surface font-body text-on-surface">
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-<!-- ══ TOP NAVIGATION ══════════════════════════════════════════════════════ -->
-<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
-  <nav class="flex items-center justify-between px-6 py-4 max-w-screen-2xl mx-auto">
-    <div class="flex items-center gap-8">
-      <a href="index.html" class="text-2xl font-black tracking-tight text-emerald-900 dark:text-emerald-100 font-headline">Koyamon Mart</a>
-      <div class="hidden md:flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-xl text-emerald-800 dark:text-emerald-400 font-headline font-semibold cursor-pointer hover:bg-surface-container-high transition-colors">
-        <span class="material-symbols-outlined">location_on</span>
-        <span data-en="Padikkal, Velimukku" data-ml="പടിക്കൽ, വേലിമുക്ക്">Padikkal, Velimukku</span>
-        <span class="material-symbols-outlined">expand_more</span>
+<!-- TOP APP BAR -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm transition-all duration-300">
+  <div class="flex justify-between items-center px-4 h-16 w-full max-w-md mx-auto">
+    <div class="flex items-center gap-2">
+      <div class="p-2 rounded-full bg-emerald-50 text-primary">
+        <span class="material-symbols-outlined text-xl">location_on</span>
       </div>
-      <div class="hidden lg:flex items-center gap-6 ml-4">
-        <a href="profile.html" class="flex items-center gap-1.5 text-sm font-bold text-emerald-900/60 hover:text-primary transition-colors">
-          <span class="material-symbols-outlined text-[20px]">receipt_long</span>
-          <span data-en="My Orders" data-ml="ഓർഡറുകൾ">My Orders</span>
-        </a>
-        <a href="order-tracking.html" class="flex items-center gap-1.5 text-sm font-bold text-emerald-900/60 hover:text-primary transition-colors">
-          <span class="material-symbols-outlined text-[20px]">distance</span>
-          <span data-en="Track Order" data-ml="ട്രാക്ക് ചെയ്യൂ">Track Order</span>
-        </a>
+      <div class="flex flex-col">
+        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" data-en="Delivering to" data-ml="ഡെലിവറി വഴി">Delivering to</span>
+        <span class="text-sm font-extrabold text-emerald-900 tracking-tight">Padikkal, Velimukku</span>
       </div>
     </div>
-
-    <!-- Search Bar -->
-    <div class="flex-1 max-w-xl mx-8 relative hidden md:block">
-      <input id="km-search-input" class="w-full h-12 bg-surface-container-highest border-none rounded-xl px-12 focus:ring-2 focus:ring-primary/40 transition-all font-body"
-        placeholder="Search for fresh fruits, groceries..." type="text"
-        data-en="Search for fresh fruits, groceries..." data-ml="പഴങ്ങൾ, പലചരക്ക് തിരയുക..."/>
-      <span class="material-symbols-outlined absolute left-4 top-3 text-outline">search</span>
-      <!-- Search suggestions dropdown -->
-      <div id="km-search-suggestions" class="hidden absolute top-14 left-0 w-full bg-white rounded-xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto"></div>
-    </div>
-
-    <div class="flex items-center gap-4">
-      <!-- Language Toggle -->
-      <button id="km-lang-toggle" class="hidden lg:block text-emerald-700 dark:text-emerald-300 border-b-2 border-emerald-600 font-headline font-semibold py-1 text-sm">
-        മലയാളം
-      </button>
-
-      <!-- Cart -->
-      <a href="cart.html" class="relative p-2 rounded-full hover:bg-surface-container transition-colors">
-        <span class="material-symbols-outlined text-emerald-800">shopping_cart</span>
-        <span id="km-cart-count" class="absolute top-0 right-0 hidden bg-secondary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">0</span>
-      </a>
-
+    <div class="flex items-center gap-2">
+      <button id="km-lang-toggle" class="text-emerald-700 border-b-2 border-emerald-600 font-bold py-1 text-xs mr-2">മലയാളം</button>
+      
       <!-- Login / User Menu -->
-      <button id="km-login-btn" class="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold font-headline hover:bg-primary-container transition-colors">
-        <span data-en="Login" data-ml="ലോഗിൻ">Login</span>
+      <button id="km-login-btn" class="h-10 w-10 flex items-center justify-center bg-primary text-white rounded-full shadow-lg">
+        <span class="material-symbols-outlined text-sm">login</span>
       </button>
-      <div id="km-user-menu" class="hidden flex items-center gap-2">
-        <span class="material-symbols-outlined text-emerald-800">account_circle</span>
-        <span id="km-user-name" class="text-sm font-semibold text-emerald-900"></span>
+      <div id="km-user-menu" class="hidden h-10 w-10 rounded-full overflow-hidden border-2 border-primary-fixed relative">
+        <img id="km-user-avatar" alt="User profile" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=60"/>
       </div>
     </div>
-  </nav>
+  </div>
+  
+  <!-- Search Bar -->
+  <div class="px-4 pb-3 max-w-md mx-auto relative">
+    <div class="relative flex items-center bg-surface-container-highest rounded-xl px-4 py-3 group">
+      <span class="material-symbols-outlined text-outline mr-3">search</span>
+      <input id="km-search-input" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-full placeholder:text-outline" 
+        placeholder="Search 'fresh milk' or 'mangoes'" type="text"
+        data-en="Search 'fresh milk' or 'mangoes'" data-ml="പാൽ അല്ലെങ്കിൽ മാമ്പഴം തിരയുക..."/>
+      <span class="material-symbols-outlined text-primary">mic</span>
+    </div>
+    <!-- Search suggestions dropdown -->
+    <div id="km-search-suggestions" class="hidden absolute top-14 left-4 right-4 bg-white rounded-xl shadow-xl z-[60] py-2 max-h-64 overflow-y-auto"></div>
+  </div>
 </header>
 
-<!-- ══ SIDEBAR CATEGORIES (Desktop) ═══════════════════════════════════════ -->
-<aside class="fixed left-0 top-0 h-screen z-40 bg-white dark:bg-slate-900 w-72 border-r-0 shadow-2xl hidden xl:flex flex-col pt-24">
-  <div class="px-6 mb-8">
-    <h2 class="font-headline font-bold text-emerald-900 text-xl" data-en="Categories" data-ml="വകുപ്പുകൾ">Categories</h2>
-    <p class="text-sm text-slate-500 font-body" data-en="Freshly Curated" data-ml="പുതിയ ശേഖരം">Freshly Curated</p>
-  </div>
-  <nav id="km-sidebar-categories" class="flex-1 overflow-y-auto px-3 space-y-1 no-scrollbar">
-    <!-- Populated by JS -->
-    <a class="flex items-center gap-4 px-4 py-3 bg-emerald-50 text-emerald-900 rounded-r-full font-headline transition-all duration-300 group" href="category.html?slug=fruits-veg">
-      <span class="material-symbols-outlined">eco</span>
-      <span class="font-semibold" data-en="Fruits &amp; Veg" data-ml="പഴങ്ങളും പച്ചക്കറിയും">Fruits &amp; Veg</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-r-full font-headline transition-all group" href="category.html?slug=dairy-eggs">
-      <span class="material-symbols-outlined">egg</span>
-      <span data-en="Dairy &amp; Eggs" data-ml="പാൽ &amp; മുട്ട">Dairy &amp; Eggs</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-r-full font-headline transition-all group" href="category.html?slug=grocery">
-      <span class="material-symbols-outlined">liquor</span>
-      <span data-en="Grocery" data-ml="പലചരക്ക്">Grocery</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-r-full font-headline transition-all group" href="category.html?slug=snacks">
-      <span class="material-symbols-outlined">bakery_dining</span>
-      <span data-en="Snacks" data-ml="സ്നാക്ക്">Snacks</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-r-full font-headline transition-all group" href="category.html?slug=stationery">
-      <span class="material-symbols-outlined">home_work</span>
-      <span data-en="Stationery" data-ml="സ്റ്റേഷനറി">Stationery</span>
-    </a>
-  </nav>
-  <div class="p-6">
-    <a href="cart.html" class="block w-full editorial-gradient text-white py-4 rounded-xl font-headline font-bold shadow-lg hover:brightness-110 transition-all text-center" data-en="View Cart" data-ml="കാർട്ട് കാണുക">
-      View Cart
-    </a>
-  </div>
-</aside>
+<main class="pt-32 pb-24 max-w-md mx-auto min-h-screen">
+  <!-- Hero Banner -->
+  <section class="px-4 mb-8">
+    <div class="relative overflow-hidden rounded-[2rem] bg-primary text-on-primary p-6 h-48 flex flex-col justify-center">
+      <div class="absolute top-0 right-0 w-1/2 h-full">
+        <img alt="Fresh Grocery Hero" class="w-full h-full object-cover opacity-60 mix-blend-overlay scale-110 -rotate-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAgsS8FRWSV3py6xn3idi7HUrb82K_Z7p5lTmyi4uaaYIA4Fe49oOS9tTxThRw1vCb-DgylM_xdjwqlWONwxHwaN_ekpVCUjqDcfzv3TaKnny1RWaIEXLvSM-NkoFK7ojInuKy21qCli3i_yCmtZwvNwEHeFB1H7iglCKnn_IU0ronlgqWpYJscW2kfrA60IOUjza4bdTtEbJREoBDV7vBPgww29nYKlhYxaLhB38AeCpIAyIz3JKaSgaHWhpHwFRCwqMV7tNV_fQV"/>
+      </div>
+      <div class="relative z-10 space-y-2">
+        <div class="inline-flex items-center bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest" data-en="New User Special" data-ml="പുതിയ യൂസർ സ്പെഷ്യൽ">
+          New User Special
+        </div>
+        <h1 class="text-3xl font-headline font-extrabold leading-tight tracking-tight" data-en="First Order<br/><span class='text-primary-fixed'>FREE</span> Delivery" data-ml="ആദ്യ ഓർഡർ<br/><span class='text-primary-fixed'>സൗജന്യ</span> ഡെലിവറി">First Order<br/><span class="text-primary-fixed">FREE</span> Delivery</h1>
+        <div class="flex items-center gap-2 mt-2">
+          <span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+          <span class="text-sm font-bold opacity-90" data-en="10-Min Delivery in Velimukku" data-ml="വേലിമുക്കിൽ 10 മിനിറ്റ് ഡെലിവറി">10-Min Delivery in Velimukku</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<!-- ══ MAIN CONTENT ════════════════════════════════════════════════════════ -->
-<main class="xl:pl-72 pt-24 min-h-screen">
+  <!-- Categories Grid -->
+  <section class="px-4 mb-10">
+    <div class="flex justify-between items-end mb-4">
+      <h2 class="text-xl font-headline font-extrabold text-on-surface" data-en="Shop by Category" data-ml="വിഭാഗങ്ങൾ">Shop by Category</h2>
+      <a href="category.html" class="text-primary text-xs font-bold" data-en="View All" data-ml="എല്ലാം കാണൂ">View All</a>
+    </div>
+    <div id="km-categories-mini" class="grid grid-cols-4 gap-3">
+      <!-- Loading skeletons -->
+      <div class="h-20 bg-surface-container rounded-2xl animate-pulse"></div>
+      <div class="h-20 bg-surface-container rounded-2xl animate-pulse"></div>
+      <div class="h-20 bg-surface-container rounded-2xl animate-pulse"></div>
+      <div class="h-20 bg-surface-container rounded-2xl animate-pulse"></div>
+    </div>
+  </section>
 
-  <!-- Hero Section -->
-  <section class="p-6">
-    <div class="relative w-full h-[400px] rounded-3xl overflow-hidden group">
-      <img alt="Fresh Organic Produce at Koyamon Mart" class="w-full h-full object-cover"
-        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWRgl-z4UuMJzqfbLcxV_OUQthAH4cmZZxpn8NrH6b9B6oDNrDGR-i0xHgLnNgsiQLKq_iYxIVP974j11LLcFFRPEQyltxRk2uhVGG7MJfXM4_HHNfsRORKzSnGH6y3uXGT-2TUmnT1cO5h94zmv7K1fmOJPTlry7SSVxYT64d3y-sPNAl18euzpiBhFNtTSJBd_iCFMZGNzeg2oj8rdQtkyK3bHCdzjhwfJv207EOvwmzGOJYFLGJJ2LjWEDJsW8uvavy6QJIDbBk"/>
-      <div class="absolute inset-0 bg-gradient-to-r from-emerald-950/80 to-transparent flex flex-col justify-center px-12">
-        <span class="bg-secondary text-white px-4 py-1 rounded-full text-xs font-bold w-fit mb-4" data-en="LIMITED OFFER" data-ml="പ്രത്യേക ഓഫർ">LIMITED OFFER</span>
-        <h1 class="text-white font-headline text-5xl md:text-6xl font-extrabold max-w-lg leading-tight mb-4" data-en="First Order Free Delivery" data-ml="ആദ്യ ഓർഡർ ഡെലിവറി ഫ്രീ">First Order Free Delivery</h1>
-        <p class="text-white/90 font-body text-xl mb-8" data-en="Plus get ₹100 cashback on your first grocery haul." data-ml="ആദ്യ ഓർഡറിൽ ₹100 ക്യാഷ്ബാക്ക് നേടൂ.">Plus get ₹100 cashback on your first grocery haul.</p>
-        <div class="flex gap-4">
-          <a href="category.html" class="bg-white text-primary px-8 py-4 rounded-xl font-headline font-bold hover:bg-primary-fixed transition-colors" data-en="Shop Now" data-ml="ഇപ്പോൾ വാങ്ങൂ">Shop Now</a>
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 px-6 py-4 rounded-xl text-white">
-            <p class="text-xs uppercase opacity-80" data-en="Delivery Zone" data-ml="ഡെലിവറി ഏരിയ">Delivery Zone</p>
-            <p class="font-bold" data-en="Within 10KM" data-ml="10KM പരിധിയിൽ">Within 10KM</p>
+  <!-- Trending Products -->
+  <section class="mb-10">
+    <div class="px-4 flex justify-between items-end mb-4">
+      <h2 class="text-xl font-headline font-extrabold text-on-surface" data-en="Trending Near You" data-ml="നിങ്ങൾക്ക് സമീപം ട്രെൻഡിങ്">Trending Near You</h2>
+      <a href="category.html" class="text-primary text-xs font-bold" data-en="See All" data-ml="കൂടുതൽ">See All</a>
+    </div>
+    <div id="km-featured-grid" class="flex overflow-x-auto hide-scrollbar gap-4 px-4 pb-4">
+      <!-- Loaded by JS -->
+    </div>
+  </section>
+
+  <!-- Lightning Deals -->
+  <section class="px-4 mb-10">
+    <div class="bg-secondary-fixed text-on-secondary-fixed rounded-[2rem] p-6 relative overflow-hidden">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+          <h2 class="text-lg font-headline font-extrabold uppercase tracking-tight" data-en="Lightning Deals" data-ml="മിന്നൽ ഓഫറുകൾ">Lightning Deals</h2>
+        </div>
+        <div class="flex gap-1.5 font-mono">
+          <div class="bg-secondary text-white px-2 py-1 rounded-lg text-xs font-black">04</div>
+          <span class="font-bold">:</span>
+          <div class="bg-secondary text-white px-2 py-1 rounded-lg text-xs font-black">22</div>
+        </div>
+      </div>
+      <div id="km-deals-grid" class="grid grid-cols-1 gap-3">
+        <!-- Static placeholder for now -->
+        <div class="bg-surface-container-lowest rounded-2xl p-3 flex gap-3 items-center">
+          <div class="w-16 h-16 bg-surface-container-low rounded-xl overflow-hidden flex-shrink-0">
+            <img alt="Organic Honey" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCum-3YXh4DdRaBPDF9FgTyyMW7JAzWQYOpHWkjKlIcylhhPkTL-eaDyp49wWbI8HploPxcrDKVwOBkaqxqgO23NzJ0lOIrDHGejRqtwrUFFWf_9HTggv5P3ETihRJD4Yhhx9Vu60oh_eX20YPsA5jfDyCjeuXrIso3Zo5VaOcYIwd9wLlmdNhY9sxfTClOFnIIWGDMHJqE5_RIuxUEtVs5PMV7DPMWNbn4ofZ6KS-UM4sXL2-m4RCzOqAi97Ou0HPxIHvbguJHY8gX"/>
+          </div>
+          <div>
+            <div class="text-[10px] font-bold text-secondary uppercase">40% OFF</div>
+            <div class="text-xs font-bold text-on-surface">Pure Organic Honey</div>
+            <div class="flex items-center gap-1">
+              <span class="text-sm font-black text-on-surface">₹120</span>
+              <span class="text-[10px] text-outline line-through">₹200</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Category Bento Grid -->
-  <section class="px-6 py-8">
-    <div class="flex items-center justify-between mb-8">
-      <h2 class="font-headline text-3xl font-extrabold text-on-surface" data-en="Browse by Category" data-ml="വകുപ്പ് അനുസരിച്ച് തിരയൂ">Browse by Category</h2>
-      <a class="text-primary font-bold hover:underline" href="category.html" data-en="See all" data-ml="എല്ലാം കാണൂ">See all</a>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-      <a href="category.html?slug=fruits" class="group relative aspect-square rounded-3xl bg-surface-container-low overflow-hidden cursor-pointer">
-        <div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
-          <h3 class="font-headline font-bold text-2xl" data-en="Fruits" data-ml="പഴങ്ങൾ">Fruits</h3>
-          <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-primary">arrow_forward</span>
-          </span>
-        </div>
-        <img alt="Fresh Fruits" class="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-4 translate-y-4 group-hover:scale-110 transition-transform"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOn2a0MT4tYPcIgwt8Jk1KQ9S4DNDshXOZLy44NRnEdeXZYwcQscV9LB7WBXNEcoxNRNX__ZbpDaDwk-YgBOfHJg56YbEjhoXRLB_48BTMeHr6VdvPknIiuBwa-N71JgqBJUG8NpQNKNmFZrs4nrTCVF14li_JenFLjbgVauiZjqo-QCgwItkblitFR0zTHp-RpjkYakGVCR9IPyYqanGlUx25Jx7CpE0QYvLAxePHYq4SvTmVwH_4Kd91g69o7mc2YUB7Jtek_6Pa"/>
-      </a>
-      <a href="category.html?slug=vegetables" class="group relative aspect-square rounded-3xl bg-surface-container-low overflow-hidden cursor-pointer">
-        <div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
-          <h3 class="font-headline font-bold text-2xl" data-en="Vegetables" data-ml="പച്ചക്കറി">Vegetables</h3>
-          <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-primary">arrow_forward</span>
-          </span>
-        </div>
-        <img alt="Fresh Vegetables" class="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-4 translate-y-4 group-hover:scale-110 transition-transform"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-l9O-nmeoH8tacqh0aVvXy2-ElQQiuxc7fknZE-5210XfN1GgZ4xzgcCuE7GWOWxgs_RXSCWQCoEcQ9lxnDgUa5Ik87VLY5189WaJvnUV3nAALDXR0zgQgEie6trj1kKHMA1ZVZrSiPSkOzVpgwY4GRto5nRtGlzoups222Hk_ChXMh7HBjnC7uZR1GwmfxIWAEgBTNixqTYJxFgsQvhMS7pvff0wUhz6pgU3vWuo5-ITYfsSjc3g5vgbFSNLn3dVmMkqXh20ZD-u"/>
-      </a>
-      <a href="category.html?slug=snacks" class="group relative aspect-square rounded-3xl bg-surface-container-low overflow-hidden cursor-pointer">
-        <div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
-          <h3 class="font-headline font-bold text-2xl" data-en="Snacks" data-ml="സ്നാക്ക്">Snacks</h3>
-          <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-primary">arrow_forward</span>
-          </span>
-        </div>
-        <img alt="Snacks" class="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-4 translate-y-4 group-hover:scale-110 transition-transform"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc-hZnX4dQRoRwefXMAssfWhauVTiLp_NkKAQPDZ9Lg4gs8uGMnG13Qlgwzn_bPTE8z7sbGU_etw0daI2QQKeOVmkIQvsw1_2T2-ploPp7XgIL_900XLpK-eFqUd7BqInpz8pbMfxAdHfx3H_K9l7fnF4fR680Jm6bNFaivBkQXYRRwhxQEr7bVBAJmVSpx1l2Ade2JOsGWrb65QK8ZxsY9AP6ji8aXfmlV3u4Mj1r9m7mPxT1VsO9RlO2SZOxzpdeA8EkaWzntYFJ"/>
-      </a>
-      <a href="category.html?slug=stationery" class="group relative aspect-square rounded-3xl bg-surface-container-low overflow-hidden cursor-pointer">
-        <div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
-          <h3 class="font-headline font-bold text-2xl" data-en="Stationery" data-ml="സ്റ്റേഷനറി">Stationery</h3>
-          <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-primary">arrow_forward</span>
-          </span>
-        </div>
-        <img alt="Stationery" class="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-4 translate-y-4 group-hover:scale-110 transition-transform"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNlH_h0zIhevsiy4p6-09DHt4l2CyQGs69TMo_8iPIDTn6M-MrGjDmVxhbPnO4oGZb_1V7IWI5Zz7e4gYUjYUzrm9QLm7XHL37Mh0JwjUpFhnPG-37tpk8Na-NGqQQZLP2lmFw4n9MSGyzZtDdE_AH45ica8e7Tsc68CY59AwcNZe8Trok_aCWeQplYwor8fvPwZJKjP6qYUcFXmR0jMWC2C3K-4BYygv5sVMdukXkvRF7AqSilUSNpnurrffj9bHGS9FipOi1e-H2"/>
-      </a>
-    </div>
-  </section>
-
-  <!-- Featured / Trending Products -->
-  <section class="px-6 py-12 bg-surface-container-low/50">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h2 class="font-headline text-3xl font-extrabold text-on-surface" data-en="Trending Near You" data-ml="നിങ്ങൾക്ക് സമീപം ട്രെൻഡിങ്">Trending Near You</h2>
-        <p class="text-slate-500 font-body" data-en="Popular items in Padikkal" data-ml="പടിക്കലിൽ ജനപ്രിയ ഉൽപ്പന്നങ്ങൾ">Popular items in Padikkal</p>
+  <!-- Service Promises -->
+  <section class="px-4 mb-20">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-emerald-50 rounded-3xl p-5 border border-emerald-100 flex flex-col items-center">
+        <span class="material-symbols-outlined text-primary text-3xl mb-3">eco</span>
+        <h3 class="font-headline font-bold text-emerald-950 text-center" data-en="Farm to Table" data-ml="ഫാം ടു ടേബിൾ">Farm to Table</h3>
       </div>
-      <a href="category.html" class="text-primary font-bold hover:underline flex items-center gap-1" data-en="View All" data-ml="എല്ലാം കാണൂ">View All</a>
-    </div>
-    <!-- Product Grid — populated by JS or shows static fallback -->
-    <div id="km-featured-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <!-- Skeleton placeholders while loading -->
-      <div class="bg-surface-container-lowest p-5 rounded-2xl animate-pulse">
-        <div class="mb-6 aspect-square rounded-xl bg-surface-container-high"></div>
-        <div class="h-4 bg-surface-container-high rounded mb-2"></div>
-        <div class="h-3 bg-surface-container-high rounded w-2/3"></div>
-      </div>
-      <div class="bg-surface-container-lowest p-5 rounded-2xl animate-pulse">
-        <div class="mb-6 aspect-square rounded-xl bg-surface-container-high"></div>
-        <div class="h-4 bg-surface-container-high rounded mb-2"></div>
-        <div class="h-3 bg-surface-container-high rounded w-2/3"></div>
-      </div>
-      <div class="bg-surface-container-lowest p-5 rounded-2xl animate-pulse hidden md:block">
-        <div class="mb-6 aspect-square rounded-xl bg-surface-container-high"></div>
-        <div class="h-4 bg-surface-container-high rounded mb-2"></div>
-        <div class="h-3 bg-surface-container-high rounded w-2/3"></div>
-      </div>
-      <div class="bg-surface-container-lowest p-5 rounded-2xl animate-pulse hidden lg:block">
-        <div class="mb-6 aspect-square rounded-xl bg-surface-container-high"></div>
-        <div class="h-4 bg-surface-container-high rounded mb-2"></div>
-        <div class="h-3 bg-surface-container-high rounded w-2/3"></div>
+      <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100 flex flex-col items-center">
+        <span class="material-symbols-outlined text-secondary text-3xl mb-3">timer</span>
+        <h3 class="font-headline font-bold text-orange-950 text-center" data-en="Fast Delivery" data-ml="വേഗത്തിലുള്ള ഡെലിവറി">Fast Delivery</h3>
       </div>
     </div>
   </section>
-
-  <!-- Free Delivery Banner -->
-  <section class="p-6">
-    <div class="bg-primary text-white p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
-      <div class="relative z-10">
-        <h2 class="font-headline text-3xl font-extrabold mb-2" data-en="Free Delivery over ₹500" data-ml="₹500-ന് മുകളിൽ ഫ്രീ ഡെലിവറി">Free Delivery over ₹500</h2>
-        <p class="text-primary-fixed font-body" data-en="Stock up your kitchen and save more on every order." data-ml="കൂടുതൽ ഓർഡർ, കൂടുതൽ ലാഭം.">Stock up your kitchen and save more on every order.</p>
-      </div>
-      <div class="flex gap-4 relative z-10">
-        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/20">
-          <p class="text-sm opacity-80" data-en="Save average" data-ml="ഓരോ ഓർഡറിലും ലാഭിക്കൂ">Save average</p>
-          <p class="text-2xl font-bold">₹40 / order</p>
-        </div>
-        <a href="category.html" class="bg-secondary text-white px-8 py-4 rounded-xl font-headline font-bold shadow-lg hover:scale-105 transition-transform flex items-center" data-en="Shop Now" data-ml="ഇപ്പോൾ ഷോപ്പ് ചെയ്യൂ">Shop Now</a>
-      </div>
-      <div class="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="w-full py-12 px-6 grid grid-cols-1 md:grid-cols-4 gap-8 bg-slate-50 font-body text-sm">
-    <div class="col-span-1">
-      <span class="font-bold text-lg text-emerald-900 mb-4 block">Koyamon Mart</span>
-      <p class="text-slate-500 mb-6 leading-relaxed" data-en="Your hyperlocal destination for the freshest groceries and daily essentials in Padikkal &amp; Velimukku." data-ml="പടിക്കൽ, വേലിമുക്ക് പ്രദേശത്തെ ഫ്രഷ് ഗ്രോസറി ഹൈപ്പർലോക്കൽ ഡെലിവറി.">
-        Your hyperlocal destination for the freshest groceries in Padikkal &amp; Velimukku.
-      </p>
-    </div>
-    <div>
-      <h4 class="font-bold text-slate-800 mb-6" data-en="Quick Links" data-ml="ദ്രുത ലിങ്കുകൾ">Quick Links</h4>
-      <ul class="space-y-4">
-        <li><a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#" data-en="About Us" data-ml="ഞങ്ങളെ കുറിച്ച്">About Us</a></li>
-        <li><a class="text-slate-500 hover:text-emerald-500 transition-colors" href="order-tracking.html" data-en="Track Order" data-ml="ഓർഡർ ട്രാക്ക്">Track Order</a></li>
-        <li><a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#" data-en="Privacy Policy" data-ml="സ്വകാര്യതാ നയം">Privacy Policy</a></li>
-        <li><a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#" data-en="Contact Support" data-ml="ബന്ധപ്പെടൂ">Contact Support</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4 class="font-bold text-slate-800 mb-6" data-en="Support" data-ml="പിന്തുണ">Support</h4>
-      <ul class="space-y-4">
-        <li><a class="text-slate-500 hover:text-emerald-500 transition-colors" href="order-tracking.html" data-en="Order Tracking" data-ml="ഓർഡർ ട്രാക്ക്">Order Tracking</a></li>
-        <li><a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#" data-en="Refund Policy" data-ml="റിഫണ്ട് നയം">Refund Policy</a></li>
-        <li><a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#" data-en="FAQs" data-ml="പതിവ് ചോദ്യങ്ങൾ">FAQs</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4 class="font-bold text-slate-800 mb-6" data-en="Delivery Areas" data-ml="ഡെലിവറി ഏരിയ">Delivery Areas</h4>
-      <p class="text-slate-500 leading-relaxed" data-en="Padikkal · Velimukku · Malappuram (within 10KM)" data-ml="പടിക്കൽ · വേലിമുക്ക് · മലപ്പുറം (10KM പരിധി)">
-        Padikkal · Velimukku · Malappuram (within 10KM)
-      </p>
-    </div>
-    <div class="col-span-full pt-12 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="text-slate-500">© 2024 Koyamon Mart. Freshly Curated. Padikkal, Malappuram.</p>
-    </div>
-  </footer>
 </main>
 
-<!-- ══ MOBILE BOTTOM NAV ═══════════════════════════════════════════════════ -->
-  <a href="profile.html" class="flex flex-col items-center gap-1 text-outline">
-    <span class="material-symbols-outlined">person</span>
-    <span class="text-[10px]" data-en="Profile" data-ml="പ്രൊഫൈൽ">Profile</span>
+<!-- BOTTOM NAVIGATION -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-8 bg-white/90 backdrop-blur-xl z-50 rounded-t-[2.5rem] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+  <a class="flex flex-col items-center justify-center bg-emerald-100 text-emerald-900 rounded-2xl px-5 py-2 transition-all" href="index.html">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Home" data-ml="ഹോം">Home</span>
   </a>
-</div>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1.5" href="category.html">
+    <span class="material-symbols-outlined">grid_view</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Categories" data-ml="വിഭാഗങ്ങൾ">Categories</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1.5" href="order-tracking.html">
+    <span class="material-symbols-outlined">local_shipping</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Tracking" data-ml="ട്രാക്കിംഗ്">Tracking</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1.5 relative" href="cart.html">
+    <span class="material-symbols-outlined">shopping_basket</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Cart" data-ml="കാർട്ട്">Cart</span>
+    <span id="km-cart-count" class="absolute -top-1 right-3 hidden bg-secondary text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">0</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1.5" href="profile.html">
+    <span class="material-symbols-outlined">person</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Profile" data-ml="പ്രൊഫൈൽ">Profile</span>
+  </a>
+</nav>
 
-<!-- Floating Quick Cart -->
-<a href="cart.html" id="km-floating-cart" class="fixed bottom-24 right-6 z-40 bg-primary text-white p-4 rounded-2xl shadow-[0_12px_40px_rgba(0,105,71,0.3)] flex items-center gap-3 transition-all duration-500 translate-y-32 opacity-0 group">
-  <div class="relative">
-    <span class="material-symbols-outlined text-2xl">shopping_basket</span>
-    <span id="km-float-count" class="absolute -top-1 -right-1 bg-secondary text-white text-[9px] font-bold px-1 rounded-full border-2 border-primary">0</span>
-  </div>
-  <div class="pr-2">
-    <p class="text-[10px] uppercase tracking-widest font-bold opacity-70 leading-none mb-1">Your Basket</p>
-    <p class="font-bold text-sm leading-none" id="km-float-total">₹0</p>
-  </div>
-  <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-</a>
-
-
-<!-- ══ SCRIPTS ════════════════════════════════════════════════════════════ -->
+<!-- Scripts -->
 <script src="assets/js/config.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/cart.js"></script>
@@ -396,88 +238,94 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!searchInput?.contains(e.target)) suggestions?.classList.add('hidden');
   });
 
-  // ── Load featured products ─────────────────────────────────────────────
+  // ── Load Categories ────────────────────────────────────────────────────
+  try {
+    const data = await api.categories.list();
+    const cats = data.categories || [];
+    const lang = localStorage.getItem('km_lang') || 'en';
+    const grid = document.getElementById('km-categories-mini');
+    
+    if (cats.length) {
+      grid.innerHTML = cats.slice(0, 8).map(cat => {
+        const name = lang === 'ml' && cat.name.ml ? cat.name.ml : (cat.name.en || cat.name);
+        return `
+          <a href="search.html?category=${cat._id}&catName=${encodeURIComponent(name)}" class="flex flex-col items-center gap-2 group">
+            <div class="w-full aspect-square rounded-2xl bg-surface-container-low flex items-center justify-center group-hover:bg-primary-fixed/30 transition-colors">
+              <img src="${cat.image || ''}" alt="${name}" class="w-10 h-10 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/128/706/706164.png'"/>
+            </div>
+            <span class="text-[10px] font-bold text-on-surface-variant text-center leading-tight truncate w-full">${name}</span>
+          </a>
+        `;
+      }).join('');
+    }
+  } catch (e) { console.warn('Categories failed to load'); }
+
+  // ── Load Featured Products ─────────────────────────────────────────────
   try {
     const { products } = await api.products.featured();
     const grid = document.getElementById('km-featured-grid');
     if (!grid || !products?.length) return;
 
     const lang = localStorage.getItem('km_lang') || 'en';
-    grid.innerHTML = products.slice(0, 4).map(p => {
+    grid.innerHTML = products.map(p => {
       const v = p.variants?.[0];
       const discount = v?.mrp > v?.price ? Math.round((1 - v.price / v.mrp) * 100) : 0;
       const name = lang === 'ml' && p.name.ml ? p.name.ml : p.name.en;
       return `
-        <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all group">
-          <a href="product.html?id=${p._id}" class="block relative mb-6 aspect-square rounded-xl overflow-hidden bg-surface-container-low">
+        <div class="flex-shrink-0 w-44 bg-surface-container-lowest rounded-3xl p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100">
+          <a href="product.html?id=${p._id}" class="h-32 w-full bg-surface-container-low rounded-2xl mb-3 flex items-center justify-center overflow-hidden relative group">
             <img alt="${name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform"
               src="${p.images?.[0] || 'assets/images/placeholder.png'}" loading="lazy"/>
-            ${p.isFeatured ? '<span class="absolute top-3 left-3 bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-2 py-1 rounded">FRESH</span>' : ''}
-            ${discount > 0 ? `<span class="absolute top-3 right-3 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded">${discount}% OFF</span>` : ''}
+            ${discount > 0 ? `<span class="absolute top-2 left-2 bg-secondary text-white text-[8px] font-black px-2 py-0.5 rounded-full">${discount}% OFF</span>` : ''}
           </a>
-          <div class="space-y-1">
-            <h4 class="font-headline font-bold text-lg leading-tight">${name}</h4>
-            <p class="text-xs text-slate-400">${p.variants?.map(vr => vr.label).join(', ')}</p>
+          <div class="space-y-1 mb-3">
+            <h3 class="text-xs font-bold text-on-surface truncate">${name}</h3>
+            <p class="text-[10px] text-outline font-medium">${v?.label || ''}</p>
           </div>
-          <div class="mt-6 flex items-center justify-between">
-            <div>
-              <span class="text-xl font-bold text-emerald-900">₹${v?.price || ''}</span>
-              ${v?.mrp > v?.price ? `<span class="text-sm text-slate-400 line-through ml-2">₹${v.mrp}</span>` : ''}
-            </div>
-            <button onclick="KMCart.add({_id:'${p._id}',name:{en:'${p.name.en}',ml:'${p.name.ml || p.name.en}'},images:['${p.images?.[0] || ''}']}, {label:'${v?.label}',price:${v?.price},mrp:${v?.mrp}}, 1); KMToast.show('Added to cart ✓', 'success')"
-              class="w-10 h-10 rounded-xl editorial-gradient text-white flex items-center justify-center shadow-md hover:scale-105 transition-transform">
-              <span class="material-symbols-outlined">add</span>
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-extrabold text-on-surface">₹${v?.price || ''}</span>
+            <button onclick="KMCart.add({_id:'${p._id}',name:{en:'${p.name.en}',ml:'${p.name.ml || p.name.en}'},images:['${p.images?.[0] || ''}']}, {label:'${v?.label}',price:${v?.price},mrp:${v?.mrp}}, 1); KMToast.show('Added', 'success')"
+              class="bg-primary text-white p-1.5 rounded-lg hover:brightness-110 active:scale-90 transition-all">
+              <span class="material-symbols-outlined text-sm">add</span>
             </button>
           </div>
         </div>
       `;
     }).join('');
-  } catch(e) {
-    console.warn('Featured products load failed, using static fallback');
-    document.getElementById('km-featured-grid').innerHTML = `
-      <div class="col-span-full text-center py-8 text-slate-400">
-        <span class="material-symbols-outlined text-4xl mb-2 block">wifi_off</span>
-        <p class="text-sm">Could not load products. Start the backend server.</p>
-      </div>
-    `;
-  }
+  } catch(e) { console.warn('Featured products failed'); }
 });
 
-// ── Toast utility ──────────────────────────────────────────────────────────
+// ── UI Utilities ───────────────────────────────────────────────────────────
 const KMToast = {
   show(msg, type = '') {
-    const container = document.querySelector('.km-toast-container') || (() => {
-      const el = document.createElement('div');
-      el.className = 'km-toast-container fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-2 items-center';
-      document.body.appendChild(el);
-      return el;
-    })();
-    const toast = document.createElement('div');
-    toast.className = `px-5 py-3 rounded-xl text-sm font-semibold shadow-xl text-white ${type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-500' : 'bg-slate-800'}`;
-    toast.textContent = msg;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 2800);
+    const el = Object.assign(document.createElement('div'), { textContent: msg });
+    el.className = `fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl text-sm font-semibold shadow-xl text-white ${type === 'success' ? 'bg-emerald-600' : 'bg-red-500'}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
   }
 };
-  }
 
-  function updateFloatingCart() {
-    const count = KMCart.count();
-    const float = document.getElementById('km-floating-cart');
-    const floatTotal = document.getElementById('km-float-total');
-    const floatCount = document.getElementById('km-float-count');
-    if (!float) return;
-    if (count > 0) {
-      float.classList.remove('translate-y-32', 'opacity-0');
-      floatCount.textContent = count;
-      floatTotal.textContent = `₹${KMCart.subtotal()}`;
+function updateCartBadges() {
+  const count = KMCart.count();
+  const badge = document.getElementById('km-cart-count');
+  if (badge) {
+    badge.textContent = count;
+    badge.classList.toggle('hidden', count === 0);
+  }
+}
+setInterval(updateCartBadges, 1000);
+
+// Update Auth UI 
+document.addEventListener('km-auth-changed', () => {
+    const user = KMAuth.getUser();
+    if (user) {
+        document.getElementById('km-login-btn')?.classList.add('hidden');
+        document.getElementById('km-user-menu')?.classList.remove('hidden');
     } else {
-      float.classList.add('translate-y-32', 'opacity-0');
+        document.getElementById('km-login-btn')?.classList.remove('hidden');
+        document.getElementById('km-user-menu')?.classList.add('hidden');
     }
-  }
-
-  updateFloatingCart();
-  setInterval(updateFloatingCart, 1000);
+});
 </script>
 </body>
 </html>
