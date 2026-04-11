@@ -52,16 +52,7 @@
         </button>
       </div>
     </section>
-    <section>
-      <h3 class="text-on-surface font-bold text-lg mb-4" data-en="Price Range" data-ml="വിലശ്രേണി">Price Range</h3>
-      <div class="px-2">
-        <input id="km-price-range" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="1000" min="10" type="range" value="1000"/>
-        <div class="flex justify-between mt-2 text-sm text-on-surface-variant">
-          <span>₹10</span>
-          <span id="km-price-label">₹1000+</span>
-        </div>
-      </div>
-    </section>
+
     <section class="bg-primary/5 p-6 rounded-xl border border-primary/10">
       <span class="material-symbols-outlined text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">eco</span>
       <h4 class="font-bold text-primary mb-1" data-en="Local Promise" data-ml="ലോക്കൽ പ്രോമിസ്">Local Promise</h4>
@@ -168,7 +159,6 @@ const KMToast = {
 let currentQuery = '';
 let searchTimer = null;
 let selectedCat = '';
-let maxPrice = 1000;
 
 function productCard(p, lang) {
   const name = lang === 'ml' && p.name.ml ? p.name.ml : p.name.en;
@@ -220,7 +210,6 @@ async function doSearch(q) {
   try {
     const params = { search: q, limit: 24 };
     if (selectedCat) params.category = selectedCat;
-    if (maxPrice < 1000) params.maxPrice = maxPrice;
 
     const data = await api.products.list(params);
     document.getElementById('km-search-loading').classList.add('hidden');
@@ -310,12 +299,6 @@ function selectCat(btn, catId) {
   if (currentQuery) doSearch(currentQuery);
 }
 
-// Price range
-document.getElementById('km-price-range').addEventListener('input', function() {
-  maxPrice = +this.value;
-  document.getElementById('km-price-label').textContent = maxPrice >= 1000 ? '₹1000+' : `₹${maxPrice}`;
-  if (currentQuery) { clearTimeout(searchTimer); searchTimer = setTimeout(() => doSearch(currentQuery), 500); }
-});
 
 // Search input
 document.getElementById('km-search-input').addEventListener('input', function() {
