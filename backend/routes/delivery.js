@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const { calculateDeliveryFee, haversineKm, MAX_KM, FREE_DELIVERY_ABOVE } = require('../utils/delivery');
 
-const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.1234;
-const STORE_LNG = parseFloat(process.env.STORE_LNG) || 76.1234;
+const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.0825;
+const STORE_LNG = parseFloat(process.env.STORE_LNG) || 75.9083;
 
 // ── POST /api/delivery/fee ─────────────────────────────────────────────────────
 // Used by frontend cart page to show real-time delivery fee

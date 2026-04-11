@@ -323,24 +323,25 @@
 </main>
 
 <!-- ══ MOBILE BOTTOM NAV ═══════════════════════════════════════════════════ -->
-<div class="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:hidden z-50 px-6 py-3 flex justify-between items-center">
-  <a href="index.html" class="flex flex-col items-center gap-1 text-primary">
-    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
-    <span class="text-[10px] font-bold" data-en="Home" data-ml="ഹോം">Home</span>
-  </a>
-  <a href="category.html" class="flex flex-col items-center gap-1 text-slate-400">
-    <span class="material-symbols-outlined">category</span>
-    <span class="text-[10px]" data-en="Categories" data-ml="വകുപ്പുകൾ">Categories</span>
-  </a>
-  <a href="#" id="km-mobile-search-btn" class="flex flex-col items-center gap-1 text-slate-400">
-    <span class="material-symbols-outlined">search</span>
-    <span class="text-[10px]" data-en="Search" data-ml="തിരയൂ">Search</span>
-  </a>
-  <a href="profile.html" class="flex flex-col items-center gap-1 text-slate-400">
+  <a href="profile.html" class="flex flex-col items-center gap-1 text-outline">
     <span class="material-symbols-outlined">person</span>
     <span class="text-[10px]" data-en="Profile" data-ml="പ്രൊഫൈൽ">Profile</span>
   </a>
 </div>
+
+<!-- Floating Quick Cart -->
+<a href="cart.html" id="km-floating-cart" class="fixed bottom-24 right-6 z-40 bg-primary text-white p-4 rounded-2xl shadow-[0_12px_40px_rgba(0,105,71,0.3)] flex items-center gap-3 transition-all duration-500 translate-y-32 opacity-0 group">
+  <div class="relative">
+    <span class="material-symbols-outlined text-2xl">shopping_basket</span>
+    <span id="km-float-count" class="absolute -top-1 -right-1 bg-secondary text-white text-[9px] font-bold px-1 rounded-full border-2 border-primary">0</span>
+  </div>
+  <div class="pr-2">
+    <p class="text-[10px] uppercase tracking-widest font-bold opacity-70 leading-none mb-1">Your Basket</p>
+    <p class="font-bold text-sm leading-none" id="km-float-total">₹0</p>
+  </div>
+  <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+
 
 <!-- ══ SCRIPTS ════════════════════════════════════════════════════════════ -->
 <script src="assets/js/config.js"></script>
@@ -448,6 +449,25 @@ const KMToast = {
     setTimeout(() => toast.remove(), 2800);
   }
 };
+  }
+
+  function updateFloatingCart() {
+    const count = KMCart.count();
+    const float = document.getElementById('km-floating-cart');
+    const floatTotal = document.getElementById('km-float-total');
+    const floatCount = document.getElementById('km-float-count');
+    if (!float) return;
+    if (count > 0) {
+      float.classList.remove('translate-y-32', 'opacity-0');
+      floatCount.textContent = count;
+      floatTotal.textContent = `₹${KMCart.subtotal()}`;
+    } else {
+      float.classList.add('translate-y-32', 'opacity-0');
+    }
+  }
+
+  updateFloatingCart();
+  setInterval(updateFloatingCart, 1000);
 </script>
 </body>
 </html>
