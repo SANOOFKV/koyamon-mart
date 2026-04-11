@@ -80,6 +80,79 @@ router.post('/products', async (req, res) => {
   }
 });
 
+// ── POST /api/admin/products/bulk-upload ─── CSV bulk import ──────────────────
+const multer  = require('multer');
+const upload  = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+
+router.post('/products/bulk-upload', upload.single('csv'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ success: false, message: 'No CSV file uploaded' });
+
+    const text  = req.file.buffer.toString('utf-8');
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    if (lines.length < 2) return res.status(400).json({ success: false, message: 'CSV must have a header row and at least one data row' });
+
+    // Parse header
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    const required = ['name_en', 'category_slug', 'variant_label', 'variant_price', 'variant_stock'];
+    const missing  = required.filter(r => !headers.includes(r));
+    if (missing.length) return res.status(400).json({ success: false, message: `Missing columns: ${missing.join(', ')}` });
+
+    // Parse rows — group multi-variant rows by name_en + category_slug
+    const rowMap = new Map();
+    for (let i = 1; i < lines.length; i++) {
+      const cols  = lines[i].split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ''));
+      if (cols.length < headers.length && cols.every(c => !c)) continue;
+      const row   = {};
+      headers.forEach((h, idx) => { row[h] = cols[idx] || ''; });
+      if (!row.name_en || !row.category_slug) continue;
+
+      const key = `${row.name_en}__${row.category_slug}`;
+      if (!rowMap.has(key)) rowMap.set(key, { ...row, variants: [] });
+      rowMap.get(key).variants.push({
+        label: row.variant_label || 'piece',
+        price: Number(row.variant_price) || 0,
+        mrp:   Number(row.variant_mrp)   || Number(row.variant_price) || 0,
+        stock: Number(row.variant_stock) || 0,
+      });
+    }
+
+    const results = { created: 0, skipped: 0, errors: [] };
+
+    for (const [, row] of rowMap) {
+      try {
+        const category = await Category.findOne({ slug: row.category_slug.toLowerCase() });
+        if (!category) {
+          results.errors.push(`Row "${row.name_en}": Category slug "${row.category_slug}" not found`);
+          continue;
+        }
+
+        const exists = await Product.findOne({ 'name.en': row.name_en, category: category._id });
+        if (exists) { results.skipped++; continue; }
+
+        await Product.create({
+          name:        { en: row.name_en, ml: row.name_ml || '' },
+          description: { en: row.description_en || '', ml: row.description_ml || '' },
+          category:    category._id,
+          variants:    row.variants,
+          tags:        row.tags ? row.tags.split('|').map(t => t.trim()) : [],
+          unit:        row.unit || 'piece',
+          isFeatured:  row.is_featured === 'true',
+          images:      row.image_url ? [row.image_url] : [],
+          isActive:    true,
+        });
+        results.created++;
+      } catch (err) {
+        results.errors.push(`Row "${row.name_en}": ${err.message}`);
+      }
+    }
+
+    res.json({ success: true, ...results });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 router.put('/products/:id', async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
