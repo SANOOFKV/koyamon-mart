@@ -182,7 +182,8 @@ function buildStaticGrid() {
   ];
   return statics.map(c => `
     <div class="group relative overflow-hidden rounded-3xl bg-surface-container-lowest h-[280px] md:h-[320px] shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer"
-      onclick="window.location.href='search.html?q=${c.name}'">
+      onclick="window.location.href='search.html?category=${c.slug}&catName=${encodeURIComponent(c.name)}'">
+
       <img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="${c.img}" alt="${c.name}" loading="lazy"/>
       <div class="absolute inset-0 bg-gradient-to-t ${c.gradient}"></div>
       <div class="absolute bottom-0 left-0 p-6 md:p-8 w-full">

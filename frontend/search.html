@@ -206,14 +206,15 @@ function addToCart(id, nameEn, img, label, price, mrp) {
 async function doSearch(q) {
   currentQuery = q;
   const lang = localStorage.getItem('km_lang') || 'en';
-  if (!q.trim()) { showLanding(); return; }
+  
+  // If no query and no category, show landing
+  if (!q.trim() && !selectedCat) { showLanding(); return; }
 
-  document.getElementById('km-search-title').textContent = `"${q}" — Koyamon Mart`;
   document.getElementById('km-search-landing').classList.add('hidden');
   document.getElementById('km-empty-state').classList.add('hidden');
   document.getElementById('km-recommendations').classList.add('hidden');
   document.getElementById('km-results-grid').classList.add('hidden');
-  document.getElementById('km-results-header').classList.add('hidden');
+  document.getElementById('km-results-header').classList.remove('hidden');
   document.getElementById('km-search-loading').classList.remove('hidden');
 
   try {
@@ -227,14 +228,15 @@ async function doSearch(q) {
 
     if (products.length > 0) {
       document.getElementById('km-results-header').classList.remove('hidden');
-      document.getElementById('km-results-query').textContent = `"${q}"`;
-      document.getElementById('km-results-count').textContent = `${products.length} result${products.length !== 1 ? 's' : ''} found`;
+      document.getElementById('km-results-query').textContent = q ? `"${q}"` : 'All Products';
+      document.getElementById('km-results-count').textContent = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
       document.getElementById('km-results-grid').innerHTML = products.map(p => productCard(p, lang)).join('');
       document.getElementById('km-results-grid').classList.remove('hidden');
     } else {
       showEmptyState(q, lang);
       loadRecommendations(lang);
     }
+
   } catch {
     document.getElementById('km-search-loading').classList.add('hidden');
     showEmptyState(q, lang);
@@ -242,11 +244,19 @@ async function doSearch(q) {
 }
 
 function showEmptyState(q, lang) {
+  document.getElementById('km-results-header').classList.add('hidden');
   document.getElementById('km-empty-state').classList.remove('hidden');
-  document.getElementById('km-empty-title').textContent = lang === 'ml'
-    ? `"${q}" ലഭ്യമല്ല`
-    : `Oops! No results for "${q}".`;
+  if (q) {
+    document.getElementById('km-empty-title').textContent = lang === 'ml'
+      ? `"${q}" ലഭ്യമല്ല`
+      : `Oops! No results for "${q}".`;
+  } else {
+    document.getElementById('km-empty-title').textContent = lang === 'ml'
+      ? `ഈ വിഭാഗത്തിൽ ഉൽപ്പന്നങ്ങളില്ല`
+      : `No products in this category yet.`;
+  }
 }
+
 
 async function loadRecommendations(lang) {
   const data = await api.products.featured();
@@ -315,12 +325,18 @@ document.getElementById('km-search-input').addEventListener('input', function() 
 
 document.addEventListener('DOMContentLoaded', () => {
   loadCategories();
-  // Check for ?q= param
-  const q = new URLSearchParams(window.location.search).get('q');
-  if (q) {
+  // Check for URL params
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q') || '';
+  const cat = params.get('category') || '';
+  
+  if (cat) selectedCat = cat;
+
+  if (q || cat) {
     document.getElementById('km-search-input').value = q;
     doSearch(q);
   }
+
 
   // Cart badge
   const cnt = KMCart.count();

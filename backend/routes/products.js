@@ -8,7 +8,17 @@ router.get('/', async (req, res) => {
     const { category, search, sort, minPrice, maxPrice, page = 1, limit = 20, inStock } = req.query;
     const filter = { isActive: true };
 
-    if (category)   filter.category = category;
+    if (category) {
+      // Check if it's a valid Mongo ID
+      if (mongoose.Types.ObjectId.isValid(category)) {
+        filter.category = category;
+      } else {
+        // Assume it's a slug
+        const cat = await Category.findOne({ slug: category });
+        if (cat) filter.category = cat._id;
+        else filter.category = null; // Forces empty result if slug invalid
+      }
+    }
     if (inStock === 'true') filter['variants.stock'] = { $gt: 0 };
 
     if (search) {
