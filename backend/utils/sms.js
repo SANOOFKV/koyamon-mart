@@ -32,18 +32,9 @@ async function sendOTP(phone, otp) {
 async function sendViaMSG91(phone, otp) {
   // TODO: Integrate MSG91 when AUTH_KEY is available
   // https://docs.msg91.com/reference/send-otp
-  const { default: fetch } = await import('node-fetch');
-  const url = 'https://control.msg91.com/api/v5/otp';
-  const body = {
-    template_id: process.env.MSG91_TEMPLATE_ID,
-    mobile: phone.replace('+', ''),
-    authkey: process.env.MSG91_AUTH_KEY,
-    otp,
-  };
+  const url = `https://control.msg91.com/api/v5/otp?template_id=${process.env.MSG91_TEMPLATE_ID}&mobile=${phone.replace('+', '')}&authkey=${process.env.MSG91_AUTH_KEY}&otp=${otp}`;
   const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    method: 'GET',
   });
   const data = await res.json();
   return { success: data.type === 'success', messageId: data.request_id };

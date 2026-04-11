@@ -272,7 +272,7 @@ document.getElementById('notif-form').addEventListener('submit', async (e) => {
   btn.textContent = 'Sending...'; btn.disabled = true;
   try {
     // POST to backend (endpoint to be implemented: POST /admin/notifications)
-    const res = await api.post('/admin/notifications', {
+    const res = await api.admin.notifications.create({
       type: selectedType,
       target: document.getElementById('notif-target').value,
       message,
@@ -299,7 +299,7 @@ document.getElementById('notif-form').addEventListener('submit', async (e) => {
 
 async function loadHistory() {
   try {
-    const data = await api.get('/admin/notifications');
+    const data = await api.admin.notifications.list();
     const notifs = data.notifications || [];
     const container = document.getElementById('notif-history');
     if (!notifs.length) {

@@ -3,6 +3,7 @@ const Product  = require('../models/Product');
 const Category = require('../models/Category');
 const Order    = require('../models/Order');
 const User     = require('../models/User');
+const Notification = require('../models/Notification');
 const { requireAdmin } = require('../middleware/adminGuard');
 
 // All admin routes require admin JWT
@@ -187,6 +188,28 @@ router.patch('/orders/:id/status', async (req, res) => {
     );
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
     res.json({ success: true, order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ════════════════════════════════════════════════════════════
+router.post('/notifications', async (req, res) => {
+  try {
+    // In production, real SMS/Push gateway logic would trigger here based on req.body.channels
+    const notif = await Notification.create(req.body);
+    res.status(201).json({ success: true, notification: notif });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+router.get('/notifications', async (req, res) => {
+  try {
+    const notifications = await Notification.find().sort({ createdAt: -1 }).limit(50);
+    res.json({ success: true, notifications });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

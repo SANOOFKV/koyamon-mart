@@ -107,5 +107,9 @@ const api = {
       byId: (id) => api.get(`/admin/orders/${id}`),
       updateStatus: (id, status, note) => api.patch(`/admin/orders/${id}/status`, { status, note }),
     },
+    notifications: {
+      list: () => api.get('/admin/notifications'),
+      create: (body) => api.post('/admin/notifications', body),
+    },
   },
 };
