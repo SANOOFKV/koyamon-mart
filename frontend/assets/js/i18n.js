@@ -28,7 +28,7 @@ const KMLang = {
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
         el.placeholder = text;
       } else {
-        el.textContent = text;
+        el.innerHTML = text;
       }
     });
   },
