@@ -1,5 +1,7 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
 const Product  = require('../models/Product');
+const Category = require('../models/Category');
 
 // ── GET /api/products ─────────────────────────────────────────────────────────
 // Query params: category, search, sort, minPrice, maxPrice, page, limit
@@ -9,21 +11,21 @@ router.get('/', async (req, res) => {
     const filter = { isActive: true };
 
     if (category) {
-      // Check if it's a valid Mongo ID
       if (mongoose.Types.ObjectId.isValid(category)) {
         filter.category = category;
       } else {
-        // Assume it's a slug
-        const cat = await Category.findOne({ slug: category });
+        const cat = await Category.findOne({ slug: category.toLowerCase() });
         if (cat) filter.category = cat._id;
-        else filter.category = null; // Forces empty result if slug invalid
+        else filter.category = null;
       }
     }
+
     if (inStock === 'true') filter['variants.stock'] = { $gt: 0 };
 
-    if (search) {
+    if (search && search.trim() !== '') {
       filter.$text = { $search: search };
     }
+
 
     if (minPrice || maxPrice) {
       filter['variants.price'] = {};
