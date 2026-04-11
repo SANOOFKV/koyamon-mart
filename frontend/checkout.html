@@ -389,7 +389,7 @@ document.getElementById('co-place-order-btn').addEventListener('click', async ()
     if (res.success) {
       KMCart.clear();
       if (paymentMethod === 'cod') {
-        window.location.href = `order-tracking.html?orderId=${res.order.orderId}`;
+        window.location.href = `order-confirm.html?orderId=${res.order.orderId}`;
       } else {
         // Razorpay flow
         const rzpRes = await api.payment.createOrder(res.order.orderId);
@@ -401,7 +401,7 @@ document.getElementById('co-place-order-btn').addEventListener('click', async ()
           order_id: rzpRes.razorpayOrder.id,
           handler: async (response) => {
             await api.payment.verify({ ...response, orderId: res.order.orderId });
-            window.location.href = `order-tracking.html?orderId=${res.order.orderId}`;
+            window.location.href = `order-confirm.html?orderId=${res.order.orderId}`;
           },
           prefill: { contact: user?.phone || guestPhone },
           theme: { color: '#006947' },
