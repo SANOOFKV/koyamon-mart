@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Manage Products — Koyamon Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "inverse-on-surface":"#f0f1f2","on-tertiary-fixed-variant":"#3a4951","primary":"#006947","on-secondary-container":"#562000","surface":"#f8f9fa","secondary":"#9f4200","error-container":"#ffdad6","secondary-fixed":"#ffdbcb","on-background":"#191c1d","on-error":"#ffffff","inverse-primary":"#6fdba8","tertiary-container":"#677780","surface-dim":"#d9dadb","on-error-container":"#93000a","surface-container-low":"#f3f4f5","on-tertiary":"#ffffff","secondary-container":"#fd6c00","on-tertiary-container":"#fbfdff","on-primary":"#ffffff","background":"#f8f9fa","error":"#ba1a1a","on-primary-fixed":"#002113","surface-container-lowest":"#ffffff","primary-fixed-dim":"#6fdba8","outline":"#6d7a71","on-secondary-fixed-variant":"#7a3000","on-primary-fixed-variant":"#005236","on-secondary-fixed":"#341100","inverse-surface":"#2e3132","surface-variant":"#e1e3e4","on-tertiary-fixed":"#0e1d25","on-surface":"#191c1d","secondary-fixed-dim":"#ffb692","primary-fixed":"#8bf8c3","on-primary-container":"#f5fff6","surface-container-highest":"#e1e3e4","on-secondary":"#ffffff","surface-container-high":"#e7e8e9","surface-tint":"#006c49","on-surface-variant":"#3d4a41","tertiary-fixed-dim":"#b9c9d3","tertiary":"#4f5e67","outline-variant":"#bccabf","primary-container":"#00855b","surface-container":"#edeeef","tertiary-fixed":"#d5e5ef","surface-bright":"#f8f9fa" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex">
+
+<!-- SIDEBAR -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 gap-4 border-r border-slate-100 z-40">
+  <div class="px-6 mb-4">
+    <h1 class="text-lg font-black text-emerald-800 tracking-tight">Koyamon Admin</h1>
+    <p class="text-xs text-slate-500 font-medium">Central Hub</p>
+  </div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all" href="dashboard.html">
+      <span class="material-symbols-outlined">dashboard</span><span class="text-sm font-medium">Dashboard</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 bg-emerald-100/50 text-emerald-800 font-semibold rounded-xl transition-all" href="products.html">
+      <span class="material-symbols-outlined">storefront</span><span class="text-sm">Products</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all" href="orders.html">
+      <span class="material-symbols-outlined">receipt_long</span><span class="text-sm font-medium">Orders</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all" href="inventory.html">
+      <span class="material-symbols-outlined">inventory_2</span><span class="text-sm font-medium">Inventory</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all" href="notifications.html">
+      <span class="material-symbols-outlined">notifications_active</span><span class="text-sm font-medium">Notifications</span>
+    </a>
+  </nav>
+  <div class="px-6 mt-auto">
+    <div class="mt-6 flex items-center gap-3 py-4 border-t border-slate-100">
+      <div class="w-8 h-8 rounded-full bg-emerald-200 flex items-center justify-center font-bold text-emerald-900 text-xs">A</div>
+      <div>
+        <p class="text-xs font-bold">Admin</p>
+        <button id="admin-logout" class="text-[10px] text-slate-400 hover:text-red-500 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">logout</span> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="ml-64 min-h-screen flex-1">
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md px-8 py-6 flex items-center justify-between border-b border-slate-100">
+    <div>
+      <h2 class="text-2xl font-extrabold text-on-surface tracking-tight">Products</h2>
+      <nav class="flex items-center gap-2 text-xs text-outline mt-1">
+        <span>Admin</span>
+        <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+        <span class="text-primary font-medium">Products</span>
+      </nav>
+    </div>
+    <div class="flex items-center gap-4">
+      <button onclick="toggleView('form')" id="btn-add-new" class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">add</span> Add Product
+      </button>
+    </div>
+  </header>
+
+  <section class="p-8">
+    
+    <!-- LIST VIEW -->
+    <div id="view-list">
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="relative w-full md:w-96">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+          <input id="prod-search" class="w-full pl-12 pr-4 py-3 bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm placeholder:text-outline" placeholder="Search products by name..."/>
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <select id="prod-cat-filter" class="bg-surface-container-low border-none rounded-full px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-primary/40 cursor-pointer">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-container-low/50">
+              <th class="px-6 py-4 text-xs font-bold text-outline uppercase tracking-wider">Product</th>
+              <th class="px-6 py-4 text-xs font-bold text-outline uppercase tracking-wider">Category</th>
+              <th class="px-6 py-4 text-xs font-bold text-outline uppercase tracking-wider">Variants</th>
+              <th class="px-6 py-4 text-xs font-bold text-outline uppercase tracking-wider">Active</th>
+              <th class="px-6 py-4 text-xs font-bold text-outline uppercase tracking-wider text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="prod-tbody" class="divide-y divide-surface-container">
+            <tr><td colspan="5" class="text-center py-12 text-slate-400">Loading...</td></tr>
+          </tbody>
+        </table>
+        <div class="px-6 py-4 border-t border-surface-container flex items-center justify-between">
+          <p class="text-xs text-outline font-medium" id="prod-pagination-info">—</p>
+          <div class="flex items-center gap-2" id="prod-pagination-btns"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM VIEW -->
+    <div id="view-form" class="hidden max-w-3xl">
+      <button onclick="toggleView('list')" class="mb-6 flex items-center gap-2 text-slate-500 hover:text-primary font-semibold text-sm transition-colors">
+        <span class="material-symbols-outlined">arrow_back</span> Back to List
+      </button>
+
+      <form id="prod-form" class="bg-surface-container-lowest rounded-xl shadow-sm p-8 space-y-8">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+          <h3 id="form-title" class="text-xl font-bold font-headline">Add New Product</h3>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-slate-500">Active</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="pf-active" class="sr-only peer" checked>
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </div>
+        </div>
+
+        <input type="hidden" id="pf-id" />
+
+        <!-- Name & Desc -->
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Name (English) <span class="text-red-500">*</span></label>
+            <input id="pf-name-en" required class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Name (Malayalam)</label>
+            <input id="pf-name-ml" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Description (English)</label>
+            <textarea id="pf-desc-en" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40 h-24 resize-none"></textarea>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Description (Malayalam)</label>
+            <textarea id="pf-desc-ml" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40 h-24 resize-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Category <span class="text-red-500">*</span></label>
+            <select id="pf-category" required class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40">
+              <option value="">Select Category...</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Image URL <span class="text-red-500">*</span></label>
+            <input id="pf-image" placeholder="https://" required class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40"/>
+            <p class="text-[10px] text-slate-400">Direct link to product image.</p>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tags (comma separated)</label>
+          <input id="pf-tags" placeholder="organic, fresh, local" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40"/>
+        </div>
+
+        <!-- Variants -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Variants <span class="text-red-500">*</span></label>
+            <button type="button" onclick="addVariant()" class="text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg hover:bg-primary/20">
+              + Add Variant
+            </button>
+          </div>
+          <div id="pf-variants-list" class="space-y-3">
+            <!-- Variants rendered here -->
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex items-center justify-end gap-4 border-t border-slate-100 pt-6">
+          <button type="button" onclick="toggleView('list')" class="px-6 py-3 font-semibold text-sm rounded-xl hover:bg-surface-container-high transition-colors text-slate-600">Cancel</button>
+          <button type="submit" id="pf-save-btn" class="px-8 py-3 bg-primary text-white font-bold text-sm rounded-xl shadow-md hover:bg-primary-container hover:text-on-primary-container transition-all">Save Product</button>
+        </div>
+      </form>
+    </div>
+
+  </section>
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script>
+const adminToken = () => localStorage.getItem('km_admin_token');
+if (!adminToken()) { window.location.href = 'dashboard.html'; }
+
+let allProducts = [];
+let allCategories = [];
+let currentPage = 1;
+const PER_PAGE = 10;
+let currentMode = 'list'; // list | form
+
+function showToast(msg, type='') {
+  const el = Object.assign(document.createElement('div'), { textContent: msg });
+  el.className = `fixed bottom-8 right-8 z-[9999] px-5 py-3 rounded-xl text-sm font-semibold shadow-xl text-white ${type==='success'?'bg-emerald-600':'bg-red-500'}`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+async function loadCategories() {
+  try {
+    const res = await api.categories.list();
+    allCategories = res.categories || [];
+    
+    // Populate filters & forms
+    const filter = document.getElementById('prod-cat-filter');
+    const fSelect = document.getElementById('pf-category');
+    
+    allCategories.forEach(c => {
+      const opt1 = new Option(c.name?.en || c.name, c._id);
+      const opt2 = new Option(c.name?.en || c.name, c._id);
+      filter.add(opt1);
+      fSelect.add(opt2);
+    });
+  } catch(e) { console.error('Failed to load categories', e); }
+}
+
+async function loadProducts() {
+  try {
+    const q = document.getElementById('prod-search').value;
+    const cat = document.getElementById('prod-cat-filter').value;
+    
+    const params = { page: currentPage, limit: PER_PAGE };
+    if (q) params.search = q;
+    if (cat) params.category = cat;
+
+    const res = await api.admin.products.list(params);
+    allProducts = res.products || [];
+    renderTable(res.total || 0);
+  } catch(e) { console.error(e); showToast('Load fails', 'error'); }
+}
+
+function renderTable(total) {
+  const tbody = document.getElementById('prod-tbody');
+  
+  document.getElementById('prod-pagination-info').textContent =
+    `Showing ${(currentPage-1)*PER_PAGE + 1}–${Math.min(currentPage*PER_PAGE, total)} of ${total} items`;
+
+  tbody.innerHTML = allProducts.length ? allProducts.map(p => `
+    <tr class="hover:bg-surface-container-low transition-colors group">
+      <td class="px-6 py-5">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+            <img class="w-full h-full object-cover" src="${p.images?.[0] || ''}" />
+          </div>
+          <div>
+            <p class="font-bold text-sm text-on-surface">${p.name?.en || '—'}</p>
+            <p class="text-[10px] text-outline">ID: ${p._id}</p>
+          </div>
+        </div>
+      </td>
+      <td class="px-6 py-5">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-surface-container-high rounded-lg">${p.category?.name?.en || '—'}</span>
+      </td>
+      <td class="px-6 py-5">
+        <div class="space-y-1">
+          ${(p.variants||[]).map(v => `<span class="text-[10px] inline-flex mr-1 bg-slate-100 px-2 py-0.5 rounded font-medium">${v.label}: ₹${v.price} (${v.stock})</span>`).join('')}
+        </div>
+      </td>
+      <td class="px-6 py-5">
+        ${p.isActive 
+          ? `<span class="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">Active</span>`
+          : `<span class="text-[10px] uppercase font-bold text-red-700 bg-red-100 px-2 py-1 rounded-full">Inactive</span>`}
+      </td>
+      <td class="px-6 py-5 text-right space-x-2">
+        <button onclick="editProduct('${p._id}')" class="p-2 text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>
+        <button onclick="deleteProduct('${p._id}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>
+      </td>
+    </tr>
+  `).join('') : `<tr><td colspan="5" class="text-center py-16 text-slate-400">No products found</td></tr>`;
+
+  renderPagination(total);
+}
+
+function renderPagination(total) {
+  const totalPages = Math.ceil(total / PER_PAGE);
+  const btns = document.getElementById('prod-pagination-btns');
+  btns.innerHTML = '';
+  if (totalPages <= 1) return;
+  for (let i=1; i<=totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = `px-3 py-1 rounded-lg text-xs font-bold transition-all ${i === currentPage ? 'bg-primary text-on-primary' : 'hover:bg-surface-container'}`;
+    btn.onclick = () => { currentPage = i; loadProducts(); };
+    btns.appendChild(btn);
+  }
+}
+
+// ── Form view toggle ─────────────────────────────────────────────────────────
+
+function toggleView(mode) {
+  currentMode = mode;
+  document.getElementById('view-list').classList.toggle('hidden', mode !== 'list');
+  document.getElementById('view-form').classList.toggle('hidden', mode !== 'form');
+  document.getElementById('btn-add-new').classList.toggle('hidden', mode !== 'list');
+  if (mode === 'form') { document.getElementById('prod-form').reset(); document.getElementById('pf-id').value = ''; document.getElementById('pf-variants-list').innerHTML = ''; addVariant(); document.getElementById('form-title').textContent = 'Add New Product'; }
+}
+
+function addVariant(data = { label:'', price:'', originalPrice:'', stock:'' }) {
+  const list = document.getElementById('pf-variants-list');
+  const id = Date.now() + Math.random();
+  const html = `
+    <div id="var-${id}" class="flex items-center gap-3 bg-surface-container-low p-3 rounded-xl variant-row">
+      <input type="text" placeholder="Label (e.g. 500g)" required value="${data.label}" class="var-label w-1/3 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
+      <input type="number" step="0.5" placeholder="Price (₹)" required value="${data.price}" class="var-price w-1/4 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
+      <input type="number" step="0.5" placeholder="Orig Price" value="${data.originalPrice||''}" class="var-orig w-1/4 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
+      <input type="number" placeholder="Stock" required value="${data.stock}" class="var-stock w-1/4 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
+      <button type="button" onclick="document.getElementById('var-${id}').remove()" class="text-slate-400 hover:text-red-500 px-2"><span class="material-symbols-outlined text-sm">close</span></button>
+    </div>
+  `;
+  list.insertAdjacentHTML('beforeend', html);
+}
+
+function editProduct(id) {
+  const p = allProducts.find(x => x._id === id);
+  if (!p) return;
+  toggleView('form');
+  document.getElementById('form-title').textContent = 'Edit Product';
+  document.getElementById('pf-id').value = p._id;
+  document.getElementById('pf-name-en').value = p.name?.en || '';
+  document.getElementById('pf-name-ml').value = p.name?.ml || '';
+  document.getElementById('pf-desc-en').value = p.description?.en || '';
+  document.getElementById('pf-desc-ml').value = p.description?.ml || '';
+  document.getElementById('pf-category').value = p.category?._id || p.category || '';
+  document.getElementById('pf-image').value = p.images?.[0] || '';
+  document.getElementById('pf-tags').value = (p.tags||[]).join(', ');
+  document.getElementById('pf-active').checked = p.isActive;
+  
+  document.getElementById('pf-variants-list').innerHTML = '';
+  if (p.variants?.length) p.variants.forEach(v => addVariant(v));
+  else addVariant();
+}
+
+document.getElementById('prod-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  // Collect variants
+  const variants = [];
+  document.querySelectorAll('.variant-row').forEach(row => {
+    variants.push({
+      label: row.querySelector('.var-label').value,
+      price: Number(row.querySelector('.var-price').value),
+      originalPrice: Number(row.querySelector('.var-orig').value) || Number(row.querySelector('.var-price').value),
+      stock: Number(row.querySelector('.var-stock').value)
+    });
+  });
+
+  if (variants.length === 0) { showToast('Add at least 1 variant', 'error'); return; }
+
+  const body = {
+    name: { en: document.getElementById('pf-name-en').value, ml: document.getElementById('pf-name-ml').value },
+    description: { en: document.getElementById('pf-desc-en').value, ml: document.getElementById('pf-desc-ml').value },
+    category: document.getElementById('pf-category').value,
+    images: [document.getElementById('pf-image').value].filter(Boolean),
+    tags: document.getElementById('pf-tags').value.split(',').map(s=>s.trim()).filter(Boolean),
+    isActive: document.getElementById('pf-active').checked,
+    variants
+  };
+
+  const id = document.getElementById('pf-id').value;
+  const btn = document.getElementById('pf-save-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  try {
+    if (id) await api.admin.products.update(id, body);
+    else await api.admin.products.create(body);
+    showToast('Product saved', 'success');
+    toggleView('list');
+    loadProducts();
+  } catch(err) {
+    showToast('Error saving product', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Product';
+  }
+});
+
+async function deleteProduct(id) {
+  if (!confirm('Are you sure you want to delete (deactivate) this product?')) return;
+  try {
+    await api.admin.products.delete(id);
+    showToast('Product deactivated', 'success');
+    loadProducts();
+  } catch(e) { showToast('Delete failed', 'error'); }
+}
+
+// ── Listeners ────────────────────────────────────────────────────────────────
+document.getElementById('prod-search').addEventListener('input', () => { setTimeout(loadProducts, 400); });
+document.getElementById('prod-cat-filter').addEventListener('change', () => { currentPage=1; loadProducts(); });
+
+document.getElementById('admin-logout').addEventListener('click', () => {
+  localStorage.removeItem('km_admin_token');
+  window.location.href = 'dashboard.html';
+});
+
+// Init
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadCategories();
+  
+  // Check URL arg for "add new" or "edit"
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('edit')) {
+    await loadProducts();
+    editProduct(params.get('edit'));
+  } else if (params.get('add')) {
+    await loadProducts();
+    toggleView('form');
+  } else {
+    loadProducts();
+  }
+});
+</script>
+</body>
+</html>
