@@ -39,7 +39,7 @@
 
 <!-- TOP APP BAR -->
 <header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm transition-all duration-300">
-  <div class="flex justify-between items-center px-4 h-16 w-full max-w-md mx-auto">
+  <div class="flex justify-between items-center px-4 h-16 w-full max-w-screen-2xl mx-auto">
     <div class="flex items-center gap-2">
       <div class="p-2 rounded-full bg-emerald-50 text-primary">
         <span class="material-symbols-outlined text-xl">location_on</span>
@@ -63,8 +63,8 @@
   </div>
   
   <!-- Search Bar -->
-  <div class="px-4 pb-3 max-w-md mx-auto relative">
-    <div class="relative flex items-center bg-surface-container-highest rounded-xl px-4 py-3 group">
+  <div class="px-4 pb-3 max-w-screen-2xl mx-auto relative flex justify-center">
+    <div class="relative flex items-center bg-surface-container-highest rounded-xl px-4 py-3 group w-full max-w-xl">
       <span class="material-symbols-outlined text-outline mr-3">search</span>
       <input id="km-search-input" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-full placeholder:text-outline" 
         placeholder="Search 'fresh milk' or 'mangoes'" type="text"
@@ -76,10 +76,10 @@
   </div>
 </header>
 
-<main class="pt-32 pb-24 max-w-md mx-auto min-h-screen">
+<main class="pt-40 md:pt-32 pb-24 max-w-screen-2xl mx-auto min-h-screen">
   <!-- Hero Banner -->
   <section class="px-4 mb-8">
-    <div class="relative overflow-hidden rounded-[2rem] bg-primary text-on-primary p-6 h-48 flex flex-col justify-center">
+    <div class="relative overflow-hidden rounded-[2rem] bg-primary text-on-primary p-6 h-48 md:h-64 lg:h-80 flex flex-col justify-center">
       <div class="absolute top-0 right-0 w-1/2 h-full">
         <img alt="Fresh Grocery Hero" class="w-full h-full object-cover opacity-60 mix-blend-overlay scale-110 -rotate-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAgsS8FRWSV3py6xn3idi7HUrb82K_Z7p5lTmyi4uaaYIA4Fe49oOS9tTxThRw1vCb-DgylM_xdjwqlWONwxHwaN_ekpVCUjqDcfzv3TaKnny1RWaIEXLvSM-NkoFK7ojInuKy21qCli3i_yCmtZwvNwEHeFB1H7iglCKnn_IU0ronlgqWpYJscW2kfrA60IOUjza4bdTtEbJREoBDV7vBPgww29nYKlhYxaLhB38AeCpIAyIz3JKaSgaHWhpHwFRCwqMV7tNV_fQV"/>
       </div>
@@ -102,7 +102,7 @@
       <h2 class="text-xl font-headline font-extrabold text-on-surface" data-en="Shop by Category" data-ml="വിഭാഗങ്ങൾ">Shop by Category</h2>
       <a href="category.html" class="text-primary text-xs font-bold" data-en="View All" data-ml="എല്ലാം കാണൂ">View All</a>
     </div>
-    <div id="km-categories-mini" class="grid grid-cols-4 gap-3">
+    <div id="km-categories-mini" class="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-10 gap-3">
       <!-- Loading skeletons -->
       <div class="h-20 bg-surface-container rounded-2xl animate-pulse"></div>
       <div class="h-20 bg-surface-container rounded-2xl animate-pulse"></div>
@@ -117,7 +117,7 @@
       <h2 class="text-xl font-headline font-extrabold text-on-surface" data-en="Trending Near You" data-ml="നിങ്ങൾക്ക് സമീപം ട്രെൻഡിങ്">Trending Near You</h2>
       <a href="category.html" class="text-primary text-xs font-bold" data-en="See All" data-ml="കൂടുതൽ">See All</a>
     </div>
-    <div id="km-featured-grid" class="flex overflow-x-auto hide-scrollbar gap-4 px-4 pb-4">
+    <div id="km-featured-grid" class="flex md:grid md:grid-cols-4 lg:grid-cols-6 overflow-x-auto md:overflow-visible hide-scrollbar gap-4 px-4 pb-4">
       <!-- Loaded by JS -->
     </div>
   </section>
@@ -136,7 +136,7 @@
           <div class="bg-secondary text-white px-2 py-1 rounded-lg text-xs font-black">22</div>
         </div>
       </div>
-      <div id="km-deals-grid" class="grid grid-cols-1 gap-3">
+      <div id="km-deals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         <!-- Static placeholder for now -->
         <div class="bg-surface-container-lowest rounded-2xl p-3 flex gap-3 items-center">
           <div class="w-16 h-16 bg-surface-container-low rounded-xl overflow-hidden flex-shrink-0">
@@ -168,10 +168,52 @@
       </div>
     </div>
   </section>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full py-16 px-8 grid grid-cols-1 md:grid-cols-4 gap-12 bg-surface-container-low font-body text-sm mt-20">
+    <div class="col-span-1">
+      <span class="font-headline font-black text-2xl text-emerald-900 mb-4 block">Koyamon Mart</span>
+      <p class="text-slate-500 mb-6 leading-relaxed" data-en="Your hyperlocal destination for the freshest groceries and daily essentials in Padikkal & Velimukku." data-ml="പടിക്കൽ, വേലിമുക്ക് പ്രദേശത്തെ ഫ്രഷ് ഗ്രോസറി ഹൈപ്പർലോക്കൽ ഡെലിവറി.">
+        Your hyperlocal destination for the freshest groceries in Padikkal & Velimukku.
+      </p>
+    </div>
+    <div>
+      <h4 class="font-bold text-slate-800 mb-6" data-en="Shop" data-ml="ഷോപ്പ്">Shop</h4>
+      <ul class="space-y-4">
+        <li><a class="text-slate-500 hover:text-primary transition-colors" href="category.html">Vegetables</a></li>
+        <li><a class="text-slate-500 hover:text-primary transition-colors" href="category.html">Fruits</a></li>
+        <li><a class="text-slate-500 hover:text-primary transition-colors" href="category.html">Dairy & Eggs</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-slate-800 mb-6" data-en="Support" data-ml="സപ്പോർട്ട്">Support</h4>
+      <ul class="space-y-4">
+        <li><a class="text-slate-500 hover:text-primary transition-colors" href="order-tracking.html">Track Order</a></li>
+        <li><a class="text-slate-500 hover:text-primary transition-colors" href="profile.html">My Account</a></li>
+        <li><a class="text-slate-500 hover:text-primary transition-colors" href="#">Delivery Areas</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-slate-800 mb-6" data-en="Download App" data-ml="ആപ്പ് ഡൗൺലോഡ്">Download App</h4>
+      <div class="flex flex-col gap-3">
+        <div class="bg-black text-white px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-slate-800 transition-all">
+          <span class="material-symbols-outlined">play_store</span>
+          <div>
+            <p class="text-[8px] uppercase">Get it on</p>
+            <p class="text-xs font-bold font-headline">Google Play</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-span-full pt-12 border-t border-slate-200 text-center text-slate-400">
+      <p>© 2024 Koyamon Mart. Freshly Curated. Padikkal, Malappuram.</p>
+    </div>
+  </footer>
 </main>
 
-<!-- BOTTOM NAVIGATION -->
-<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-8 bg-white/90 backdrop-blur-xl z-50 rounded-t-[2.5rem] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+<!-- BOTTOM NAVIGATION (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-8 bg-white/90 backdrop-blur-xl z-50 rounded-t-[2.5rem] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
   <a class="flex flex-col items-center justify-center bg-emerald-100 text-emerald-900 rounded-2xl px-5 py-2 transition-all" href="index.html">
     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
     <span class="text-[10px] font-bold mt-0.5" data-en="Home" data-ml="ഹോം">Home</span>
