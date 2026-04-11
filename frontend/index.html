@@ -105,9 +105,14 @@
         placeholder="Search for fresh fruits, groceries..." type="text"
         data-en="Search for fresh fruits, groceries..." data-ml="പഴങ്ങൾ, പലചരക്ക് തിരയുക..."/>
       <span class="material-symbols-outlined absolute left-4 top-3 text-outline">search</span>
-      <!-- Search suggestions dropdown -->
       <div id="km-search-suggestions" class="hidden absolute top-14 left-0 w-full bg-white rounded-xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto"></div>
     </div>
+
+    <!-- Mobile Search Toggle (Optional icon) -->
+    <div class="md:hidden flex items-center gap-2">
+       <button id="km-mobile-search-toggle" class="p-2 text-emerald-800"><span class="material-symbols-outlined">search</span></button>
+    </div>
+
 
     <div class="flex items-center gap-4">
       <!-- Language Toggle -->
@@ -172,15 +177,33 @@
 <!-- ══ MAIN CONTENT ════════════════════════════════════════════════════════ -->
 <main class="xl:pl-72 pt-24 min-h-screen">
 
+  <!-- Mobile Only Category Scroller -->
+  <section class="xl:hidden px-6 pt-4">
+    <div id="km-mobile-categories" class="flex overflow-x-auto gap-4 py-2 no-scrollbar">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- Mobile Only Search Bar -->
+  <section class="md:hidden px-6 py-4">
+    <div class="relative">
+      <input id="km-search-input-mobile" class="w-full h-12 bg-surface-container-low border-2 border-emerald-50 rounded-2xl px-12 focus:ring-2 focus:ring-primary/30 transition-all font-body text-sm"
+        placeholder="Search 'fresh milk'..." type="text"
+        data-en="Search 'fresh milk'..." data-ml="പലചരക്ക് തിരയുക..."/>
+      <span class="material-symbols-outlined absolute left-4 top-3.5 text-outline text-[20px]">search</span>
+    </div>
+  </section>
+
   <!-- Hero Section -->
-  <section class="p-6">
-    <div class="relative w-full h-[400px] rounded-3xl overflow-hidden group">
+  <section class="p-4 md:p-6">
+    <div class="relative w-full h-[220px] md:h-[400px] rounded-2xl md:rounded-3xl overflow-hidden group">
+
       <img alt="Fresh Organic Produce at Koyamon Mart" class="w-full h-full object-cover"
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWRgl-z4UuMJzqfbLcxV_OUQthAH4cmZZxpn8NrH6b9B6oDNrDGR-i0xHgLnNgsiQLKq_iYxIVP974j11LLcFFRPEQyltxRk2uhVGG7MJfXM4_HHNfsRORKzSnGH6y3uXGT-2TUmnT1cO5h94zmv7K1fmOJPTlry7SSVxYT64d3y-sPNAl18euzpiBhFNtTSJBd_iCFMZGNzeg2oj8rdQtkyK3bHCdzjhwfJv207EOvwmzGOJYFLGJJ2LjWEDJsW8uvavy6QJIDbBk"/>
       <div class="absolute inset-0 bg-gradient-to-r from-emerald-950/80 to-transparent flex flex-col justify-center px-12">
         <span class="bg-secondary text-white px-4 py-1 rounded-full text-xs font-bold w-fit mb-4" data-en="LIMITED OFFER" data-ml="പ്രത്യേക ഓഫർ">LIMITED OFFER</span>
-        <h1 class="text-white font-headline text-5xl md:text-6xl font-extrabold max-w-lg leading-tight mb-4" data-en="First Order Free Delivery" data-ml="ആദ്യ ഓർഡർ ഡെലിവറി ഫ്രീ">First Order Free Delivery</h1>
-        <p class="text-white/90 font-body text-xl mb-8" data-en="Plus get ₹100 cashback on your first grocery haul." data-ml="ആദ്യ ഓർഡറിൽ ₹100 ക്യാഷ്ബാക്ക് നേടൂ.">Plus get ₹100 cashback on your first grocery haul.</p>
+        <h1 class="text-white font-headline text-3xl md:text-6xl font-extrabold max-w-lg leading-tight mb-4" data-en="First Order Free Delivery" data-ml="ആദ്യ ഓർഡർ ഡെലിവറി ഫ്രീ">First Order Free Delivery</h1>
+        <p class="text-white/90 font-body text-base md:text-xl mb-8" data-en="Plus get ₹100 cashback on your first grocery haul." data-ml="ആദ്യ ഓർഡറിൽ ₹100 ക്യാഷ്ബാക്ക് നേടൂ.">Plus get ₹100 cashback on your first grocery haul.</p>
         <div class="flex gap-4">
           <a href="category.html" class="bg-white text-primary px-8 py-4 rounded-xl font-headline font-bold hover:bg-primary-fixed transition-colors" data-en="Shop Now" data-ml="ഇപ്പോൾ വാങ്ങൂ">Shop Now</a>
           <div class="bg-white/10 backdrop-blur-md border border-white/20 px-6 py-4 rounded-xl text-white">
@@ -252,7 +275,7 @@
       <a href="category.html" class="text-primary font-bold hover:underline flex items-center gap-1" data-en="View All" data-ml="എല്ലാം കാണൂ">View All</a>
     </div>
     <!-- Product Grid — populated by JS or shows static fallback -->
-    <div id="km-featured-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div id="km-featured-grid" class="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 no-scrollbar pb-6 px-4 -mx-4 md:px-0 md:mx-0">
       <!-- Skeleton placeholders while loading -->
       <div class="bg-surface-container-lowest p-5 rounded-2xl animate-pulse">
         <div class="mb-6 aspect-square rounded-xl bg-surface-container-high"></div>
@@ -333,11 +356,30 @@
 </main>
 
 <!-- ══ MOBILE BOTTOM NAV ═══════════════════════════════════════════════════ -->
-  <a href="profile.html" class="flex flex-col items-center gap-1 text-outline">
-    <span class="material-symbols-outlined">person</span>
-    <span class="text-[10px]" data-en="Profile" data-ml="പ്രൊഫൈൽ">Profile</span>
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-8 bg-white/95 backdrop-blur-md z-50 rounded-t-[2rem] shadow-[0_-4px_30px_rgba(0,0,0,0.08)] border-t border-slate-100">
+  <a class="flex flex-col items-center justify-center text-primary px-4 py-1" href="index.html">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Home" data-ml="ഹോം">Home</span>
   </a>
-</div>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="category.html">
+    <span class="material-symbols-outlined">grid_view</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Categories" data-ml="വിഭാഗങ്ങൾ">Categories</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="order-tracking.html">
+    <span class="material-symbols-outlined">local_shipping</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Tracking" data-ml="ട്രാക്കിംഗ്">Tracking</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1 relative" href="cart.html">
+    <span class="material-symbols-outlined">shopping_basket</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Cart" data-ml="കാർട്ട്">Cart</span>
+    <span id="km-cart-count-mobile" class="absolute top-0 right-3 hidden bg-secondary text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white">0</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="profile.html">
+    <span class="material-symbols-outlined">person</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Profile" data-ml="പ്രൊഫൈൽ">Profile</span>
+  </a>
+</nav>
+
 
 <!-- Floating Quick Cart -->
 <a href="cart.html" id="km-floating-cart" class="fixed bottom-24 right-6 z-40 bg-primary text-white p-4 rounded-2xl shadow-[0_12px_40px_rgba(0,105,71,0.3)] flex items-center gap-3 transition-all duration-500 translate-y-32 opacity-0 group">
@@ -408,7 +450,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const discount = v?.mrp > v?.price ? Math.round((1 - v.price / v.mrp) * 100) : 0;
       const name = lang === 'ml' && p.name.ml ? p.name.ml : p.name.en;
       return `
-        <div class="bg-surface-container-lowest p-5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all group">
+        <div class="flex-shrink-0 w-[240px] md:w-full bg-surface-container-lowest p-5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all group">
           <a href="product.html?id=${p._id}" class="block relative mb-6 aspect-square rounded-xl overflow-hidden bg-surface-container-low">
             <img alt="${name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform"
               src="${p.images?.[0] || 'assets/images/placeholder.png'}" loading="lazy"/>
@@ -416,13 +458,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             ${discount > 0 ? `<span class="absolute top-3 right-3 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded">${discount}% OFF</span>` : ''}
           </a>
           <div class="space-y-1">
-            <h4 class="font-headline font-bold text-lg leading-tight">${name}</h4>
-            <p class="text-xs text-slate-400">${p.variants?.map(vr => vr.label).join(', ')}</p>
+            <h4 class="font-headline font-bold text-base md:text-lg leading-tight truncate">${name}</h4>
+            <p class="text-[11px] text-slate-400">${p.variants?.map(vr => vr.label).join(', ')}</p>
           </div>
           <div class="mt-6 flex items-center justify-between">
             <div>
-              <span class="text-xl font-bold text-emerald-900">₹${v?.price || ''}</span>
-              ${v?.mrp > v?.price ? `<span class="text-sm text-slate-400 line-through ml-2">₹${v.mrp}</span>` : ''}
+              <span class="text-lg md:text-xl font-bold text-emerald-900">₹${v?.price || ''}</span>
+              ${v?.mrp > v?.price ? `<span class="text-xs text-slate-400 line-through ml-2">₹${v.mrp}</span>` : ''}
             </div>
             <button onclick="KMCart.add({_id:'${p._id}',name:{en:'${p.name.en}',ml:'${p.name.ml || p.name.en}'},images:['${p.images?.[0] || ''}']}, {label:'${v?.label}',price:${v?.price},mrp:${v?.mrp}}, 1); KMToast.show('Added to cart ✓', 'success')"
               class="w-10 h-10 rounded-xl editorial-gradient text-white flex items-center justify-center shadow-md hover:scale-105 transition-transform">
@@ -431,17 +473,39 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         </div>
       `;
+
     }).join('');
   } catch(e) {
     console.warn('Featured products load failed, using static fallback');
-    document.getElementById('km-featured-grid').innerHTML = `
-      <div class="col-span-full text-center py-8 text-slate-400">
-        <span class="material-symbols-outlined text-4xl mb-2 block">wifi_off</span>
-        <p class="text-sm">Could not load products. Start the backend server.</p>
-      </div>
-    `;
   }
+
+  // ── Load Categories for Mobile Scroller ──────────────────────────
+  try {
+    const data = await api.categories.list();
+    const scroller = document.getElementById('km-mobile-categories');
+    if (scroller && data.categories) {
+       const lang = localStorage.getItem('km_lang') || 'en';
+       scroller.innerHTML = data.categories.map(cat => {
+         const name = lang === 'ml' && cat.name.ml ? cat.name.ml : (cat.name.en || cat.name);
+         return `<a href="category.html?slug=${cat.slug}" class="flex-shrink-0 flex flex-col items-center gap-1">
+           <div class="w-14 h-14 bg-surface-container-low rounded-2xl flex items-center justify-center">
+             <img src="${cat.image}" class="w-10 h-10 object-contain" alt="${name}"/>
+           </div>
+           <span class="text-[10px] font-bold text-emerald-900">${name}</span>
+         </a>`;
+       }).join('');
+    }
+  } catch(e) {}
+
+  // ── Mobile Search Sync ──────────────────────────────────────────
+  const searchMobile = document.getElementById('km-search-input-mobile');
+  searchMobile?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      window.location.href = `search.html?q=${encodeURIComponent(searchMobile.value)}`;
+    }
+  });
 });
+
 
 // ── Toast utility ──────────────────────────────────────────────────────────
 const KMToast = {
@@ -459,13 +523,20 @@ const KMToast = {
     setTimeout(() => toast.remove(), 2800);
   }
 };
-  }
+
 
   function updateFloatingCart() {
     const count = KMCart.count();
     const float = document.getElementById('km-floating-cart');
     const floatTotal = document.getElementById('km-float-total');
     const floatCount = document.getElementById('km-float-count');
+    const mobileCount = document.getElementById('km-cart-count-mobile');
+
+    if (mobileCount) {
+      mobileCount.textContent = count;
+      mobileCount.classList.toggle('hidden', count === 0);
+    }
+
     if (!float) return;
     if (count > 0) {
       float.classList.remove('translate-y-32', 'opacity-0');
@@ -475,6 +546,7 @@ const KMToast = {
       float.classList.add('translate-y-32', 'opacity-0');
     }
   }
+
 
   updateFloatingCart();
   setInterval(updateFloatingCart, 1000);
