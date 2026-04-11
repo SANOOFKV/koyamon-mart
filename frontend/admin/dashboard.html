@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Admin Dashboard — Koyamon Mart</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "on-surface":"#191c1d","surface-container-low":"#f3f4f5","primary-container":"#00855b","inverse-surface":"#2e3132","tertiary-container":"#677780","on-tertiary-fixed":"#0e1d25","secondary-container":"#fd6c00","tertiary":"#4f5e67","primary-fixed-dim":"#6fdba8","outline-variant":"#bccabf","secondary":"#9f4200","outline":"#6d7a71","surface-variant":"#e1e3e4","surface-container-high":"#e7e8e9","on-primary-fixed":"#002113","on-tertiary":"#ffffff","surface-dim":"#d9dadb","primary":"#006947","on-tertiary-container":"#fbfdff","on-secondary":"#ffffff","on-background":"#191c1d","error-container":"#ffdad6","surface":"#f8f9fa","secondary-fixed-dim":"#ffb692","on-primary":"#ffffff","on-error":"#ffffff","background":"#f8f9fa","inverse-primary":"#6fdba8","error":"#ba1a1a","tertiary-fixed":"#d5e5ef","surface-container-highest":"#e1e3e4","on-surface-variant":"#3d4a41","inverse-on-surface":"#f0f1f2","on-primary-container":"#f5fff6","on-error-container":"#93000a","surface-container-lowest":"#ffffff","on-secondary-fixed-variant":"#7a3000","tertiary-fixed-dim":"#b9c9d3","surface-tint":"#006c49","on-secondary-container":"#562000","surface-container":"#edeeef","on-primary-fixed-variant":"#005236","surface-bright":"#f8f9fa","secondary-fixed":"#ffdbcb","primary-fixed":"#8bf8c3","on-tertiary-fixed-variant":"#3a4951","on-secondary-fixed":"#341100" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #bccabf; border-radius: 10px; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex">
+
+<!-- ── Admin Login Gate (shown if not authenticated) ─────────────────────── -->
+<div id="admin-login-gate" class="fixed inset-0 bg-surface z-50 flex items-center justify-center">
+  <div class="bg-white p-10 rounded-2xl shadow-xl max-w-sm w-full mx-4">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
+        <span class="material-symbols-outlined">storefront</span>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-emerald-900 font-headline">Admin Central</h2>
+        <p class="text-xs text-slate-500">Koyamon Mart</p>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Email</label>
+        <input id="admin-email" type="email" placeholder="admin@koyamonmart.com"
+          class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Password</label>
+        <input id="admin-password" type="password" placeholder="••••••••"
+          class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+      </div>
+      <p id="admin-login-error" class="text-red-500 text-xs hidden"></p>
+      <button id="admin-login-btn" class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:brightness-110 transition-all">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SIDEBAR ────────────────────────────────────────────────────────────── -->
+<aside class="flex flex-col h-screen w-64 bg-surface-container-low p-4 space-y-2 fixed left-0 top-0 z-40">
+  <div class="mb-8 px-2 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+      <span class="material-symbols-outlined">storefront</span>
+    </div>
+    <div>
+      <h2 class="text-lg font-bold text-emerald-900 font-headline leading-tight">Admin Central</h2>
+      <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Koyamon Mart</p>
+    </div>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a class="flex items-center gap-3 px-4 py-3 bg-emerald-100/50 text-emerald-900 rounded-xl font-semibold" href="dashboard.html">
+      <span class="material-symbols-outlined">dashboard</span><span class="text-sm">Dashboard</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all" href="products.html">
+      <span class="material-symbols-outlined">inventory_2</span><span class="text-sm">Products</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all" href="orders.html">
+      <span class="material-symbols-outlined">shopping_cart</span><span class="text-sm">Orders</span>
+      <span id="admin-pending-badge" class="ml-auto bg-secondary text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden"></span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all" href="inventory.html">
+      <span class="material-symbols-outlined">production_quantity_limits</span><span class="text-sm">Inventory</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all" href="../index.html" target="_blank">
+      <span class="material-symbols-outlined">open_in_new</span><span class="text-sm">View Store</span>
+    </a>
+  </nav>
+  <div class="pt-4 border-t border-outline-variant/10">
+    <button id="admin-add-product-btn" onclick="window.location.href='products.html#add'" class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-sm">add_circle</span><span>Add Product</span>
+    </button>
+    <div class="mt-4 flex items-center gap-3 px-2">
+      <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">A</div>
+      <div class="overflow-hidden">
+        <p class="text-sm font-bold truncate" id="admin-name-display">Admin</p>
+        <button id="admin-logout-btn" class="text-[10px] text-red-400 hover:underline">Logout</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN CONTENT ───────────────────────────────────────────────────────── -->
+<main class="flex-1 ml-64 p-8 bg-surface">
+
+  <!-- Header -->
+  <header class="mb-10 flex justify-between items-end">
+    <div>
+      <p class="text-secondary font-bold text-sm tracking-widest uppercase mb-1">Morning, Chief</p>
+      <h1 class="text-4xl font-extrabold text-on-surface font-headline tracking-tight">Koyamon Dashboard</h1>
+    </div>
+    <div class="flex gap-4 items-center">
+      <div class="bg-surface-container-highest px-4 py-2 rounded-xl flex items-center gap-2">
+        <span class="material-symbols-outlined text-emerald-700 text-sm">calendar_today</span>
+        <span class="text-sm font-semibold" id="admin-today-date"></span>
+      </div>
+      <button onclick="loadDashboard()" class="p-2 bg-surface-container rounded-xl hover:bg-surface-container-high transition-colors" title="Refresh">
+        <span class="material-symbols-outlined text-slate-500">refresh</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Stats Grid -->
+  <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-[0_12px_40px_rgba(25,28,29,0.04)] relative overflow-hidden group">
+      <p class="text-slate-500 text-sm font-medium mb-1">Today's Revenue</p>
+      <h3 id="stat-revenue" class="text-3xl font-bold text-on-surface font-headline">—</h3>
+      <div class="mt-4 flex items-center gap-1 text-emerald-600 text-xs font-bold">
+        <span class="material-symbols-outlined text-sm">trending_up</span>
+        <span>Paid orders</span>
+      </div>
+      <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform">
+        <span class="material-symbols-outlined text-8xl">payments</span>
+      </div>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-[0_12px_40px_rgba(25,28,29,0.04)] relative overflow-hidden group">
+      <p class="text-slate-500 text-sm font-medium mb-1">Today's Orders</p>
+      <h3 id="stat-today-orders" class="text-3xl font-bold text-on-surface font-headline">—</h3>
+      <div class="mt-4 flex items-center gap-1 text-secondary text-xs font-bold">
+        <span class="material-symbols-outlined text-sm">avg_pace</span>
+        <span id="stat-pending-text">— pending</span>
+      </div>
+      <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform">
+        <span class="material-symbols-outlined text-8xl">shopping_basket</span>
+      </div>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-[0_12px_40px_rgba(25,28,29,0.04)] border-2 border-error/5 relative overflow-hidden group">
+      <p class="text-slate-500 text-sm font-medium mb-1">Low Stock Alerts</p>
+      <h3 id="stat-low-stock" class="text-3xl font-bold text-error font-headline">—</h3>
+      <div class="mt-4 flex items-center gap-1 text-error text-xs font-bold">
+        <span class="material-symbols-outlined text-sm">warning</span>
+        <a href="inventory.html" class="hover:underline">View Inventory →</a>
+      </div>
+      <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform">
+        <span class="material-symbols-outlined text-8xl text-error">inventory</span>
+      </div>
+    </div>
+    <div class="bg-primary text-on-primary p-6 rounded-2xl shadow-[0_12px_40px_rgba(0,105,71,0.15)] flex flex-col justify-between">
+      <div>
+        <p class="text-primary-fixed-dim text-sm font-medium mb-1">Total Customers</p>
+        <h3 id="stat-users" class="text-3xl font-bold font-headline">—</h3>
+      </div>
+      <div class="flex items-center gap-2 bg-white/10 p-2 rounded-lg backdrop-blur-sm">
+        <div class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></div>
+        <span class="text-xs font-medium">All time registered</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Grid: Products Table + Order Queue -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- Inventory Control Table -->
+    <section class="lg:col-span-2 bg-surface-container-lowest rounded-3xl p-8 shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold font-headline">Inventory Control</h2>
+        <div class="flex gap-3">
+          <div class="relative w-48">
+            <input id="admin-product-search" class="w-full bg-surface-container-highest border-none rounded-xl py-2 px-10 text-sm focus:ring-2 focus:ring-primary/40" placeholder="Search product..."/>
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
+          </div>
+          <a href="products.html" class="px-4 py-2 bg-surface-container text-sm font-bold rounded-xl hover:bg-surface-container-high transition-colors text-slate-700">All Products</a>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="admin-products-loading" class="space-y-4">
+        <div class="h-16 bg-surface-container animate-pulse rounded-2xl"></div>
+        <div class="h-16 bg-surface-container animate-pulse rounded-2xl"></div>
+        <div class="h-16 bg-surface-container animate-pulse rounded-2xl"></div>
+      </div>
+
+      <div class="overflow-x-auto hidden" id="admin-products-table-wrap">
+        <table class="w-full text-left border-separate border-spacing-y-4">
+          <thead>
+            <tr class="text-slate-400 text-[11px] uppercase tracking-[0.2em] font-bold">
+              <th class="px-4 pb-2">Product</th>
+              <th class="px-4 pb-2">Stock</th>
+              <th class="px-4 pb-2">Price Update</th>
+              <th class="px-4 pb-2 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-products-tbody"></tbody>
+        </table>
+        <div class="mt-4 text-center">
+          <a href="products.html" class="text-primary font-bold text-sm hover:underline">View All Products →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Orders Queue -->
+    <aside class="bg-surface-container-low rounded-3xl p-6 flex flex-col h-[600px]">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold font-headline">Active Queue</h2>
+        <span class="bg-secondary text-on-secondary px-3 py-1 rounded-full text-[10px] font-bold">LIVE</span>
+      </div>
+      <div id="admin-orders-queue" class="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+        <div class="text-center py-8 text-slate-400"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div><p class="text-xs">Loading orders...</p></div>
+      </div>
+      <div class="mt-6 pt-4 border-t border-outline-variant/20">
+        <a href="orders.html" class="w-full text-primary font-bold text-sm flex items-center justify-center gap-2">
+          View All Orders <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Low Stock Alerts -->
+  <section class="mt-8 bg-surface-container-lowest rounded-3xl p-8 shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+    <h2 class="text-2xl font-bold font-headline mb-6 flex items-center gap-2">
+      <span class="material-symbols-outlined text-error" style="font-variation-settings:'FILL' 1;">warning</span>
+      Low Stock Alerts
+    </h2>
+    <div id="admin-low-stock-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="text-center py-4 text-slate-400"><p class="text-sm">Loading...</p></div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script>
+const adminToken = () => localStorage.getItem('km_admin_token');
+
+function setAdminToken(t) { localStorage.setItem('km_admin_token', t); }
+function clearAdminToken() { localStorage.removeItem('km_admin_token'); }
+
+// Override api headers for admin
+const _origHeaders = api._headers.bind(api);
+api._headers = function() {
+  const t = adminToken();
+  return t ? { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` } : _origHeaders();
+};
+
+function checkAdminAuth() {
+  if (adminToken()) {
+    document.getElementById('admin-login-gate').classList.add('hidden');
+    return true;
+  }
+  document.getElementById('admin-login-gate').classList.remove('hidden');
+  return false;
+}
+
+document.getElementById('admin-login-btn').addEventListener('click', async () => {
+  const email    = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-password').value;
+  const btn = document.getElementById('admin-login-btn');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  const res = await api.auth.adminLogin(email, password);
+  if (res.success) {
+    setAdminToken(res.token);
+    document.getElementById('admin-login-gate').classList.add('hidden');
+    loadDashboard();
+  } else {
+    document.getElementById('admin-login-error').textContent = res.message || 'Invalid credentials';
+    document.getElementById('admin-login-error').classList.remove('hidden');
+  }
+  btn.textContent = 'Sign In'; btn.disabled = false;
+});
+
+document.getElementById('admin-logout-btn').addEventListener('click', () => {
+  clearAdminToken();
+  document.getElementById('admin-login-gate').classList.remove('hidden');
+});
+
+async function loadDashboard() {
+  if (!checkAdminAuth()) return;
+
+  document.getElementById('admin-today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+
+  try {
+    const data = await api.admin.dashboard();
+    if (!data.success) { clearAdminToken(); checkAdminAuth(); return; }
+    const s = data.stats;
+
+    document.getElementById('stat-revenue').textContent    = `₹${(s.revenue || 0).toLocaleString('en-IN')}`;
+    document.getElementById('stat-today-orders').textContent = s.todayOrders ?? '—';
+    document.getElementById('stat-pending-text').textContent = `${s.pendingOrders || 0} pending`;
+    document.getElementById('stat-low-stock').textContent  = `${s.lowStockCount || 0} Items`;
+    document.getElementById('stat-users').textContent      = s.totalUsers ?? '—';
+
+    if (s.pendingOrders > 0) {
+      document.getElementById('admin-pending-badge').textContent = s.pendingOrders;
+      document.getElementById('admin-pending-badge').classList.remove('hidden');
+    }
+
+    // Low stock alerts
+    document.getElementById('admin-low-stock-list').innerHTML = s.lowStockProducts?.length > 0
+      ? s.lowStockProducts.map(p => `
+          <div class="flex items-center gap-3 p-4 bg-error-container/30 rounded-xl border border-error/10">
+            <span class="material-symbols-outlined text-error">warning</span>
+            <div>
+              <p class="text-sm font-bold">${p.name?.en || 'Product'}</p>
+              <p class="text-xs text-slate-500">${p.variants?.filter(v=>v.stock<=5).map(v=>`${v.label}: ${v.stock} left`).join(', ')}</p>
+            </div>
+            <a href="products.html?edit=${p._id}" class="ml-auto text-primary text-xs font-bold hover:underline">Update</a>
+          </div>
+        `).join('')
+      : '<p class="text-slate-400 text-sm col-span-full">✓ All products have sufficient stock</p>';
+
+  } catch(e) { console.error('Dashboard load failed:', e); }
+
+  // Load recent products
+  loadProducts();
+  // Load active orders
+  loadActiveOrders();
+}
+
+async function loadProducts() {
+  try {
+    const data = await api.admin.products.list({ limit: 5 });
+    document.getElementById('admin-products-loading').classList.add('hidden');
+    document.getElementById('admin-products-table-wrap').classList.remove('hidden');
+
+    document.getElementById('admin-products-tbody').innerHTML = (data.products || []).map(p => `
+      <tr class="bg-surface hover:bg-surface-container-low transition-colors">
+        <td class="px-4 py-4 rounded-l-2xl">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-white rounded-xl overflow-hidden shadow-sm">
+              <img class="w-full h-full object-cover" src="${p.images?.[0] || ''}" alt="${p.name?.en || ''}"/>
+            </div>
+            <div>
+              <p class="text-sm font-bold">${p.name?.en || '—'}</p>
+              <p class="text-[10px] text-slate-500">${p.category?.name?.en || ''}</p>
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-4">
+          <div class="space-y-1">
+            ${(p.variants || []).map(v => `
+              <div class="flex gap-2 items-center">
+                <span class="text-[10px] font-bold text-slate-400 w-10">${v.label}</span>
+                <span class="text-xs font-semibold px-2 rounded-full ${v.stock <= 5 ? 'bg-error-container text-on-error-container' : 'bg-emerald-100 text-emerald-800'}">${v.stock <= 5 ? '⚠ ' : ''}${v.stock}</span>
+              </div>
+            `).join('')}
+          </div>
+        </td>
+        <td class="px-4 py-4">
+          <div class="flex flex-wrap gap-2">
+            ${(p.variants || []).map(v => `
+              <div class="flex items-center gap-1">
+                <span class="text-[9px] font-bold text-slate-400">${v.label}</span>
+                <input class="w-16 bg-white border-none rounded-lg py-1 px-2 text-xs font-bold text-primary focus:ring-1 focus:ring-primary"
+                  type="number" value="${v.price}"
+                  onchange="updatePrice('${p._id}','${v.label}',this.value)"/>
+              </div>
+            `).join('')}
+          </div>
+        </td>
+        <td class="px-4 py-4 rounded-r-2xl text-right">
+          <a href="products.html?edit=${p._id}" class="p-2 text-slate-400 hover:text-primary transition-colors inline-block">
+            <span class="material-symbols-outlined">edit_square</span>
+          </a>
+        </td>
+      </tr>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function updatePrice(productId, variantLabel, newPrice) {
+  // Re-save the full variant with updated price
+  // In a real flow, this calls a PATCH endpoint for daily price updates
+  try {
+    const p = await api.products.byId(productId);
+    if (!p.product) return;
+    const variants = p.product.variants.map(v => v.label === variantLabel ? { ...v._doc || v, price: +newPrice } : v);
+    await api.admin.products.update(productId, { variants });
+    showToast('Price updated ✓', 'success');
+  } catch { showToast('Update failed', 'error'); }
+}
+
+async function loadActiveOrders() {
+  try {
+    const data = await api.admin.orders.list({ status: 'placed', limit: 10 });
+    const queue = document.getElementById('admin-orders-queue');
+    if (!data.orders?.length) {
+      queue.innerHTML = '<div class="text-center py-12 text-slate-400"><span class="material-symbols-outlined text-4xl block mb-2">check_circle</span><p class="text-sm">No pending orders</p></div>';
+      return;
+    }
+    const colorMap = { placed: 'border-secondary', confirmed: 'border-blue-400', packed: 'border-emerald-500', out_for_delivery: 'border-primary' };
+    const labelMap = { placed: 'PENDING', confirmed: 'CONFIRMED', packed: 'PACKING', out_for_delivery: 'OUT' };
+    const bgMap    = { placed: 'bg-secondary-fixed text-on-secondary-fixed', confirmed: 'bg-blue-100 text-blue-800', packed: 'bg-emerald-100 text-emerald-800' };
+
+    queue.innerHTML = data.orders.map(o => `
+      <div class="bg-surface-container-lowest p-4 rounded-2xl shadow-sm border-l-4 ${colorMap[o.status] || 'border-slate-300'}">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <p class="text-xs font-bold">#${o.orderId}</p>
+            <p class="text-[10px] text-slate-500">${new Date(o.createdAt).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })}</p>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-1 rounded-lg ${bgMap[o.status] || 'bg-slate-100'}">${labelMap[o.status] || o.status.toUpperCase()}</span>
+        </div>
+        <div class="space-y-1 mb-4">
+          <p class="text-xs text-slate-700">${o.items?.length || 0} Items · ₹${o.total}</p>
+        </div>
+        <div class="flex gap-2">
+          <a href="orders.html?id=${o._id}" class="flex-1 bg-surface-container-high py-2 rounded-xl text-xs font-bold text-center hover:bg-surface-variant transition-colors">Details</a>
+          <button onclick="updateOrderStatus('${o._id}', '${getNextStatus(o.status)}')" class="flex-1 bg-primary text-on-primary py-2 rounded-xl text-xs font-bold hover:opacity-90 transition-opacity">
+            ${getNextStatusLabel(o.status)}
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+function getNextStatus(s) { return {placed:'confirmed',confirmed:'packed',packed:'out_for_delivery',out_for_delivery:'delivered'}[s] || s; }
+function getNextStatusLabel(s) { return {placed:'Confirm',confirmed:'Start Packing',packed:'Assign Rider',out_for_delivery:'Mark Delivered'}[s] || 'Update'; }
+
+async function updateOrderStatus(id, status) {
+  try {
+    const res = await api.admin.orders.updateStatus(id, status);
+    if (res.success) { showToast(`Order → ${status}`, 'success'); loadDashboard(); }
+    else showToast('Update failed', 'error');
+  } catch { showToast('Error updating order', 'error'); }
+}
+
+function showToast(msg, type = '') {
+  const el = Object.assign(document.createElement('div'), { textContent: msg });
+  el.className = `fixed bottom-8 right-8 z-[9999] px-5 py-3 rounded-xl text-sm font-semibold shadow-xl text-white ${type === 'success' ? 'bg-emerald-600' : 'bg-red-500'}`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (checkAdminAuth()) loadDashboard();
+});
+
+// Auto-refresh every 30 seconds
+setInterval(() => { if (adminToken()) loadActiveOrders(); }, 30000);
+</script>
+</body>
+</html>

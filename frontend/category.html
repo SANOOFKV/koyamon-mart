@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="description" content="Browse all categories — groceries, vegetables, fruits, snacks, dairy, stationery and more at Koyamon Mart, Padikkal."/>
+  <title>Categories — Koyamon Mart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "on-secondary-fixed-variant":"#7a3000","tertiary-fixed":"#d5e5ef","inverse-surface":"#2e3132","outline":"#6d7a71","on-tertiary-fixed-variant":"#3a4951","surface-container-low":"#f3f4f5","on-primary-fixed-variant":"#005236","on-error":"#ffffff","on-background":"#191c1d","surface-bright":"#f8f9fa","on-primary":"#ffffff","tertiary-fixed-dim":"#b9c9d3","surface-container-high":"#e7e8e9","on-tertiary-fixed":"#0e1d25","tertiary-container":"#677780","secondary":"#9f4200","on-secondary-container":"#562000","error-container":"#ffdad6","surface-container-highest":"#e1e3e4","primary-container":"#00855b","secondary-container":"#fd6c00","on-primary-fixed":"#002113","surface-tint":"#006c49","primary":"#006947","secondary-fixed-dim":"#ffb692","background":"#f8f9fa","inverse-on-surface":"#f0f1f2","surface-container":"#edeeef","tertiary":"#4f5e67","primary-fixed-dim":"#6fdba8","on-tertiary-container":"#fbfdff","on-surface-variant":"#3d4a41","primary-fixed":"#8bf8c3","surface-variant":"#e1e3e4","on-secondary":"#ffffff","on-primary-container":"#f5fff6","secondary-fixed":"#ffdbcb","surface-dim":"#d9dadb","on-tertiary":"#ffffff","on-surface":"#191c1d","surface-container-lowest":"#ffffff","on-secondary-fixed":"#341100","outline-variant":"#bccabf","inverse-primary":"#6fdba8","surface":"#f8f9fa","on-error-container":"#93000a","error":"#ba1a1a" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+    h1,h2,h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .editorial-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    @media (min-width: 768px)  { .editorial-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .editorial-grid { grid-template-columns: repeat(4, 1fr); } }
+    /* Featured (3rd dynamic card spans 2 cols on md+) */
+    .cat-featured { grid-column: span 2; }
+  </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+
+<!-- Nav -->
+<nav class="sticky top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
+  <div class="flex justify-between items-center px-6 py-4 max-w-screen-2xl mx-auto">
+    <a href="index.html" class="text-2xl font-extrabold tracking-tight text-emerald-900 font-headline">Koyamon Mart</a>
+    <div class="hidden md:flex items-center space-x-8">
+      <a class="text-emerald-600/70 font-semibold hover:text-emerald-600 transition-colors" href="index.html" data-en="Home" data-ml="ഹോം">Home</a>
+      <a class="text-emerald-700 font-bold" href="category.html" data-en="Categories" data-ml="വകുപ്പ്">Categories</a>
+      <a class="text-emerald-600/70 font-semibold hover:text-emerald-600 transition-colors" href="profile.html" data-en="Orders" data-ml="ഓർഡർ">Orders</a>
+      <a class="text-emerald-600/70 font-semibold hover:text-emerald-600 transition-colors" href="about.html" data-en="Support" data-ml="സഹായം">Support</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="km-lang-toggle" class="hidden md:block text-emerald-700 border-b-2 border-emerald-600 font-semibold text-sm py-1">മലയാളം</button>
+      <a href="search.html" class="p-2 text-emerald-900 hover:bg-slate-50 rounded-full transition-all">
+        <span class="material-symbols-outlined">search</span>
+      </a>
+      <a href="cart.html" class="p-2 text-emerald-900 hover:bg-slate-50 rounded-full transition-all relative">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <span id="km-cart-count" class="hidden absolute top-0 right-0 bg-secondary text-white text-[10px] font-bold px-1.5 rounded-full min-w-[18px] text-center">0</span>
+      </a>
+      <a href="profile.html" class="p-2 text-emerald-900 hover:bg-slate-50 rounded-full transition-all">
+        <span class="material-symbols-outlined">account_circle</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-screen-2xl mx-auto px-6 py-12">
+  <!-- Header -->
+  <header class="mb-12">
+    <h1 class="font-headline text-5xl md:text-7xl font-extrabold text-on-surface tracking-tight leading-none mb-4" data-en="Curated <span class='text-primary'>Essentials</span>" data-ml="ക്യൂററ്റഡ് <span class='text-primary'>എസൻഷ്യൽസ്</span>">
+      Curated <span class="text-primary">Essentials</span>
+    </h1>
+    <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl leading-relaxed" data-en="Discover the freshest produce and household needs from Koyamon Mart, sourced locally in Padikkal, Velimukku." data-ml="കൊയമോൻ മാർട്ടിൽ നിന്ന് ഏറ്റവും പുതിയ ഉൽപ്പന്നങ്ങൾ കണ്ടെത്തൂ.">
+      Discover the freshest produce and household needs from Koyamon Mart, sourced locally in Padikkal, Velimukku.
+    </p>
+  </header>
+
+  <!-- Loading state -->
+  <div id="km-cats-loading" class="editorial-grid">
+    <div class="h-[320px] bg-surface-container animate-pulse rounded-3xl"></div>
+    <div class="h-[320px] bg-surface-container animate-pulse rounded-3xl"></div>
+    <div class="h-[320px] bg-surface-container animate-pulse rounded-3xl cat-featured"></div>
+    <div class="h-[320px] bg-surface-container animate-pulse rounded-3xl"></div>
+    <div class="h-[320px] bg-surface-container animate-pulse rounded-3xl"></div>
+    <div class="h-[320px] bg-surface-container animate-pulse rounded-3xl"></div>
+  </div>
+
+  <!-- Category Bento Grid -->
+  <div id="km-cats-grid" class="editorial-grid hidden"></div>
+
+  <!-- Promo Section -->
+  <section class="mt-24 rounded-[3rem] bg-gradient-to-br from-primary to-primary-container p-12 md:p-20 relative overflow-hidden">
+    <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+    <div class="relative z-10 max-w-2xl">
+      <h2 class="font-headline text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6" data-en="Experience Hyperlocal Freshness Every Day" data-ml="ഓരോ ദിവസവും ഹൈപ്പർലോക്കൽ ഫ്രഷ്‌നെസ്സ്">Experience Hyperlocal<br/>Freshness Every Day</h2>
+      <p class="text-on-primary-container text-lg mb-8 opacity-90" data-en="Get the best of Padikkal's local market delivered in under 30 minutes." data-ml="30 മിനിറ്റിൽ ഡെലിവർ ചെയ്യുന്നു.">Get the best of Padikkal's local market delivered in under 30 minutes.</p>
+      <div class="flex flex-wrap gap-4">
+        <a href="index.html" class="px-8 py-4 bg-white text-primary font-bold rounded-xl text-lg shadow-lg hover:bg-surface-container-low transition-colors" data-en="Start Shopping" data-ml="ഷോപ്പ് ആരംഭിക്കൂ">Start Shopping</a>
+        <a href="search.html" class="px-8 py-4 bg-primary-container border border-white/20 text-white font-bold rounded-xl text-lg hover:bg-primary transition-colors" data-en="View Offers" data-ml="ഓഫറുകൾ">View Offers</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Mobile Nav -->
+<nav class="md:hidden fixed bottom-0 w-full rounded-t-3xl z-50 bg-white/90 backdrop-blur-xl shadow-[0_-8px_30px_rgba(0,105,71,0.08)] flex justify-around items-center px-4 py-3 pb-8">
+  <a href="index.html" class="flex flex-col items-center text-emerald-800/40 p-3">
+    <span class="material-symbols-outlined">home</span>
+    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Home" data-ml="ഹോം">Home</span>
+  </a>
+  <a href="category.html" class="flex flex-col items-center bg-gradient-to-br from-emerald-800 to-emerald-600 text-white rounded-2xl p-3 shadow-lg">
+    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">grid_view</span>
+    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Categories" data-ml="വകുപ്പ്">Categories</span>
+  </a>
+  <a href="profile.html" class="flex flex-col items-center text-emerald-800/40 p-3">
+    <span class="material-symbols-outlined">receipt_long</span>
+    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Orders" data-ml="ഓർഡർ">Orders</span>
+  </a>
+  <a href="about.html" class="flex flex-col items-center text-emerald-800/40 p-3">
+    <span class="material-symbols-outlined">contact_support</span>
+    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Support" data-ml="സഹായം">Support</span>
+  </a>
+</nav>
+<div class="h-24 md:hidden"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script>
+// Fallback category cards if API has no image (curated per category type)
+const CAT_FALLBACK = {
+  vegetables: { img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80', badge: 'Organic', badgeClass: 'bg-primary-fixed text-on-primary-fixed', gradient: 'from-emerald-950/80 via-emerald-900/20 to-transparent', sub: 'Farm-to-table greens' },
+  fruits:     { img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=80', badge: 'Fresh', badgeClass: 'bg-secondary-fixed text-on-secondary-fixed', gradient: 'from-secondary/80 via-transparent to-transparent', sub: 'Sweet & locally grown' },
+  dairy:      { img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=800&auto=format&fit=crop&q=80', badge: 'Daily', badgeClass: 'bg-primary-fixed text-on-primary-fixed', gradient: 'from-emerald-950/60 via-transparent to-transparent', sub: 'Morning-fresh delivery' },
+  snacks:     { img: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=800&auto=format&fit=crop&q=80', badge: '', badgeClass: '', gradient: 'from-black/60 to-transparent', sub: 'Evening cravings' },
+  grocery:    { img: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=800&auto=format&fit=crop&q=80', badge: '', badgeClass: '', gradient: 'from-black/60 to-transparent', sub: 'Daily essentials' },
+  stationery: { img: 'https://images.unsplash.com/photo-1518459031867-a89b944bffe4?w=800&auto=format&fit=crop&q=80', badge: '', badgeClass: '', gradient: 'from-stone-900/70 via-transparent to-transparent', sub: 'Work & school needs' },
+};
+
+function getCatStyle(cat) {
+  const name = (cat.name?.en || cat.name || '').toLowerCase();
+  for (const [key, style] of Object.entries(CAT_FALLBACK)) {
+    if (name.includes(key)) return style;
+  }
+  return { img: cat.image || 'assets/images/placeholder.png', badge: '', badgeClass: '', gradient: 'from-black/60 to-transparent', sub: '' };
+}
+
+async function loadCategories() {
+  const lang = localStorage.getItem('km_lang') || 'en';
+  try {
+    const data = await api.categories.list();
+    const cats = data.categories || [];
+
+    document.getElementById('km-cats-loading').classList.add('hidden');
+    const grid = document.getElementById('km-cats-grid');
+    grid.classList.remove('hidden');
+
+    if (!cats.length) {
+      // Show static fallback grid
+      grid.innerHTML = buildStaticGrid(lang);
+      return;
+    }
+
+    grid.innerHTML = cats.map((cat, i) => {
+      const style = getCatStyle(cat);
+      const name = lang === 'ml' && cat.name?.ml ? cat.name.ml : (cat.name?.en || cat.name);
+      const isFeatured = i === 2; // 3rd card gets full-width treatment
+      const h = isFeatured ? 'h-[320px] md:h-[420px]' : 'h-[320px]';
+      return `
+        <div class="${isFeatured ? 'cat-featured' : ''} group relative overflow-hidden rounded-3xl bg-surface-container-lowest ${h} shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer"
+          onclick="window.location.href='search.html?category=${cat._id}&catName=${encodeURIComponent(name)}'">
+          <img alt="${name}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            src="${cat.image || style.img}" loading="lazy" onerror="this.src='${style.img}'"/>
+          <div class="absolute inset-0 bg-gradient-to-t ${style.gradient}"></div>
+          <div class="absolute bottom-0 left-0 p-8 ${isFeatured ? 'md:p-12' : ''}">
+            ${style.badge ? `<span class="inline-block px-3 py-1 mb-3 text-[10px] font-bold tracking-widest uppercase ${style.badgeClass} rounded-full">${style.badge}</span>` : ''}
+            <h3 class="font-headline ${isFeatured ? 'text-3xl md:text-4xl font-extrabold' : 'text-2xl font-bold'} text-white">${name}</h3>
+            <p class="text-white/70 text-sm mt-1">${style.sub}</p>
+            ${isFeatured ? `<div class="mt-6 flex items-center text-primary-fixed font-bold tracking-tight" data-en="Explore Collection" data-ml="ശേഖരം കാണൂ">Explore Collection <span class="material-symbols-outlined ml-2">arrow_forward</span></div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  } catch {
+    document.getElementById('km-cats-loading').classList.add('hidden');
+    document.getElementById('km-cats-grid').classList.remove('hidden');
+    document.getElementById('km-cats-grid').innerHTML = buildStaticGrid();
+  }
+}
+
+function buildStaticGrid() {
+  const statics = [
+    { name: 'Fresh Vegetables', badge: 'Organic', badgeClass: 'bg-primary-fixed text-on-primary-fixed', gradient: 'from-emerald-950/80 via-emerald-900/20 to-transparent', sub: 'Farm-to-table greens', img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80', slug: 'vegetables' },
+    { name: 'Seasonal Fruits', badge: 'New Arrival', badgeClass: 'bg-secondary-fixed text-on-secondary-fixed', gradient: 'from-secondary/80 via-transparent to-transparent', sub: 'Sweet & locally grown', img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=80', slug: 'fruits' },
+    { name: 'Daily Dairy', badge: '', badgeClass: '', gradient: 'from-emerald-950/60 via-transparent to-transparent', sub: 'Pure milk, butter, and yogurt', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=800&auto=format&fit=crop&q=80', slug: 'dairy', featured: true },
+    { name: 'Snacks & Drinks', badge: '', badgeClass: '', gradient: 'from-black/60 to-transparent', sub: 'Evening cravings', img: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=800&auto=format&fit=crop&q=80', slug: 'snacks' },
+    { name: 'Household', badge: '', badgeClass: '', gradient: 'from-tertiary-container/80 to-transparent', sub: 'Everyday essentials', img: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&auto=format&fit=crop&q=80', slug: 'household' },
+    { name: 'Stationery', badge: '', badgeClass: '', gradient: 'from-stone-900/70 via-transparent to-transparent', sub: 'Work & school needs', img: 'https://images.unsplash.com/photo-1518459031867-a89b944bffe4?w=800&auto=format&fit=crop&q=80', slug: 'stationery' },
+  ];
+  return statics.map(c => `
+    <div class="${c.featured ? 'cat-featured' : ''} group relative overflow-hidden rounded-3xl bg-surface-container-lowest ${c.featured ? 'h-[320px] md:h-[420px]' : 'h-[320px]'} shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer"
+      onclick="window.location.href='search.html?q=${c.name}'">
+      <img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="${c.img}" alt="${c.name}" loading="lazy"/>
+      <div class="absolute inset-0 bg-gradient-to-t ${c.gradient}"></div>
+      <div class="absolute bottom-0 left-0 p-8 ${c.featured ? 'md:p-12' : ''}">
+        ${c.badge ? `<span class="inline-block px-3 py-1 mb-3 text-[10px] font-bold tracking-widest uppercase ${c.badgeClass} rounded-full">${c.badge}</span>` : ''}
+        <h3 class="font-headline ${c.featured ? 'text-3xl md:text-4xl font-extrabold' : 'text-2xl font-bold'} text-white">${c.name}</h3>
+        <p class="text-white/70 text-sm mt-1">${c.sub}</p>
+        ${c.featured ? `<div class="mt-6 flex items-center text-primary-fixed font-bold">Explore Collection <span class="material-symbols-outlined ml-2">arrow_forward</span></div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// Cart badge
+document.addEventListener('DOMContentLoaded', () => {
+  loadCategories();
+  const cnt = KMCart?.count?.() || 0;
+  if (cnt > 0) { const b = document.getElementById('km-cart-count'); b.textContent = cnt; b.classList.remove('hidden'); }
+});
+</script>
+</body>
+</html>

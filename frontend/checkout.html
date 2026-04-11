@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Checkout — Koyamon Mart</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "surface-container":"#edeeef","surface-dim":"#d9dadb","secondary-fixed":"#ffdbcb","on-primary-fixed":"#002113","surface":"#f8f9fa","on-primary-container":"#f5fff6","primary-container":"#00855b","surface-container-highest":"#e1e3e4","inverse-on-surface":"#f0f1f2","on-secondary-container":"#562000","primary":"#006947","outline":"#6d7a71","error-container":"#ffdad6","surface-bright":"#f8f9fa","secondary-container":"#fd6c00","primary-fixed":"#8bf8c3","outline-variant":"#bccabf","on-tertiary-container":"#fbfdff","on-primary":"#ffffff","on-error":"#ffffff","on-tertiary":"#ffffff","surface-tint":"#006c49","background":"#f8f9fa","surface-container-high":"#e7e8e9","on-tertiary-fixed":"#0e1d25","secondary-fixed-dim":"#ffb692","on-secondary-fixed":"#341100","surface-container-low":"#f3f4f5","on-primary-fixed-variant":"#005236","on-tertiary-fixed-variant":"#3a4951","surface-container-lowest":"#ffffff","inverse-primary":"#6fdba8","tertiary-fixed":"#d5e5ef","on-background":"#191c1d","tertiary":"#4f5e67","error":"#ba1a1a","surface-variant":"#e1e3e4","inverse-surface":"#2e3132","on-surface-variant":"#3d4a41","tertiary-container":"#677780","on-error-container":"#93000a","secondary":"#9f4200","on-secondary":"#ffffff","on-surface":"#191c1d","primary-fixed-dim":"#6fdba8","on-secondary-fixed-variant":"#7a3000","tertiary-fixed-dim":"#b9c9d3" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .otp-input { letter-spacing: 0.5em; text-align: center; font-size: 1.5rem; font-weight: 700; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+
+<!-- NAV -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+  <div class="flex items-center justify-between px-6 py-4 max-w-screen-2xl mx-auto">
+    <a href="index.html" class="text-2xl font-black tracking-tight text-emerald-900 font-headline">Koyamon Mart</a>
+    <div class="hidden lg:flex items-center gap-4">
+      <div class="flex items-center gap-2 text-slate-400 pb-1"><span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">✓</span><span class="text-xs uppercase tracking-wider text-emerald-700 font-bold">Cart</span></div>
+      <div class="w-8 h-[2px] bg-emerald-300"></div>
+      <div class="flex items-center gap-2 text-emerald-700 font-bold border-b-2 border-emerald-600 pb-1"><span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs">2</span><span class="text-xs uppercase tracking-wider">Checkout</span></div>
+      <div class="w-8 h-[2px] bg-surface-container-high"></div>
+      <div class="flex items-center gap-2 text-slate-400 pb-1"><span class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-xs">3</span><span class="text-xs uppercase tracking-wider">Payment</span></div>
+    </div>
+    <button id="km-lang-toggle" class="hidden lg:block text-emerald-700 border-b-2 border-emerald-600 font-semibold text-sm">മലയാളം</button>
+  </div>
+</nav>
+
+<main class="pt-24 pb-12 px-6 max-w-7xl mx-auto min-h-screen">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+    <!-- LEFT: Order Summary -->
+    <div class="lg:col-span-7 space-y-8">
+      <div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+        <h2 class="text-2xl font-bold text-emerald-900 mb-6 headline" data-en="Order Summary" data-ml="ഓർഡർ സംഗ്രഹം">Order Summary</h2>
+        <div id="co-items" class="space-y-5 mb-8"></div>
+
+        <!-- Delivery Address Form -->
+        <div class="border-t border-surface-container pt-8 space-y-4">
+          <h3 class="text-lg font-bold text-emerald-900 headline" data-en="Delivery Address" data-ml="ഡെലിവറി വിലാസം">Delivery Address</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1" data-en="House / Flat / Building" data-ml="വീട് / ഫ്ലാറ്റ്">House / Flat / Building</label>
+              <input id="co-addr-line1" type="text" placeholder="House name, flat no." class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1" data-en="Street / Area" data-ml="തെരുവ്">Street / Area</label>
+              <input id="co-addr-line2" type="text" placeholder="Street, locality" class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1" data-en="Landmark" data-ml="ലാൻഡ്‌മാർക്ക്">Landmark</label>
+              <input id="co-addr-landmark" type="text" placeholder="Near mosque, school..." class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Pincode</label>
+              <input id="co-addr-pincode" type="text" placeholder="676XXX" maxlength="6" class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+            </div>
+          </div>
+          <!-- Location detector -->
+          <button id="co-detect-location" class="flex items-center gap-2 text-primary text-sm font-bold hover:underline">
+            <span class="material-symbols-outlined text-sm">my_location</span>
+            <span data-en="Use my current location" data-ml="എന്റെ ലൊക്കേഷൻ ഉപയോഗിക്കൂ">Use my current location</span>
+          </button>
+          <p id="co-location-status" class="text-xs text-slate-400"></p>
+        </div>
+
+        <!-- Bill Breakdown -->
+        <div class="mt-8 pt-8 border-t border-surface-container space-y-4">
+          <div class="flex justify-between text-slate-600">
+            <span class="text-sm" data-en="Subtotal" data-ml="ഉപ-ആകെ">Subtotal</span>
+            <span class="font-medium" id="co-subtotal">₹0</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-slate-600" data-en="Delivery" data-ml="ഡെലിവറി">Delivery</span>
+            <span class="text-sm font-bold" id="co-delivery" data-en="Calculating..." data-ml="കണക്കാക്കുന്നു...">Calculating...</span>
+          </div>
+          <div class="flex justify-between bg-surface-container-low p-4 rounded-xl">
+            <span class="text-lg font-bold text-emerald-900 headline" data-en="Total" data-ml="ആകെ">Total</span>
+            <span class="text-2xl font-black text-emerald-900" id="co-total">₹0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Auth + Payment -->
+    <div class="lg:col-span-5 space-y-8">
+
+      <!-- Auth Section (switches between OTP, OTP Verify, Logged In, Guest) -->
+      <div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+
+        <!-- STEP 1: Phone Input -->
+        <div id="co-auth-phone" class="">
+          <h2 class="text-xl font-bold text-emerald-900 headline mb-1" data-en="Login to Checkout" data-ml="ലോഗിൻ ചെക്കൗട്ട്">Login to Checkout</h2>
+          <p class="text-sm text-slate-500 mb-6" data-en="Get exclusive discounts &amp; track delivery" data-ml="ഡിസ്കൗണ്ടും ഡെലിവറി ട്രാക്കിങ്ങും നേടൂ">Get exclusive discounts &amp; track delivery</p>
+          <div class="space-y-4">
+            <div class="flex gap-2">
+              <div class="bg-surface-container-highest px-4 py-4 rounded-xl font-bold text-slate-700 text-sm">+91</div>
+              <input id="co-phone" type="tel" maxlength="10" placeholder="Enter 10 digit number"
+                class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40 placeholder:text-slate-400"/>
+            </div>
+            <p id="co-phone-error" class="text-xs text-red-500 hidden"></p>
+            <button id="co-send-otp-btn" class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg active:scale-[0.98] transition-transform" data-en="Send OTP" data-ml="OTP അയക്കൂ">
+              Send OTP
+            </button>
+          </div>
+          <div class="mt-8 relative">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-surface-container-high"></div></div>
+            <div class="relative flex justify-center text-xs"><span class="px-3 bg-white text-slate-400 font-bold uppercase tracking-widest">OR</span></div>
+          </div>
+          <button id="co-guest-btn" class="w-full mt-6 bg-surface-container-high text-emerald-900 py-4 rounded-xl font-bold text-sm tracking-wide hover:bg-surface-container-highest transition-colors active:scale-[0.98]" data-en="Continue as Guest" data-ml="ഗസ്റ്റായി തുടരൂ">
+            Continue as Guest
+          </button>
+        </div>
+
+        <!-- STEP 2: OTP Verification -->
+        <div id="co-auth-otp" class="hidden">
+          <button onclick="document.getElementById('co-auth-otp').classList.add('hidden'); document.getElementById('co-auth-phone').classList.remove('hidden')" class="flex items-center gap-2 text-primary text-sm font-bold mb-6">
+            <span class="material-symbols-outlined text-sm">arrow_back</span> Change number
+          </button>
+          <h2 class="text-xl font-bold text-emerald-900 headline mb-1" data-en="Enter OTP" data-ml="OTP നൽകൂ">Enter OTP</h2>
+          <p class="text-sm text-slate-500 mb-6" id="co-otp-sent-to">OTP sent to +91 XXXXXXXXXX</p>
+          <input id="co-otp-input" type="tel" maxlength="6" placeholder="——————"
+            class="otp-input w-full bg-surface-container-highest border-0 rounded-xl px-4 py-5 focus:ring-2 focus:ring-emerald-500/40 mb-4"/>
+          <p id="co-otp-error" class="text-xs text-red-500 hidden mb-2"></p>
+          <button id="co-verify-otp-btn" class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg active:scale-[0.98] transition-transform" data-en="Verify &amp; Continue" data-ml="സ്ഥിരീകരിക്കൂ">Verify &amp; Continue</button>
+          <button id="co-resend-otp" class="w-full mt-3 text-primary font-semibold text-sm py-2" data-en="Resend OTP" data-ml="OTP വീണ്ടും അയക്കൂ">Resend OTP</button>
+        </div>
+
+        <!-- STEP 3: Guest form -->
+        <div id="co-auth-guest" class="hidden">
+          <h2 class="text-xl font-bold text-emerald-900 headline mb-1" data-en="Guest Checkout" data-ml="ഗസ്റ്റ് ചെക്കൗട്ട്">Guest Checkout</h2>
+          <p class="text-sm text-slate-500 mb-6" data-en="We need a few details for your delivery." data-ml="ഡെലിവറിക്ക് ചില വിവരങ്ങൾ ആവശ്യമാണ്.">We need a few details for your delivery.</p>
+          <div class="space-y-4">
+            <input id="co-guest-name" type="text" placeholder="Your name" class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+            <input id="co-guest-phone" type="tel" maxlength="10" placeholder="Mobile number" class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+          </div>
+        </div>
+
+        <!-- STEP 4: Logged in state -->
+        <div id="co-auth-loggedin" class="hidden">
+          <div class="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl mb-6">
+            <span class="material-symbols-outlined text-emerald-700" style="font-variation-settings:'FILL' 1;">verified_user</span>
+            <div>
+              <p class="font-bold text-emerald-900 text-sm" id="co-user-greeting">Welcome back!</p>
+              <p class="text-xs text-slate-500" id="co-user-phone-display"></p>
+            </div>
+            <button id="co-logout-btn" class="ml-auto text-xs text-red-400 hover:underline">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Method (shown after auth) -->
+      <div id="co-payment-section" class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)] opacity-40 pointer-events-none transition-all duration-500">
+        <h2 class="text-xl font-bold text-emerald-900 mb-6 headline" data-en="Payment Method" data-ml="പേയ്‌മെന്റ് രീതി">Payment Method</h2>
+        <div class="space-y-3" id="co-payment-methods">
+          <label class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low cursor-pointer border-2 border-transparent hover:border-emerald-200 transition-all">
+            <div class="flex items-center gap-4">
+              <span class="material-symbols-outlined text-emerald-600">account_balance_wallet</span>
+              <span class="font-bold text-emerald-900" data-en="UPI (GPay, PhonePe)" data-ml="UPI (GPay, PhonePe)">UPI (GPay, PhonePe)</span>
+            </div>
+            <input class="text-emerald-600 focus:ring-emerald-600 w-5 h-5" name="km-payment" type="radio" value="upi"/>
+          </label>
+          <label class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low cursor-pointer border-2 border-transparent hover:border-emerald-200 transition-all">
+            <div class="flex items-center gap-4">
+              <span class="material-symbols-outlined text-emerald-600">credit_card</span>
+              <span class="font-bold text-emerald-900" data-en="Credit / Debit Cards" data-ml="കാർഡ്">Credit / Debit Cards</span>
+            </div>
+            <input class="text-emerald-600 focus:ring-emerald-600 w-5 h-5" name="km-payment" type="radio" value="card"/>
+          </label>
+          <label class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low cursor-pointer border-2 border-transparent hover:border-emerald-200 transition-all">
+            <div class="flex items-center gap-4">
+              <span class="material-symbols-outlined text-secondary">payments</span>
+              <span class="font-bold text-emerald-900" data-en="Cash on Delivery" data-ml="ക്യാഷ് ഓൺ ഡെലിവറി">Cash on Delivery</span>
+            </div>
+            <input class="text-emerald-600 focus:ring-emerald-600 w-5 h-5" name="km-payment" type="radio" value="cod" checked/>
+          </label>
+        </div>
+
+        <div class="mt-6 flex items-start gap-3 bg-secondary-fixed/30 p-4 rounded-xl border-l-4 border-secondary">
+          <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">shield</span>
+          <p class="text-xs text-on-secondary-fixed leading-relaxed" data-en="Trust Guarantee: Your payment is processed securely. We don't store your card details." data-ml="ട്രസ്റ്റ് ഗ്യാരന്റി: നിങ്ങളുടെ പേയ്‌മെന്റ് സുരക്ഷിതമായി പ്രോസസ് ചെയ്യുന്നു.">
+            <span class="font-bold">Trust Guarantee:</span> Your payment is processed securely.
+          </p>
+        </div>
+
+        <!-- Place Order Button -->
+        <button id="co-place-order-btn" class="mt-6 w-full bg-secondary text-white py-5 rounded-xl font-bold text-lg shadow-xl hover:brightness-110 transition-all active:scale-[0.98] font-headline" data-en="Place Order" data-ml="ഓർഡർ ചെയ്യൂ">
+          Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script>
+let userPhone = '';
+let deliveryCoords = null;
+let isAuthenticated = false;
+
+const KMToast = {
+  show(msg, type = '') {
+    const el = Object.assign(document.createElement('div'), { textContent: msg });
+    el.className = `fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl text-sm font-semibold shadow-xl text-white transition-all ${type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-500' : 'bg-slate-800'}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  }
+};
+
+function renderOrderSummary() {
+  const items = KMCart.get();
+  const subtotal = KMCart.subtotal();
+  document.getElementById('co-items').innerHTML = items.map(i => `
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+        <img class="w-full h-full object-cover" src="${i.image || 'assets/images/placeholder.png'}" alt="${i.productName}" loading="lazy"/>
+      </div>
+      <div class="flex-grow">
+        <h3 class="font-semibold text-emerald-900 text-sm font-headline">${i.productName}</h3>
+        <p class="text-xs text-slate-500">${i.variantLabel} × ${i.quantity}</p>
+      </div>
+      <span class="font-bold text-emerald-900">₹${i.variantPrice * i.quantity}</span>
+    </div>
+  `).join('');
+  document.getElementById('co-subtotal').textContent = `₹${subtotal}`;
+
+  const user = KMAuth.getUser?.();
+  const isFirst = !user || user.orderCount === 0;
+  const fee = isFirst || subtotal >= 500 ? 0 : 15 + Math.round(5 * 8);
+  document.getElementById('co-delivery').textContent = fee === 0 ? 'FREE 🚀' : `₹${fee}`;
+  document.getElementById('co-total').textContent = `₹${subtotal + fee}`;
+}
+
+function unlockPayment() {
+  const paySection = document.getElementById('co-payment-section');
+  paySection.classList.remove('opacity-40', 'pointer-events-none');
+}
+
+// ── Auth state management ──────────────────────────────────────────────────
+function checkExistingLogin() {
+  const user = KMAuth.getUser?.();
+  if (user) {
+    document.getElementById('co-auth-phone').classList.add('hidden');
+    document.getElementById('co-auth-loggedin').classList.remove('hidden');
+    document.getElementById('co-user-greeting').textContent = `Welcome, ${user.name || 'Friend'}!`;
+    document.getElementById('co-user-phone-display').textContent = user.phone;
+    isAuthenticated = true;
+    unlockPayment();
+  }
+}
+
+// ── Send OTP ───────────────────────────────────────────────────────────────
+document.getElementById('co-send-otp-btn').addEventListener('click', async () => {
+  const phone = document.getElementById('co-phone').value.trim();
+  if (!/^[6-9]\d{9}$/.test(phone)) {
+    document.getElementById('co-phone-error').textContent = 'Enter a valid 10-digit Indian mobile number';
+    document.getElementById('co-phone-error').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('co-phone-error').classList.add('hidden');
+  const btn = document.getElementById('co-send-otp-btn');
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  try {
+    const res = await api.auth.sendOTP('+91' + phone);
+    if (res.success) {
+      userPhone = '+91' + phone;
+      document.getElementById('co-otp-sent-to').textContent = `OTP sent to +91 ${phone}`;
+      document.getElementById('co-auth-phone').classList.add('hidden');
+      document.getElementById('co-auth-otp').classList.remove('hidden');
+    } else {
+      KMToast.show(res.message || 'Failed to send OTP', 'error');
+    }
+  } catch {
+    // DEV mode: skip OTP (backend may not be running)
+    userPhone = '+91' + phone;
+    document.getElementById('co-otp-sent-to').textContent = `OTP sent to +91 ${phone} (check console in dev mode)`;
+    document.getElementById('co-auth-phone').classList.add('hidden');
+    document.getElementById('co-auth-otp').classList.remove('hidden');
+  }
+  btn.textContent = 'Send OTP'; btn.disabled = false;
+});
+
+// ── Verify OTP ─────────────────────────────────────────────────────────────
+document.getElementById('co-verify-otp-btn').addEventListener('click', async () => {
+  const otp = document.getElementById('co-otp-input').value.trim();
+  if (otp.length !== 6) {
+    document.getElementById('co-otp-error').textContent = 'Enter the 6-digit OTP';
+    document.getElementById('co-otp-error').classList.remove('hidden');
+    return;
+  }
+  const btn = document.getElementById('co-verify-otp-btn');
+  btn.textContent = 'Verifying...'; btn.disabled = true;
+  const res = await KMAuth.verifyOTP(userPhone, otp);
+  if (res.success) {
+    document.getElementById('co-auth-otp').classList.add('hidden');
+    document.getElementById('co-auth-loggedin').classList.remove('hidden');
+    document.getElementById('co-user-greeting').textContent = `Welcome, ${res.user.name || 'Friend'}!`;
+    document.getElementById('co-user-phone-display').textContent = res.user.phone;
+    isAuthenticated = true;
+    unlockPayment();
+    KMToast.show('Logged in successfully! 🎉', 'success');
+    renderOrderSummary(); // recalculate with new user (first order etc.)
+  } else {
+    document.getElementById('co-otp-error').textContent = res.message || 'Invalid OTP';
+    document.getElementById('co-otp-error').classList.remove('hidden');
+  }
+  btn.textContent = 'Verify & Continue'; btn.disabled = false;
+});
+
+// ── Guest checkout ─────────────────────────────────────────────────────────
+document.getElementById('co-guest-btn').addEventListener('click', () => {
+  document.getElementById('co-auth-phone').classList.add('hidden');
+  document.getElementById('co-auth-guest').classList.remove('hidden');
+  unlockPayment();
+});
+
+// ── Logout ─────────────────────────────────────────────────────────────────
+document.getElementById('co-logout-btn')?.addEventListener('click', () => {
+  KMAuth.logout();
+  document.getElementById('co-auth-loggedin').classList.add('hidden');
+  document.getElementById('co-auth-phone').classList.remove('hidden');
+  document.getElementById('co-payment-section').classList.add('opacity-40', 'pointer-events-none');
+  isAuthenticated = false;
+});
+
+// ── Location detection ─────────────────────────────────────────────────────
+document.getElementById('co-detect-location').addEventListener('click', () => {
+  const statusEl = document.getElementById('co-location-status');
+  statusEl.textContent = 'Detecting location...';
+  if (!navigator.geolocation) { statusEl.textContent = 'Geolocation not supported.'; return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    deliveryCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    statusEl.textContent = `Location detected (${deliveryCoords.lat.toFixed(4)}, ${deliveryCoords.lng.toFixed(4)})`;
+    // Recalculate delivery fee with real coords
+    api.delivery.fee({ lat: deliveryCoords.lat, lng: deliveryCoords.lng, subtotal: KMCart.subtotal() }).then(res => {
+      if (res.success) {
+        document.getElementById('co-delivery').textContent = res.fee === 0 ? `FREE (${res.reason === 'first_order_free' ? 'First order!' : 'Above ₹500'})` : `₹${res.fee} (${res.distanceKm}km)`;
+        const sub = KMCart.subtotal();
+        document.getElementById('co-total').textContent = `₹${sub + (res.fee || 0)}`;
+      }
+    });
+  }, err => { statusEl.textContent = 'Could not detect location. Please enter address manually.'; });
+});
+
+// ── Place Order ────────────────────────────────────────────────────────────
+document.getElementById('co-place-order-btn').addEventListener('click', async () => {
+  const items = KMCart.get();
+  if (!items.length) { KMToast.show('Your cart is empty', 'error'); return; }
+
+  const line1 = document.getElementById('co-addr-line1').value.trim();
+  if (!line1) { KMToast.show('Please enter your delivery address', 'error'); return; }
+
+  const paymentMethod = document.querySelector('input[name="km-payment"]:checked')?.value || 'cod';
+  const btn = document.getElementById('co-place-order-btn');
+  btn.textContent = 'Placing order...'; btn.disabled = true;
+
+  const user = KMAuth.getUser?.();
+  const isGuest = !user;
+  const guestName  = document.getElementById('co-guest-name')?.value || '';
+  const guestPhone = document.getElementById('co-guest-phone')?.value || '';
+
+  const body = {
+    items: items.map(i => ({ productId: i.productId, variantLabel: i.variantLabel, quantity: i.quantity })),
+    deliveryAddress: {
+      line1, line2: document.getElementById('co-addr-line2').value,
+      landmark: document.getElementById('co-addr-landmark').value,
+      pincode: document.getElementById('co-addr-pincode').value,
+      ...(deliveryCoords || {}),
+    },
+    payment: { method: paymentMethod },
+    isGuest,
+    guestInfo: isGuest ? { name: guestName, phone: guestPhone } : undefined,
+  };
+
+  try {
+    const res = await api.orders.place(body);
+    if (res.success) {
+      KMCart.clear();
+      if (paymentMethod === 'cod') {
+        window.location.href = `order-tracking.html?orderId=${res.order.orderId}`;
+      } else {
+        // Razorpay flow
+        const rzpRes = await api.payment.createOrder(res.order.orderId);
+        const rzp = new Razorpay({
+          key: rzpRes.key,
+          amount: rzpRes.razorpayOrder.amount,
+          currency: 'INR',
+          name: 'Koyamon Mart',
+          order_id: rzpRes.razorpayOrder.id,
+          handler: async (response) => {
+            await api.payment.verify({ ...response, orderId: res.order.orderId });
+            window.location.href = `order-tracking.html?orderId=${res.order.orderId}`;
+          },
+          prefill: { contact: user?.phone || guestPhone },
+          theme: { color: '#006947' },
+        });
+        rzp.open();
+      }
+    } else {
+      KMToast.show(res.message || 'Order failed. Try again.', 'error');
+    }
+  } catch (err) {
+    KMToast.show('Service temporarily unavailable. Please try again.', 'error');
+    console.error(err);
+  }
+  btn.textContent = 'Place Order'; btn.disabled = false;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderOrderSummary();
+  checkExistingLogin();
+  // Redirect to cart if empty
+  if (!KMCart.get().length) {
+    window.location.href = 'cart.html';
+  }
+});
+</script>
+</body>
+</html>

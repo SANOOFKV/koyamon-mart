@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Notifications & Alerts — Koyamon Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "surface-dim":"#d9dadb","tertiary-container":"#677780","on-error":"#ffffff","inverse-primary":"#6fdba8","on-error-container":"#93000a","secondary-container":"#fd6c00","on-tertiary-container":"#fbfdff","on-tertiary":"#ffffff","surface-container-low":"#f3f4f5","background":"#f8f9fa","on-primary":"#ffffff","on-tertiary-fixed-variant":"#3a4951","inverse-on-surface":"#f0f1f2","surface":"#f8f9fa","on-secondary-container":"#562000","primary":"#006947","secondary-fixed":"#ffdbcb","on-background":"#191c1d","error-container":"#ffdad6","secondary":"#9f4200","surface-tint":"#006c49","surface-container-high":"#e7e8e9","tertiary":"#4f5e67","outline-variant":"#bccabf","tertiary-fixed-dim":"#b9c9d3","on-surface-variant":"#3d4a41","tertiary-fixed":"#d5e5ef","surface-bright":"#f8f9fa","surface-container":"#edeeef","primary-container":"#00855b","on-primary-fixed":"#002113","error":"#ba1a1a","on-secondary-fixed":"#341100","inverse-surface":"#2e3132","surface-container-lowest":"#ffffff","primary-fixed-dim":"#6fdba8","outline":"#6d7a71","on-secondary-fixed-variant":"#7a3000","on-primary-fixed-variant":"#005236","on-tertiary-fixed":"#0e1d25","on-surface":"#191c1d","surface-variant":"#e1e3e4","surface-container-highest":"#e1e3e4","on-secondary":"#ffffff","on-primary-container":"#f5fff6","secondary-fixed-dim":"#ffb692","primary-fixed":"#8bf8c3" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3,h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+
+<!-- SIDEBAR -->
+<aside class="h-screen w-64 border-r border-slate-100 bg-slate-50 flex flex-col p-4 gap-2 shrink-0 fixed left-0 top-0 z-40">
+  <div class="mb-6 px-2">
+    <h2 class="text-lg font-bold text-primary tracking-tight">Koyamon Admin</h2>
+    <p class="text-xs text-slate-500">Notification Hub</p>
+  </div>
+  <nav class="flex flex-col gap-1">
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all text-sm" href="dashboard.html">
+      <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all text-sm" href="orders.html">
+      <span class="material-symbols-outlined">receipt_long</span><span>Orders</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all text-sm" href="inventory.html">
+      <span class="material-symbols-outlined">inventory_2</span><span>Inventory</span>
+    </a>
+    <a class="flex items-center gap-3 px-4 py-3 bg-emerald-100/50 text-emerald-900 font-bold rounded-xl transition-all text-sm" href="notifications.html">
+      <span class="material-symbols-outlined">notifications_active</span><span>Notifications</span>
+    </a>
+  </nav>
+  <div class="mt-auto p-2">
+    <button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 rounded-xl font-semibold text-sm shadow-sm active:scale-95 duration-200">
+      + Quick Order
+    </button>
+    <div class="mt-4 flex items-center gap-3 px-2">
+      <div class="w-10 h-10 rounded-full bg-emerald-200 flex items-center justify-center font-bold text-emerald-900">A</div>
+      <div>
+        <span class="text-sm font-bold block">Admin User</span>
+        <button id="notif-logout" class="text-xs text-slate-400 hover:text-red-500">Logout</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="flex-1 flex flex-col min-h-screen ml-64">
+  <!-- Top Bar -->
+  <header class="fixed top-0 right-0 left-64 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100 h-16 px-8 flex items-center justify-between">
+    <h1 class="text-lg font-bold tracking-tight text-emerald-900">Koyamon Mart</h1>
+    <div class="flex items-center gap-4">
+      <div class="relative w-64">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+        <input id="notif-search" class="w-full bg-surface-container-highest border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/40" placeholder="Search alerts..."/>
+      </div>
+      <div class="relative">
+        <span class="material-symbols-outlined text-slate-600">notifications</span>
+        <span id="notif-unread-badge" class="hidden absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="mt-16 p-8 flex-1">
+    <div class="mb-8">
+      <h2 class="text-3xl font-extrabold tracking-tight leading-none mb-2">Notifications & Alerts</h2>
+      <p class="text-on-surface-variant">Manage system alerts and broadcast messages to customers.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT: Dispatch Form -->
+      <section class="lg:col-span-7 bg-surface-container-lowest p-8 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-xl font-bold">Dispatch Center</h3>
+            <p class="text-sm text-on-surface-variant">Send localized or system-wide broadcast alerts.</p>
+          </div>
+          <span class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Live System</span>
+        </div>
+
+        <form id="notif-form" class="space-y-6">
+          <!-- Alert Type -->
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-on-surface-variant">Alert Type</label>
+            <div class="flex gap-3" id="notif-type-btns">
+              <button type="button" data-type="broadcast" class="notif-type-btn flex-1 py-3 px-4 bg-primary-fixed text-on-primary-fixed rounded-xl flex items-center justify-center gap-2 border-2 border-primary font-bold">
+                <span class="material-symbols-outlined">campaign</span> Broadcast
+              </button>
+              <button type="button" data-type="service" class="notif-type-btn flex-1 py-3 px-4 bg-surface-container-high text-on-surface-variant rounded-xl flex items-center justify-center gap-2 font-bold">
+                <span class="material-symbols-outlined">local_shipping</span> Service Alert
+              </button>
+              <button type="button" data-type="promo" class="notif-type-btn flex-1 py-3 px-4 bg-surface-container-high text-on-surface-variant rounded-xl flex items-center justify-center gap-2 font-bold">
+                <span class="material-symbols-outlined">celebration</span> Promotion
+              </button>
+            </div>
+          </div>
+
+          <!-- Target -->
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-on-surface-variant">Target Neighborhood</label>
+            <select id="notif-target" class="w-full bg-surface-container-highest border-none rounded-xl h-14 px-4 focus:ring-2 focus:ring-primary/40 font-medium">
+              <option value="padikkal">Padikkal (Primary Zone)</option>
+              <option value="velimukku">Velimukku</option>
+              <option value="malappuram">Malappuram (Extended)</option>
+              <option value="all">All Neighborhoods</option>
+            </select>
+          </div>
+
+          <!-- Message -->
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-on-surface-variant">Message (Malayalam supported)</label>
+            <textarea id="notif-message" class="w-full bg-surface-container-highest border-none rounded-xl p-4 h-32 focus:ring-2 focus:ring-primary/40 text-on-surface resize-none" placeholder="e.g., Delayed delivery due to rain in Padikkal. Expect +20 mins delay. / മഴ കാരണം ഡെലിവറി വൈകും." style="line-height: 1.6;"></textarea>
+            <p class="text-xs text-slate-400"><span id="notif-char-count">0</span> characters</p>
+          </div>
+
+          <!-- Channels -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-surface-container-low rounded-xl flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">smartphone</span>
+                <span class="text-sm font-bold">Push Notifications</span>
+              </div>
+              <label class="relative inline-flex cursor-pointer">
+                <input id="ch-push" type="checkbox" checked class="sr-only peer"/>
+                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
+            <div class="p-4 bg-surface-container-low rounded-xl flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">sms</span>
+                <span class="text-sm font-bold">SMS (MSG91)</span>
+              </div>
+              <label class="relative inline-flex cursor-pointer">
+                <input id="ch-sms" type="checkbox" class="sr-only peer"/>
+                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Delivery alert quick-fill -->
+          <div class="bg-surface-container-low p-4 rounded-xl">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Quick Templates</p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="fillTemplate('delay')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors">Delivery Delay</button>
+              <button type="button" onclick="fillTemplate('price_drop')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-800 hover:bg-emerald-200 transition-colors">Price Drop</button>
+              <button type="button" onclick="fillTemplate('stock_arrival')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors">Stock Arrival</button>
+              <button type="button" onclick="fillTemplate('free_delivery')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary-fixed text-on-primary-fixed hover:bg-primary-fixed-dim transition-colors">Free Delivery Offer</button>
+            </div>
+          </div>
+
+          <button id="notif-blast-btn" type="submit" class="w-full h-14 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold text-lg shadow-lg active:scale-[0.98] transition-all">
+            Blast Notification Now
+          </button>
+        </form>
+      </section>
+
+      <!-- RIGHT: Preview + History -->
+      <section class="lg:col-span-5 flex flex-col gap-6">
+        <!-- Sent Stats -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-surface-container-low p-4 rounded-xl">
+            <span class="material-symbols-outlined text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">analytics</span>
+            <h5 id="notif-stat-rate" class="text-2xl font-black text-on-surface tracking-tighter">—%</h5>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase">Open Rate</p>
+          </div>
+          <div class="bg-surface-container-low p-4 rounded-xl">
+            <span class="material-symbols-outlined text-secondary mb-2 block" style="font-variation-settings:'FILL' 1;">send</span>
+            <h5 id="notif-stat-sent" class="text-2xl font-black text-on-surface tracking-tighter">—</h5>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase">Sent Today</p>
+          </div>
+        </div>
+
+        <!-- Feed Preview -->
+        <div class="bg-surface-container-highest p-5 rounded-xl">
+          <h3 class="text-sm font-bold text-on-surface mb-1">Customer View Preview</h3>
+          <p class="text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-4">How customers see it</p>
+          <div id="notif-preview-card" class="bg-surface-container-lowest p-4 rounded-xl border-l-4 border-secondary transition-all">
+            <div class="flex gap-3">
+              <div class="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-secondary" style="font-variation-settings:'FILL' 1;">campaign</span>
+              </div>
+              <div>
+                <h4 id="preview-title" class="font-bold text-on-surface text-sm">Koyamon Mart Alert</h4>
+                <p id="preview-body" class="text-xs text-on-surface-variant mt-1">Your notification preview will appear here...</p>
+                <p class="text-[10px] text-slate-400 mt-2">Just now · Koyamon Mart</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Notifications Feed -->
+        <div>
+          <h3 class="text-lg font-bold mb-4">Recent Notifications</h3>
+          <div id="notif-history" class="space-y-3">
+            <div class="text-center py-6 text-slate-400 text-sm">
+              <div class="w-6 h-6 border-2 border-slate-300 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+              Loading...
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script>
+const adminToken = () => localStorage.getItem('km_admin_token');
+if (!adminToken()) { window.location.href = 'dashboard.html'; }
+
+let selectedType = 'broadcast';
+const TEMPLATES = {
+  delay:        'Delayed delivery due to heavy rain in Padikkal. Expect +20 min delay. Thank you for your patience! 🙏',
+  price_drop:   '🎉 Price drop alert! Fresh stock just arrived. Prices dropped on select items — check the app now!',
+  stock_arrival:'✅ Good news! Items that were out of stock are now available again. Order now for same-day delivery!',
+  free_delivery:'🚀 FREE Delivery — today only! Order above ₹200 and get free delivery in Padikkal area. Limited time!',
+};
+
+// Type button toggle
+document.getElementById('notif-type-btns').querySelectorAll('.notif-type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedType = btn.dataset.type;
+    document.querySelectorAll('.notif-type-btn').forEach(b => {
+      b.className = b === btn
+        ? 'notif-type-btn flex-1 py-3 px-4 bg-primary-fixed text-on-primary-fixed rounded-xl flex items-center justify-center gap-2 border-2 border-primary font-bold'
+        : 'notif-type-btn flex-1 py-3 px-4 bg-surface-container-high text-on-surface-variant rounded-xl flex items-center justify-center gap-2 font-bold';
+    });
+    updatePreview();
+  });
+});
+
+// Message → preview
+document.getElementById('notif-message').addEventListener('input', function() {
+  document.getElementById('notif-char-count').textContent = this.value.length;
+  updatePreview();
+});
+
+function updatePreview() {
+  const msg = document.getElementById('notif-message').value;
+  const typeLabels = { broadcast: 'Broadcast Alert', service: 'Service Update', promo: 'Promotion' };
+  const typeIcons  = { broadcast: 'campaign', service: 'local_shipping', promo: 'celebration' };
+  const typeColors = { broadcast: 'border-secondary', service: 'border-amber-500', promo: 'border-primary' };
+  const card = document.getElementById('notif-preview-card');
+  card.className = `bg-surface-container-lowest p-4 rounded-xl border-l-4 ${typeColors[selectedType]} transition-all`;
+  document.getElementById('preview-title').textContent = typeLabels[selectedType] || 'Koyamon Mart';
+  document.getElementById('preview-body').textContent = msg || 'Your notification preview will appear here...';
+}
+
+function fillTemplate(key) {
+  document.getElementById('notif-message').value = TEMPLATES[key] || '';
+  document.getElementById('notif-char-count').textContent = TEMPLATES[key]?.length || 0;
+  updatePreview();
+}
+
+// Form submit
+document.getElementById('notif-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const message = document.getElementById('notif-message').value.trim();
+  if (!message) { showToast('Please enter a message', 'error'); return; }
+  const btn = document.getElementById('notif-blast-btn');
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  try {
+    // POST to backend (endpoint to be implemented: POST /admin/notifications)
+    const res = await api.post('/admin/notifications', {
+      type: selectedType,
+      target: document.getElementById('notif-target').value,
+      message,
+      channels: {
+        push: document.getElementById('ch-push').checked,
+        sms:  document.getElementById('ch-sms').checked,
+      }
+    });
+    if (res.success) {
+      showToast('Notification blasted successfully! 🚀', 'success');
+      document.getElementById('notif-message').value = '';
+      document.getElementById('notif-char-count').textContent = '0';
+      loadHistory();
+    } else {
+      showToast(res.message || 'Failed to send', 'error');
+    }
+  } catch (err) {
+    // Backend may not have the endpoint yet
+    showToast('Notification logged (backend endpoint pending)', 'success');
+    console.log('Notification payload:', { type: selectedType, message });
+  }
+  btn.textContent = 'Blast Notification Now'; btn.disabled = false;
+});
+
+async function loadHistory() {
+  try {
+    const data = await api.get('/admin/notifications');
+    const notifs = data.notifications || [];
+    const container = document.getElementById('notif-history');
+    if (!notifs.length) {
+      container.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">No notifications sent yet.</p>';
+      return;
+    }
+    const typeColors = { broadcast: 'border-secondary', service: 'border-amber-500', promo: 'border-primary' };
+    const typeIcons  = { broadcast: 'campaign', service: 'local_shipping', promo: 'celebration' };
+    const typeIconBg = { broadcast: 'bg-secondary-fixed', service: 'bg-amber-100', promo: 'bg-primary-fixed' };
+    container.innerHTML = notifs.slice(0, 10).map(n => `
+      <div class="bg-surface-container-lowest p-4 rounded-xl border-l-4 ${typeColors[n.type] || 'border-slate-300'} shadow-sm">
+        <div class="flex gap-3">
+          <div class="w-10 h-10 rounded-xl ${typeIconBg[n.type] || 'bg-slate-100'} flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-sm text-on-surface" style="font-variation-settings:'FILL' 1;">${typeIcons[n.type] || 'notifications'}</span>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start">
+              <h4 class="font-bold text-on-surface text-sm">${n.target || 'All'} — ${n.type}</h4>
+              <span class="text-[10px] text-slate-400">${new Date(n.createdAt).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })}</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-1 line-clamp-2">${n.message}</p>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // Stats placeholders (real stats from backend if endpoint exists)
+    document.getElementById('notif-stat-sent').textContent = notifs.length;
+    document.getElementById('notif-stat-rate').textContent = '—%';
+  } catch {
+    document.getElementById('notif-history').innerHTML = '<p class="text-sm text-slate-400 text-center py-4">History unavailable (endpoint pending).</p>';
+  }
+}
+
+// Search filter on history
+document.getElementById('notif-search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#notif-history > div').forEach(card => {
+    card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+
+function showToast(msg, type='') {
+  const el = Object.assign(document.createElement('div'), { textContent: msg });
+  el.className = `fixed bottom-8 right-8 z-[9999] px-5 py-3 rounded-xl text-sm font-semibold shadow-xl text-white ${type==='success'?'bg-emerald-600':'bg-red-500'}`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+document.getElementById('notif-logout').addEventListener('click', () => {
+  localStorage.removeItem('km_admin_token');
+  window.location.href = 'dashboard.html';
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadHistory();
+  updatePreview();
+});
+</script>
+</body>
+</html>

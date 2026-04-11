@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Track Order — Koyamon Mart</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "on-surface":"#191c1d","surface-container-low":"#f3f4f5","primary-container":"#00855b","inverse-surface":"#2e3132","tertiary-container":"#677780","on-tertiary-fixed":"#0e1d25","secondary-container":"#fd6c00","tertiary":"#4f5e67","primary-fixed-dim":"#6fdba8","outline-variant":"#bccabf","secondary":"#9f4200","outline":"#6d7a71","surface-variant":"#e1e3e4","surface-container-high":"#e7e8e9","on-primary-fixed":"#002113","on-tertiary":"#ffffff","surface-dim":"#d9dadb","primary":"#006947","on-tertiary-container":"#fbfdff","on-secondary":"#ffffff","on-background":"#191c1d","error-container":"#ffdad6","surface":"#f8f9fa","secondary-fixed-dim":"#ffb692","on-primary":"#ffffff","on-error":"#ffffff","background":"#f8f9fa","inverse-primary":"#6fdba8","error":"#ba1a1a","tertiary-fixed":"#d5e5ef","surface-container-highest":"#e1e3e4","on-surface-variant":"#3d4a41","inverse-on-surface":"#f0f1f2","on-primary-container":"#f5fff6","on-error-container":"#93000a","surface-container-lowest":"#ffffff","on-secondary-fixed-variant":"#7a3000","tertiary-fixed-dim":"#b9c9d3","surface-tint":"#006c49","on-secondary-container":"#562000","surface-container":"#edeeef","on-primary-fixed-variant":"#005236","surface-bright":"#f8f9fa","secondary-fixed":"#ffdbcb","primary-fixed":"#8bf8c3","on-tertiary-fixed-variant":"#3a4951","on-secondary-fixed":"#341100" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+
+<!-- TOP NAV -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)] flex justify-between items-center px-6 py-4">
+  <a href="index.html" class="text-2xl font-bold text-emerald-900 tracking-tight font-headline">Koyamon Mart</a>
+  <div class="hidden md:flex space-x-8 items-center">
+    <a class="text-slate-500 hover:text-emerald-600 transition-colors duration-200 text-sm" href="index.html" data-en="Home" data-ml="ഹോം">Home</a>
+    <a class="text-emerald-700 font-semibold text-sm" href="order-tracking.html" data-en="Tracking" data-ml="ട്രാക്കിംഗ്">Tracking</a>
+    <a class="text-slate-500 hover:text-emerald-600 transition-colors duration-200 text-sm" href="profile.html" data-en="My Orders" data-ml="എന്റെ ഓർഡറുകൾ">My Orders</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <button id="km-lang-toggle" class="text-emerald-700 border-b-2 border-emerald-600 font-semibold text-sm">മലയാളം</button>
+  </div>
+</nav>
+
+<!-- ORDER ID SEARCH (shown if no orderId in URL) -->
+<div id="km-track-search" class="hidden pt-32 pb-12 px-6 max-w-lg mx-auto text-center">
+  <span class="material-symbols-outlined text-6xl text-emerald-600 block mb-4">package_2</span>
+  <h1 class="text-3xl font-extrabold text-emerald-900 font-headline mb-2" data-en="Track Your Order" data-ml="ഓർഡർ ട്രാക്ക് ചെയ്യൂ">Track Your Order</h1>
+  <p class="text-slate-500 mb-8" data-en="Enter your Order ID to see live status" data-ml="ലൈവ് സ്ടേറ്റസ് കാണാൻ ഓർഡർ ID നൽകൂ">Enter your Order ID to see live status</p>
+  <div class="flex gap-3">
+    <input id="km-track-input" type="text" placeholder="e.g. KM-20240411-0001"
+      class="flex-1 bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+    <button id="km-track-btn" class="bg-primary text-white px-6 py-4 rounded-xl font-bold hover:brightness-110 transition-all" data-en="Track" data-ml="ട്രാക്ക്">Track</button>
+  </div>
+  <p id="km-track-error" class="text-red-500 text-sm mt-3 hidden"></p>
+</div>
+
+<!-- LOADING -->
+<div id="km-track-loading" class="hidden pt-32 text-center">
+  <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+  <p class="text-slate-500" data-en="Fetching order details..." data-ml="ഓർഡർ വിവരങ്ങൾ ലോഡ് ആകുന്നു...">Fetching order details...</p>
+</div>
+
+<!-- ORDER CONTENT -->
+<main id="km-track-content" class="hidden pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left: Tracking + Timeline -->
+    <div class="lg:col-span-8 space-y-6">
+
+      <!-- Header Card -->
+      <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <div>
+            <h1 id="km-order-id-display" class="text-3xl font-headline font-extrabold text-emerald-900 tracking-tight">Order #—</h1>
+            <p class="text-slate-500 font-medium mt-1" id="km-order-eta"></p>
+          </div>
+          <div id="km-live-badge" class="bg-primary-container/10 px-4 py-2 rounded-full flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span class="text-primary font-semibold text-sm uppercase tracking-wider" data-en="Live Tracking" data-ml="ലൈവ് ട്രാക്കിംഗ്">Live Tracking</span>
+          </div>
+        </div>
+
+        <!-- Map placeholder -->
+        <div class="relative h-[300px] w-full rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center mb-4">
+          <div class="text-center">
+            <span class="material-symbols-outlined text-5xl text-emerald-400 block mb-2">map</span>
+            <p class="text-slate-500 text-sm" data-en="Live map tracking coming soon" data-ml="ലൈവ് മാപ്പ് ട്രാക്കിംഗ് ഉടൻ">Live map tracking coming soon</p>
+            <p class="text-xs text-slate-400 mt-1" data-en="Padikkal, Velimukku, Malappuram" data-ml="പടിക്കൽ, വേലിമുക്ക്">Padikkal, Velimukku, Malappuram</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Journey / Status Timeline -->
+      <div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+        <h3 class="text-lg font-headline font-bold text-emerald-900 mb-8" data-en="Order Journey" data-ml="ഓർഡർ യാത്ര">Order Journey</h3>
+        <div class="relative">
+          <div class="hidden md:block absolute top-6 left-0 w-full h-0.5 bg-surface-container-high"></div>
+          <div id="km-progress-bar" class="hidden md:block absolute top-6 left-0 h-0.5 bg-primary transition-all duration-700" style="width:0%"></div>
+          <div id="km-timeline" class="flex flex-col md:flex-row justify-between items-start md:items-center relative gap-8 md:gap-0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="lg:col-span-4 space-y-6">
+      <!-- Summary Card -->
+      <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-headline font-bold text-emerald-900" data-en="Order Summary" data-ml="ഓർഡർ സംഗ്രഹം">Order Summary</h3>
+          <span id="km-item-count" class="text-emerald-600 text-xs font-semibold bg-emerald-50 px-2 py-1 rounded">— items</span>
+        </div>
+        <div id="km-order-items" class="space-y-4 mb-8"></div>
+        <div id="km-bill-breakdown" class="space-y-3 pt-6 border-t-4 border-surface-container"></div>
+      </div>
+
+      <!-- Address Card -->
+      <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+        <h3 class="text-lg font-headline font-bold text-emerald-900 mb-4" data-en="Delivery Address" data-ml="ഡെലിവറി വിലാസം">Delivery Address</h3>
+        <div class="flex items-start gap-4">
+          <div class="mt-1 bg-secondary/10 p-2 rounded-lg text-secondary">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+          </div>
+          <div id="km-delivery-address" class="text-sm text-slate-600 leading-relaxed"></div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(25,28,29,0.04)]">
+        <h3 class="text-lg font-headline font-bold text-emerald-900 mb-3" data-en="Payment" data-ml="പേയ്‌മെന്റ്">Payment</h3>
+        <div id="km-payment-info" class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary">payments</span>
+          <span class="text-sm font-semibold"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ERROR STATE -->
+<div id="km-track-error-state" class="hidden pt-32 text-center px-6">
+  <span class="material-symbols-outlined text-6xl text-slate-300 block mb-4">search_off</span>
+  <h2 class="text-2xl font-bold text-slate-500 mb-4 font-headline" data-en="Order not found" data-ml="ഓർഡർ കണ്ടെത്തിയില്ല">Order not found</h2>
+  <button onclick="showSearch()" class="bg-primary text-white px-8 py-3 rounded-xl font-bold" data-en="Try Again" data-ml="വീണ്ടും ശ്രമിക്കൂ">Try Again</button>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-white/90 backdrop-blur-lg shadow-[0_-8px_30px_rgba(0,0,0,0.04)] rounded-t-[2rem]">
+  <a href="index.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">home</span><span class="text-[10px] font-medium">Home</span></a>
+  <a href="order-tracking.html" class="flex flex-col items-center gap-1 bg-emerald-100 text-emerald-900 rounded-2xl px-6 py-2">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span><span class="text-[10px] font-medium">Tracking</span>
+  </a>
+  <a href="profile.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">receipt_long</span><span class="text-[10px] font-medium">My Orders</span></a>
+  <a href="profile.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">person</span><span class="text-[10px] font-medium">Profile</span></a>
+</nav>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script>
+const STATUS_STEPS = [
+  { key: 'placed',           label: 'Ordered',           labelMl: 'ഓർഡർ ചെയ്തു',       icon: 'shopping_bag' },
+  { key: 'confirmed',        label: 'Confirmed',          labelMl: 'സ്ഥിരീകരിച്ചു',      icon: 'check_circle' },
+  { key: 'packed',           label: 'Packed',             labelMl: 'പായ്ക്ക് ചെയ്തു',    icon: 'inventory_2' },
+  { key: 'out_for_delivery', label: 'Out for Delivery',   labelMl: 'ഡെലിവറിക്ക് ഇറങ്ങി', icon: 'delivery_dining' },
+  { key: 'delivered',        label: 'Delivered',          labelMl: 'ഡെലിവർ ചെയ്തു',     icon: 'home_pin' },
+];
+
+function showSearch() {
+  document.getElementById('km-track-search').classList.remove('hidden');
+  document.getElementById('km-track-content').classList.add('hidden');
+  document.getElementById('km-track-error-state').classList.add('hidden');
+}
+
+async function loadOrder(orderId) {
+  document.getElementById('km-track-search').classList.add('hidden');
+  document.getElementById('km-track-content').classList.add('hidden');
+  document.getElementById('km-track-loading').classList.remove('hidden');
+  document.getElementById('km-track-error-state').classList.add('hidden');
+
+  try {
+    const data = await api.orders.track(orderId);
+    if (!data.success || !data.order) { showError(); return; }
+    renderOrder(data.order);
+  } catch {
+    showError();
+  }
+}
+
+function showError() {
+  document.getElementById('km-track-loading').classList.add('hidden');
+  document.getElementById('km-track-error-state').classList.remove('hidden');
+}
+
+function renderOrder(order) {
+  const lang = localStorage.getItem('km_lang') || 'en';
+  document.getElementById('km-track-loading').classList.add('hidden');
+  document.getElementById('km-track-content').classList.remove('hidden');
+
+  // Header
+  document.getElementById('km-order-id-display').textContent = `Order #${order.orderId}`;
+  const statusLabels = { placed: 'Order placed', confirmed: 'Confirmed', packed: 'Packed', out_for_delivery: 'Out for delivery 🚴', delivered: 'Delivered ✓', cancelled: 'Cancelled' };
+  document.getElementById('km-order-eta').textContent = statusLabels[order.status] || order.status;
+
+  // Timeline
+  const currentIdx = STATUS_STEPS.findIndex(s => s.key === order.status);
+  const pct = Math.max(0, Math.min(100, (currentIdx / (STATUS_STEPS.length - 1)) * 100));
+  document.getElementById('km-progress-bar').style.width = `${pct}%`;
+
+  document.getElementById('km-timeline').innerHTML = STATUS_STEPS.map((step, i) => {
+    const done = i <= currentIdx;
+    const current = i === currentIdx;
+    const label = lang === 'ml' ? step.labelMl : step.label;
+    const hist = order.statusHistory?.find(h => h.status === step.key);
+    const time = hist ? new Date(hist.updatedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '';
+    return `
+      <div class="flex md:flex-col items-center md:items-center gap-4 md:gap-4 flex-1 ${!done ? 'opacity-40' : ''}">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center relative z-10 ${done ? 'bg-primary' : 'bg-surface-container-high'} ${current ? 'ring-4 ring-primary/20' : ''}">
+          <span class="material-symbols-outlined text-${done ? 'white' : 'slate-400'}" style="font-variation-settings: 'FILL' 1;">${step.icon}</span>
+        </div>
+        <div class="text-left md:text-center">
+          <p class="font-bold text-${done ? 'emerald-900' : 'slate-600'} text-sm font-headline">${label}</p>
+          <p class="text-[10px] ${current ? 'text-primary font-semibold' : 'text-slate-400'}">${time || (i === currentIdx + 1 && order.status !== 'cancelled' ? 'Next →' : '')}</p>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Items
+  document.getElementById('km-item-count').textContent = `${order.items?.length || 0} items`;
+  document.getElementById('km-order-items').innerHTML = (order.items || []).map(item => `
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+        <span class="material-symbols-outlined text-slate-400">set_meal</span>
+      </div>
+      <div class="flex-1">
+        <h5 class="text-sm font-bold text-on-surface font-headline">${item.productName}</h5>
+        <p class="text-xs text-slate-500">${item.variant?.label || ''} × ${item.quantity} · ₹${item.totalPrice}</p>
+      </div>
+    </div>
+  `).join('');
+
+  // Bill
+  document.getElementById('km-bill-breakdown').innerHTML = `
+    <div class="flex justify-between text-sm"><span class="text-slate-500">Item Total</span><span class="font-medium">₹${order.subtotal}</span></div>
+    <div class="flex justify-between text-sm"><span class="text-slate-500">Delivery Fee</span><span class="${order.deliveryFee === 0 ? 'text-primary font-bold' : 'font-medium'}">${order.deliveryFee === 0 ? 'FREE' : '₹' + order.deliveryFee}</span></div>
+    <div class="flex justify-between text-lg font-headline font-extrabold text-emerald-900 pt-3"><span>Total</span><span>₹${order.total}</span></div>
+  `;
+
+  // Address
+  const addr = order.deliveryAddress || {};
+  document.getElementById('km-delivery-address').innerHTML = [addr.line1, addr.line2, addr.landmark, addr.pincode].filter(Boolean).join('<br/>');
+
+  // Payment
+  const pMethod = { cod: 'Cash on Delivery', upi: 'UPI Payment', card: 'Card Payment' };
+  document.getElementById('km-payment-info').innerHTML = `
+    <span class="material-symbols-outlined text-primary">payments</span>
+    <span class="text-sm font-semibold">${pMethod[order.payment?.method] || 'COD'} — ${order.payment?.status === 'paid' ? '✓ Paid' : 'Pending'}</span>
+  `;
+}
+
+// ── Search button ──────────────────────────────────────────────────────────
+document.getElementById('km-track-btn')?.addEventListener('click', () => {
+  const val = document.getElementById('km-track-input').value.trim();
+  if (!val) { document.getElementById('km-track-error').textContent = 'Please enter an Order ID'; document.getElementById('km-track-error').classList.remove('hidden'); return; }
+  loadOrder(val);
+});
+
+document.getElementById('km-track-input')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('km-track-btn')?.click();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('orderId');
+  if (orderId) {
+    loadOrder(orderId);
+  } else {
+    showSearch();
+  }
+});
+</script>
+</body>
+</html>

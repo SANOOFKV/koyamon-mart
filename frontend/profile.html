@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="description" content="Your account and orders — Koyamon Mart"/>
+  <title>My Account — Koyamon Mart</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "on-primary-fixed-variant":"#005236","on-primary-container":"#f5fff6","secondary":"#9f4200","error":"#ba1a1a","secondary-fixed-dim":"#ffb692","surface-container-low":"#f3f4f5","inverse-primary":"#6fdba8","on-tertiary":"#ffffff","tertiary-fixed-dim":"#b9c9d3","on-tertiary-fixed-variant":"#3a4951","tertiary":"#4f5e67","surface-dim":"#d9dadb","on-error":"#ffffff","on-surface":"#191c1d","on-secondary":"#ffffff","surface-bright":"#f8f9fa","surface-container-high":"#e7e8e9","outline":"#6d7a71","on-error-container":"#93000a","surface-container-highest":"#e1e3e4","surface-container-lowest":"#ffffff","tertiary-container":"#677780","primary-container":"#00855b","surface-variant":"#e1e3e4","primary-fixed":"#8bf8c3","background":"#f8f9fa","surface-container":"#edeeef","on-surface-variant":"#3d4a41","on-tertiary-fixed":"#0e1d25","outline-variant":"#bccabf","on-tertiary-container":"#fbfdff","surface-tint":"#006c49","on-secondary-fixed-variant":"#7a3000","on-primary":"#ffffff","secondary-fixed":"#ffdbcb","inverse-on-surface":"#f0f1f2","inverse-surface":"#2e3132","error-container":"#ffdad6","on-primary-fixed":"#002113","secondary-container":"#fd6c00","surface":"#f8f9fa","primary":"#006947","tertiary-fixed":"#d5e5ef","primary-fixed-dim":"#6fdba8","on-secondary-fixed":"#341100","on-secondary-container":"#562000","on-background":"#191c1d" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+    .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface">
+
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 w-full bg-white/80 backdrop-blur-xl shadow-sm z-50">
+  <div class="flex justify-between items-center px-6 py-4 w-full max-w-7xl mx-auto">
+    <div class="flex items-center gap-8">
+      <a href="index.html" class="text-xl font-bold tracking-tight text-emerald-900 font-headline">Koyamon Mart</a>
+      <div class="hidden md:flex items-center gap-6">
+        <a class="text-slate-500 font-semibold hover:bg-slate-50 transition-colors px-3 py-2 rounded-lg font-headline" href="index.html" data-en="Home" data-ml="ഹോം">Home</a>
+        <a class="text-slate-500 font-semibold hover:bg-slate-50 transition-colors px-3 py-2 rounded-lg font-headline" href="category.html" data-en="Categories" data-ml="വകുപ്പ്">Categories</a>
+        <a class="text-emerald-700 font-bold border-b-2 border-emerald-700 font-headline px-3 py-2" href="profile.html" data-en="Account" data-ml="അക്കൗണ്ട്">Account</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <button id="km-lang-toggle" class="hidden md:block text-emerald-700 border-b-2 border-emerald-600 font-semibold text-sm py-1">മലയാളം</button>
+      <a href="cart.html" class="p-2 rounded-full hover:bg-slate-50 transition-all relative">
+        <span class="material-symbols-outlined text-emerald-900">shopping_basket</span>
+        <span id="km-cart-count" class="hidden absolute top-0 right-0 bg-secondary text-white text-[10px] font-bold px-1.5 rounded-full min-w-[18px] text-center">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- NOT LOGGED IN STATE -->
+<div id="km-profile-login" class="hidden max-w-lg mx-auto mt-20 text-center px-6">
+  <span class="material-symbols-outlined text-7xl text-slate-200 block mb-4">account_circle</span>
+  <h2 class="text-2xl font-bold font-headline mb-3" data-en="Login to view your account" data-ml="അക്കൗണ്ട് കാണാൻ ലോഗിൻ ചെയ്യൂ">Login to view your account</h2>
+  <p class="text-slate-500 mb-6" data-en="Track orders, save addresses, and more" data-ml="ഓർഡറുകൾ ട്രാക്ക് ചെയ്യൂ, വിലാസങ്ങൾ സൂക്ഷിക്കൂ">Track orders, save addresses, and more</p>
+  <a href="checkout.html" class="bg-primary text-white px-8 py-4 rounded-xl font-bold inline-block font-headline" data-en="Login / Sign Up" data-ml="ലോഗിൻ / സൈൻ അപ്">Login / Sign Up</a>
+</div>
+
+<main id="km-profile-main" class="hidden max-w-7xl mx-auto px-6 py-8 md:py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+    <!-- Sidebar -->
+    <aside class="lg:col-span-4 space-y-6">
+      <!-- Profile Card -->
+      <div class="bg-surface-container-lowest rounded-3xl p-8 shadow-[0_12px_40px_rgba(25,28,29,0.06)] relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-6">
+          <span class="bg-primary-fixed text-on-primary-fixed font-headline text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider" data-en="Member" data-ml="മെമ്പർ">Member</span>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">person_celebrate</span>
+          </div>
+          <div>
+            <h1 id="km-user-display-name" class="text-2xl font-bold font-headline text-on-surface">—</h1>
+            <p id="km-user-display-phone" class="text-on-surface-variant font-medium">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nav Links -->
+      <nav class="bg-surface-container-lowest rounded-3xl p-4 shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+        <div class="space-y-1">
+          <button id="tab-orders" onclick="showTab('orders')" class="w-full flex items-center justify-between p-4 rounded-2xl bg-emerald-50 text-primary font-bold transition-all">
+            <div class="flex items-center gap-4">
+              <span class="material-symbols-outlined">receipt_long</span>
+              <span class="font-headline" data-en="My Orders" data-ml="എന്റെ ഓർഡറുകൾ">My Orders</span>
+            </div>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+          </button>
+          <button id="tab-addresses" onclick="showTab('addresses')" class="w-full flex items-center justify-between p-4 rounded-2xl text-on-surface-variant hover:bg-surface-container-low transition-all">
+            <div class="flex items-center gap-4">
+              <span class="material-symbols-outlined">location_on</span>
+              <span class="font-headline" data-en="Saved Addresses" data-ml="വിലാസങ്ങൾ">Saved Addresses</span>
+            </div>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+          </button>
+
+          <div class="pt-4 mt-4 border-t border-surface-container">
+            <div class="p-4">
+              <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3" data-en="Preferred Language" data-ml="ഭാഷ">Preferred Language</p>
+              <div class="grid grid-cols-2 gap-2 p-1 bg-surface-container-high rounded-xl">
+                <button id="lang-en" onclick="setLang('en')" class="py-2 rounded-lg bg-white text-primary text-sm font-bold shadow-sm">English</button>
+                <button id="lang-ml" onclick="setLang('ml')" class="py-2 rounded-lg text-on-surface-variant text-sm font-medium hover:bg-white/50">മലയാളം</button>
+              </div>
+            </div>
+          </div>
+          <button id="km-logout-btn" class="w-full flex items-center gap-4 p-4 rounded-2xl text-error font-bold hover:bg-error-container/20 transition-all mt-2">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="font-headline" data-en="Logout" data-ml="ലോഗൗട്ട്">Logout</span>
+          </button>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Content Area -->
+    <div class="lg:col-span-8 space-y-8">
+
+      <!-- ORDERS TAB -->
+      <section id="section-orders">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold font-headline" data-en="Recent Orders" data-ml="സമീപകാല ഓർഡറുകൾ">Recent Orders</h2>
+        </div>
+        <!-- Loading -->
+        <div id="km-orders-loading" class="space-y-4">
+          <div class="h-28 bg-surface-container animate-pulse rounded-3xl"></div>
+          <div class="h-28 bg-surface-container animate-pulse rounded-3xl"></div>
+        </div>
+        <!-- Orders List -->
+        <div id="km-orders-list" class="hidden space-y-4"></div>
+        <!-- Empty Orders -->
+        <div id="km-orders-empty" class="hidden text-center py-16">
+          <span class="material-symbols-outlined text-6xl text-slate-200 block mb-4">receipt_long</span>
+          <p class="text-slate-400 font-semibold text-lg" data-en="No orders yet" data-ml="ഓർഡറുകൾ ഇല്ല">No orders yet</p>
+          <a href="index.html" class="mt-4 inline-block text-primary font-bold hover:underline text-sm" data-en="Browse products" data-ml="ഉൽപ്പന്നങ്ങൾ ബ്രൗസ് ചെയ്യൂ">Browse products</a>
+        </div>
+      </section>
+
+      <!-- ADDRESSES TAB -->
+      <section id="section-addresses" class="hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold font-headline" data-en="Saved Addresses" data-ml="സൂക്ഷിച്ച വിലാസങ്ങൾ">Saved Addresses</h2>
+          <button onclick="showAddressModal()" class="bg-surface-container-high p-3 rounded-full hover:bg-primary hover:text-white transition-all">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        </div>
+        <div id="km-addresses-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="text-center py-8 text-slate-400 col-span-2">
+            <span class="material-symbols-outlined text-4xl block mb-2">location_off</span>
+            <p class="text-sm" data-en="No saved addresses yet" data-ml="വിലാസങ്ങൾ ഇല്ല">No saved addresses yet</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Loyalty / Credits Banner -->
+      <section class="bg-gradient-to-br from-primary to-primary-container rounded-[2rem] p-8 text-white flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden relative">
+        <div class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="relative z-10 space-y-4 text-center md:text-left">
+          <h2 class="text-3xl font-black font-headline leading-tight" data-en="Fresh Rewards Balance" data-ml="ഫ്രഷ് റിവാർഡ്സ്">Fresh Rewards<br/>Balance</h2>
+          <div class="flex items-baseline gap-2 justify-center md:justify-start">
+            <span id="km-credits-display" class="text-5xl font-extrabold font-headline">₹0</span>
+            <span class="text-emerald-200 font-medium" data-en="Credits" data-ml="ക്രെഡിറ്റ്">Credits</span>
+          </div>
+          <p class="text-emerald-50/80 text-sm max-w-xs" data-en="Use your credits to get discounts on your next order." data-ml="അടുത്ത ഓർഡറിൽ ഡിസ്കൗണ്ട് ലഭിക്കാൻ ക്രെഡിറ്റ് ഉപയോഗിക്കൂ.">Use your credits to get discounts on your next order.</p>
+        </div>
+        <div class="relative z-10">
+          <button class="bg-white text-primary px-8 py-4 rounded-2xl font-bold font-headline hover:bg-emerald-50 transition-all shadow-xl" data-en="Redeem Credits" data-ml="ക്രെഡിറ്റ് റിഡീം ചെയ്യൂ">Redeem Credits</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- Mobile Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-white/80 backdrop-blur-xl flex justify-around items-center px-4 pb-6 pt-2 shadow-[0_-12px_40px_rgba(25,28,29,0.06)] rounded-t-3xl">
+  <a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2" href="index.html">
+    <span class="material-symbols-outlined">home</span>
+    <span class="text-[10px] font-medium" data-en="Home" data-ml="ഹോം">Home</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2" href="category.html">
+    <span class="material-symbols-outlined">grid_view</span>
+    <span class="text-[10px] font-medium" data-en="Categories" data-ml="വകുപ്പ്">Categories</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2" href="cart.html">
+    <span class="material-symbols-outlined">receipt_long</span>
+    <span class="text-[10px] font-medium" data-en="Orders" data-ml="ഓർഡർ">Orders</span>
+  </a>
+  <a class="flex flex-col items-center justify-center bg-emerald-100 text-emerald-900 rounded-2xl px-5 py-2" href="profile.html">
+    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">person</span>
+    <span class="text-[10px] font-medium" data-en="Account" data-ml="അക്കൗണ്ട്">Account</span>
+  </a>
+</nav>
+<div class="h-24 md:hidden"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script>
+const STATUS_COLORS = {
+  placed:           'text-secondary bg-secondary-fixed/40',
+  confirmed:        'text-blue-800 bg-blue-100',
+  packed:           'text-teal-800 bg-teal-100',
+  out_for_delivery: 'text-secondary bg-secondary-fixed',
+  delivered:        'text-primary bg-primary-fixed',
+  cancelled:        'text-error bg-error-container',
+};
+const STATUS_LABELS = {
+  placed: 'Order Placed', confirmed: 'Confirmed', packed: 'Packed',
+  out_for_delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled',
+};
+
+function showTab(tab) {
+  ['orders', 'addresses'].forEach(t => {
+    document.getElementById(`section-${t}`).classList.toggle('hidden', t !== tab);
+    const btn = document.getElementById(`tab-${t}`);
+    if (t === tab) { btn.classList.add('bg-emerald-50','text-primary','font-bold'); btn.classList.remove('text-on-surface-variant'); }
+    else           { btn.classList.remove('bg-emerald-50','text-primary','font-bold'); btn.classList.add('text-on-surface-variant'); }
+  });
+}
+
+function setLang(lang) {
+  KMLang?.set(lang);
+  document.getElementById('lang-en').className = lang === 'en'
+    ? 'py-2 rounded-lg bg-white text-primary text-sm font-bold shadow-sm'
+    : 'py-2 rounded-lg text-on-surface-variant text-sm font-medium hover:bg-white/50';
+  document.getElementById('lang-ml').className = lang === 'ml'
+    ? 'py-2 rounded-lg bg-white text-primary text-sm font-bold shadow-sm'
+    : 'py-2 rounded-lg text-on-surface-variant text-sm font-medium hover:bg-white/50';
+}
+
+async function loadOrders() {
+  document.getElementById('km-orders-loading').classList.remove('hidden');
+  document.getElementById('km-orders-list').classList.add('hidden');
+  document.getElementById('km-orders-empty').classList.add('hidden');
+
+  try {
+    const data = await api.orders.myOrders();
+    document.getElementById('km-orders-loading').classList.add('hidden');
+    const orders = data.orders || [];
+    if (!orders.length) { document.getElementById('km-orders-empty').classList.remove('hidden'); return; }
+
+    document.getElementById('km-orders-list').classList.remove('hidden');
+    document.getElementById('km-orders-list').innerHTML = orders.map(o => `
+      <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">package_2</span>
+            </div>
+            <div>
+              <p class="text-xs font-bold uppercase tracking-widest mb-1 ${STATUS_COLORS[o.status] || ''} px-2 py-0.5 rounded-full inline-block">${STATUS_LABELS[o.status] || o.status}</p>
+              <h3 class="font-bold font-headline text-lg">#${o.orderId}</h3>
+              <p class="text-on-surface-variant text-sm">${new Date(o.createdAt).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'})} · ${o.items?.length || 0} Items</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between md:flex-col md:items-end gap-3">
+            <p class="text-xl font-extrabold text-on-surface font-headline">₹${o.total}</p>
+            <div class="flex gap-2">
+              <a href="order-tracking.html?orderId=${o.orderId}" class="px-5 py-2 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-primary hover:text-white transition-all">
+                ${o.status === 'delivered' ? 'Details' : 'Track'}
+              </a>
+              ${o.status === 'delivered' ? `<button onclick="reorder('${o._id}')" class="px-5 py-2 rounded-xl bg-primary text-white font-bold text-sm flex items-center gap-1"><span class="material-symbols-outlined text-sm">replay</span> Reorder</button>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('km-orders-loading').classList.add('hidden');
+    document.getElementById('km-orders-empty').classList.remove('hidden');
+  }
+}
+
+async function reorder(orderId) {
+  try {
+    const data = await api.orders.byId(orderId);
+    if (data.order) {
+      data.order.items.forEach(item => KMCart.add({ _id: item.productId, name: { en: item.productName }, images: [] }, { label: item.variant?.label, price: item.variant?.price, mrp: item.variant?.mrp }, item.quantity));
+      window.location.href = 'cart.html';
+    }
+  } catch { alert('Could not reorder. Please try again.'); }
+}
+
+function showAddressModal() {
+  // Placeholder — full address management in v2
+  alert('Address management coming soon!');
+}
+
+document.getElementById('km-logout-btn').addEventListener('click', () => {
+  KMAuth.logout();
+  window.location.reload();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const user = KMAuth.getUser?.();
+  if (!user) {
+    document.getElementById('km-profile-login').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('km-profile-main').classList.remove('hidden');
+  document.getElementById('km-user-display-name').textContent = user.name || 'Friend';
+  document.getElementById('km-user-display-phone').textContent = user.phone || '';
+  document.getElementById('km-credits-display').textContent = `₹${user.credits || 0}`;
+
+  const lang = localStorage.getItem('km_lang') || 'en';
+  setLang(lang);
+  loadOrders();
+
+  // Cart count
+  const cnt = KMCart.count();
+  const badge = document.getElementById('km-cart-count');
+  if (cnt > 0) { badge.textContent = cnt; badge.classList.remove('hidden'); }
+});
+</script>
+</body>
+</html>

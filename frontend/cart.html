@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="description" content="Your cart — Koyamon Mart. Fresh hyperlocal delivery in Padikkal, Velimukku."/>
+  <title>Cart — Koyamon Mart</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "surface-container":"#edeeef","surface-dim":"#d9dadb","secondary-fixed":"#ffdbcb","on-primary-fixed":"#002113","surface":"#f8f9fa","on-primary-container":"#f5fff6","primary-container":"#00855b","surface-container-highest":"#e1e3e4","inverse-on-surface":"#f0f1f2","on-secondary-container":"#562000","primary":"#006947","outline":"#6d7a71","error-container":"#ffdad6","surface-bright":"#f8f9fa","secondary-container":"#fd6c00","primary-fixed":"#8bf8c3","outline-variant":"#bccabf","on-tertiary-container":"#fbfdff","on-primary":"#ffffff","on-error":"#ffffff","on-tertiary":"#ffffff","surface-tint":"#006c49","background":"#f8f9fa","surface-container-high":"#e7e8e9","on-tertiary-fixed":"#0e1d25","secondary-fixed-dim":"#ffb692","on-secondary-fixed":"#341100","surface-container-low":"#f3f4f5","on-primary-fixed-variant":"#005236","on-tertiary-fixed-variant":"#3a4951","surface-container-lowest":"#ffffff","inverse-primary":"#6fdba8","tertiary-fixed":"#d5e5ef","on-background":"#191c1d","tertiary":"#4f5e67","error":"#ba1a1a","surface-variant":"#e1e3e4","inverse-surface":"#2e3132","on-surface-variant":"#3d4a41","tertiary-container":"#677780","on-error-container":"#93000a","secondary":"#9f4200","on-secondary":"#ffffff","on-surface":"#191c1d","primary-fixed-dim":"#6fdba8","on-secondary-fixed-variant":"#7a3000","tertiary-fixed-dim":"#b9c9d3" }, borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"}, fontFamily:{"headline":["Plus Jakarta Sans"],"body":["Inter"],"label":["Inter"]} } } }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+
+<!-- TOP NAV WITH STEPS -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+  <div class="flex items-center justify-between px-6 py-4 max-w-screen-2xl mx-auto">
+    <a href="index.html" class="text-2xl font-black tracking-tight text-emerald-900 font-headline">Koyamon Mart</a>
+    <!-- Stepper -->
+    <div class="hidden lg:flex items-center gap-4">
+      <div class="flex items-center gap-2 text-emerald-700 font-bold border-b-2 border-emerald-600 pb-1">
+        <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs">1</span>
+        <span class="text-xs uppercase tracking-wider" data-en="Cart" data-ml="കാർട്ട്">Cart</span>
+      </div>
+      <div class="w-8 h-[2px] bg-surface-container-high"></div>
+      <div class="flex items-center gap-2 text-slate-400 pb-1">
+        <span class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-xs">2</span>
+        <span class="text-xs uppercase tracking-wider" data-en="Checkout" data-ml="ചെക്കൗട്ട്">Checkout</span>
+      </div>
+      <div class="w-8 h-[2px] bg-surface-container-high"></div>
+      <div class="flex items-center gap-2 text-slate-400 pb-1">
+        <span class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-xs">3</span>
+        <span class="text-xs uppercase tracking-wider" data-en="Payment" data-ml="പേയ്‌മെന്റ്">Payment</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <button id="km-lang-toggle" class="hidden lg:block text-emerald-700 border-b-2 border-emerald-600 font-semibold py-1 text-sm">മലയാളം</button>
+      <a href="cart.html" class="relative p-2">
+        <span class="material-symbols-outlined text-emerald-800">shopping_cart</span>
+        <span id="km-cart-count" class="absolute top-0 right-0 hidden bg-secondary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">0</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- EMPTY CART STATE -->
+<div id="km-cart-empty" class="hidden pt-32 text-center px-6 pb-20">
+  <span class="material-symbols-outlined text-7xl text-slate-200 block mb-6">shopping_cart</span>
+  <h2 class="text-2xl font-bold text-slate-400 mb-4 font-headline" data-en="Your cart is empty" data-ml="കാർട്ട് ശൂന്യമാണ്">Your cart is empty</h2>
+  <p class="text-slate-400 mb-8" data-en="Add items from our fresh collection" data-ml="ഞങ്ങളുടെ ഫ്രഷ് ശേഖരത്തിൽ നിന്ന് ഇനങ്ങൾ ചേർക്കൂ">Add items from our fresh collection</p>
+  <a href="index.html" class="bg-primary text-white px-10 py-4 rounded-xl font-bold inline-block font-headline hover:brightness-110 transition-all" data-en="Shop Now" data-ml="ഷോപ്പ് ചെയ്യൂ">Shop Now</a>
+</div>
+
+<!-- CART MAIN -->
+<main id="km-cart-main" class="hidden pt-24 pb-12 px-6 max-w-7xl mx-auto min-h-screen">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+    <!-- LEFT: Cart Items -->
+    <div class="lg:col-span-7 space-y-8">
+      <div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)] relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-tight">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">eco</span>
+            Hyperlocal Fresh
+          </span>
+        </div>
+        <h2 class="text-2xl font-bold text-emerald-900 mb-6 headline" data-en="Your Order" data-ml="നിങ്ങളുടെ ഓർഡർ">Your Order</h2>
+
+        <!-- Cart Items List -->
+        <div id="km-cart-items" class="space-y-6"></div>
+
+        <!-- Bill Breakdown -->
+        <div class="mt-10 pt-8 border-t border-surface-container space-y-4">
+          <div class="flex justify-between text-slate-600">
+            <span class="text-sm" data-en="Subtotal" data-ml="ഉപ-ആകെ">Subtotal</span>
+            <span class="font-medium" id="km-subtotal">₹0</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-slate-600" data-en="Delivery Charge" data-ml="ഡെലിവറി ചാർജ്">Delivery Charge</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="km-delivery-original" class="text-xs line-through text-slate-400 hidden"></span>
+              <span id="km-delivery-fee" class="text-sm font-bold text-slate-700">—</span>
+            </div>
+          </div>
+          <div id="km-delivery-banner" class="hidden bg-emerald-50 p-3 rounded-lg flex items-center gap-3">
+            <span class="material-symbols-outlined text-emerald-700" style="font-variation-settings: 'FILL' 1;">celebration</span>
+            <p id="km-delivery-banner-text" class="text-xs text-emerald-800 font-medium"></p>
+          </div>
+          <div class="flex justify-between pt-4 bg-surface-container-low p-4 rounded-xl">
+            <span class="text-lg font-bold text-emerald-900 headline" data-en="Total to Pay" data-ml="ആകെ">Total to Pay</span>
+            <span class="text-2xl font-black text-emerald-900 tracking-tight" id="km-total">₹0</span>
+          </div>
+        </div>
+
+        <!-- Proceed Button -->
+        <a href="checkout.html" id="km-proceed-btn" class="mt-8 block w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-4 rounded-xl font-bold text-center shadow-lg hover:brightness-110 transition-all font-headline" data-en="Proceed to Checkout" data-ml="ചെക്കൗട്ടിൽ തുടരൂ">
+          Proceed to Checkout
+        </a>
+        <button onclick="history.back()" class="mt-3 block w-full text-center text-primary font-semibold text-sm py-2" data-en="← Continue Shopping" data-ml="← ഷോപ്പിംഗ് തുടരൂ">← Continue Shopping</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Delivery Info & Offers -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- Delivery Zone Info -->
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+        <h3 class="text-lg font-bold text-emerald-900 mb-4 headline" data-en="Delivery Info" data-ml="ഡെലിവറി വിവരം">Delivery Info</h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl">
+            <span class="material-symbols-outlined text-emerald-700" style="font-variation-settings:'FILL' 1;">local_shipping</span>
+            <div>
+              <p class="text-sm font-bold text-emerald-900" data-en="First Order: FREE Delivery" data-ml="ആദ്യ ഓർഡർ: ഫ്രീ ഡെലിവറി">First Order: FREE Delivery</p>
+              <p class="text-xs text-slate-500" data-en="For all new customers" data-ml="എല്ലാ പുതിയ ഉപഭോക്താക്കൾക്കും">For all new customers</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl">
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+            <div>
+              <p class="text-sm font-bold" data-en="Free delivery above ₹500" data-ml="₹500-ന് മുകളിൽ ഫ്രീ ഡെലിവറി">Free delivery above ₹500</p>
+              <p class="text-xs text-slate-500" data-en="Distance-based fee below ₹500" data-ml="₹500-ന് താഴെ ദൂര ഫീ">Distance-based fee below ₹500</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl">
+            <span class="material-symbols-outlined text-secondary">schedule</span>
+            <div>
+              <p class="text-sm font-bold" data-en="Delivery Zone: 10KM radius" data-ml="ഡെലിവറി ഏരിയ: 10KM">Delivery Zone: 10KM radius</p>
+              <p class="text-xs text-slate-500" data-en="Padikkal, Velimukku, Malappuram" data-ml="പടിക്കൽ, വേലിമുക്ക്, മലപ്പുറം">Padikkal, Velimukku, Malappuram</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Methods Preview -->
+      <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
+        <h3 class="text-lg font-bold text-emerald-900 mb-4 headline" data-en="We Accept" data-ml="ഞങ്ങൾ സ്വീകരിക്കുന്നു">We Accept</h3>
+        <div class="flex flex-wrap gap-3">
+          <span class="flex items-center gap-2 px-3 py-2 bg-surface-container rounded-lg text-sm font-semibold">
+            <span class="material-symbols-outlined text-primary text-sm">payments</span> COD
+          </span>
+          <span class="flex items-center gap-2 px-3 py-2 bg-surface-container rounded-lg text-sm font-semibold">
+            <span class="material-symbols-outlined text-primary text-sm">account_balance_wallet</span> UPI
+          </span>
+          <span class="flex items-center gap-2 px-3 py-2 bg-surface-container rounded-lg text-sm font-semibold">
+            <span class="material-symbols-outlined text-primary text-sm">credit_card</span> Cards
+          </span>
+        </div>
+        <div class="mt-4 flex items-center gap-2 text-xs text-slate-400">
+          <span class="material-symbols-outlined text-sm">lock</span>
+          <span data-en="256-bit SSL encrypted. Your data is safe." data-ml="256-bit SSL എൻക്രിപ്ഷൻ. നിങ്ങളുടെ ഡേറ്റ സുരക്ഷിതം.">256-bit SSL encrypted. Your data is safe.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script>
+function renderCart() {
+  const items = KMCart.get();
+  const empty = document.getElementById('km-cart-empty');
+  const main  = document.getElementById('km-cart-main');
+
+  if (!items.length) {
+    empty.classList.remove('hidden');
+    main.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  main.classList.remove('hidden');
+
+  const lang = localStorage.getItem('km_lang') || 'en';
+  document.getElementById('km-cart-items').innerHTML = items.map(item => `
+    <div class="flex items-center gap-4 group" data-pid="${item.productId}" data-vl="${item.variantLabel}">
+      <div class="w-20 h-20 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          src="${item.image || 'assets/images/placeholder.png'}" alt="${item.productName}" loading="lazy"/>
+      </div>
+      <div class="flex-grow">
+        <h3 class="font-semibold text-emerald-900 font-headline">${item.productName}</h3>
+        <p class="text-xs text-slate-500 font-medium">${item.variantLabel} · ₹${item.variantPrice} each</p>
+        <div class="mt-2 flex items-center justify-between">
+          <div class="flex items-center gap-3 bg-surface-container-low px-2 py-1 rounded-lg">
+            <button onclick="KMCart.updateQty('${item.productId}','${item.variantLabel}',${item.quantity-1}); renderCart()" class="text-slate-400 hover:text-emerald-700">
+              <span class="material-symbols-outlined text-sm">remove</span>
+            </button>
+            <span class="font-bold text-sm">${item.quantity}</span>
+            <button onclick="KMCart.updateQty('${item.productId}','${item.variantLabel}',${item.quantity+1}); renderCart()" class="text-emerald-700 hover:text-emerald-900">
+              <span class="material-symbols-outlined text-sm">add</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-emerald-900">₹${item.variantPrice * item.quantity}</span>
+            <button onclick="KMCart.remove('${item.productId}','${item.variantLabel}'); renderCart()" class="p-1 text-slate-300 hover:text-red-400 transition-colors">
+              <span class="material-symbols-outlined text-sm">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const subtotal = KMCart.subtotal();
+  document.getElementById('km-subtotal').textContent = `₹${subtotal}`;
+
+  // Delivery fee display
+  const user = KMAuth?.getUser?.();
+  const isFirst = !user || user.orderCount === 0;
+  const feeEl   = document.getElementById('km-delivery-fee');
+  const origEl  = document.getElementById('km-delivery-original');
+  const bannerEl = document.getElementById('km-delivery-banner');
+  const bannerTxt = document.getElementById('km-delivery-banner-text');
+
+  if (isFirst) {
+    feeEl.textContent = 'FREE';
+    feeEl.className = 'text-sm font-bold text-emerald-600';
+    bannerEl.classList.remove('hidden');
+    bannerTxt.textContent = '🎉 First order — Free delivery!';
+    document.getElementById('km-total').textContent = `₹${subtotal}`;
+  } else if (subtotal >= 500) {
+    feeEl.textContent = 'FREE';
+    feeEl.className = 'text-sm font-bold text-emerald-600';
+    origEl.textContent = '₹40'; origEl.classList.remove('hidden');
+    bannerEl.classList.remove('hidden');
+    bannerTxt.textContent = `🎉 You saved ₹40 — Free delivery for orders over ₹500!`;
+    document.getElementById('km-total').textContent = `₹${subtotal}`;
+  } else {
+    const est = 15 + Math.round(5 * 8); // ~5km estimate
+    feeEl.textContent = `₹${est} (est.)`;
+    feeEl.className = 'text-sm font-bold text-slate-700';
+    bannerEl.classList.add('hidden');
+    const needed = 500 - subtotal;
+    document.getElementById('km-total').textContent = `₹${subtotal + est}`;
+    // Show "add ₹X more for free delivery" hint
+    bannerEl.classList.remove('hidden');
+    bannerTxt.textContent = `Add ₹${needed} more to your cart for FREE delivery!`;
+    bannerEl.querySelector('.material-symbols-outlined').textContent = 'info';
+    bannerEl.classList.remove('bg-emerald-50');
+    bannerEl.classList.add('bg-amber-50');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderCart);
+window.addEventListener('km:cart-updated', renderCart);
+</script>
+</body>
+</html>
