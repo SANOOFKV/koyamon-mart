@@ -346,7 +346,7 @@ function addVariant(data = { label:'', price:'', originalPrice:'', stock:'' }) {
     <div id="var-${id}" class="flex items-center gap-3 bg-surface-container-low p-3 rounded-xl variant-row">
       <input type="text" placeholder="Label (e.g. 500g)" required value="${data.label}" class="var-label w-1/3 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
       <input type="number" step="0.5" placeholder="Price (₹)" required value="${data.price}" class="var-price w-1/4 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
-      <input type="number" step="0.5" placeholder="Orig Price" value="${data.originalPrice||''}" class="var-orig w-1/4 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
+      <input type="number" step="0.5" placeholder="Orig Price" value="${data.mrp||''}" class="var-orig w-1/4 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
       <input type="number" placeholder="Stock" required value="${data.stock}" class="var-stock w-1/4 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40"/>
       <button type="button" onclick="document.getElementById('var-${id}').remove()" class="text-slate-400 hover:text-red-500 px-2"><span class="material-symbols-outlined text-sm">close</span></button>
     </div>
@@ -383,7 +383,7 @@ document.getElementById('prod-form').addEventListener('submit', async (e) => {
     variants.push({
       label: row.querySelector('.var-label').value,
       price: Number(row.querySelector('.var-price').value),
-      originalPrice: Number(row.querySelector('.var-orig').value) || Number(row.querySelector('.var-price').value),
+      mrp: Number(row.querySelector('.var-orig').value) || Number(row.querySelector('.var-price').value),
       stock: Number(row.querySelector('.var-stock').value)
     });
   });
@@ -405,13 +405,19 @@ document.getElementById('prod-form').addEventListener('submit', async (e) => {
   btn.disabled = true; btn.textContent = 'Saving...';
 
   try {
-    if (id) await api.admin.products.update(id, body);
-    else await api.admin.products.create(body);
-    showToast('Product saved', 'success');
-    toggleView('list');
-    loadProducts();
+    let res;
+    if (id) res = await api.admin.products.update(id, body);
+    else res = await api.admin.products.create(body);
+    
+    if (res.success) {
+      showToast('Product saved', 'success');
+      toggleView('list');
+      loadProducts();
+    } else {
+      showToast(res.message || 'Error saving product', 'error');
+    }
   } catch(err) {
-    showToast('Error saving product', 'error');
+    showToast('Network error saving product', 'error');
   } finally {
     btn.disabled = false; btn.textContent = 'Save Product';
   }
