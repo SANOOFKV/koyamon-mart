@@ -48,6 +48,7 @@ const orderSchema = new mongoose.Schema({
     razorpayPaymentId: String,
     paidAt:         Date,
   },
+  deliveryBoy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
   // ── Status ────────────────────────────────────────────────────────────────
   status: {

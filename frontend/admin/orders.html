@@ -144,6 +144,20 @@
         <span class="material-symbols-outlined text-sm">save</span> Update
       </button>
     </div>
+    
+    <!-- Rider Assignment -->
+    <div class="bg-blue-50/50 p-4 rounded-xl mb-6 flex items-end gap-4 border border-blue-100/50">
+      <div class="flex-1">
+        <label class="block text-[10px] font-bold text-blue-800 uppercase tracking-widest mb-2">Assign Delivery Partner</label>
+        <select id="om-assign-rider" class="w-full bg-white border-none rounded-lg px-4 py-2 text-sm font-semibold focus:ring-2 focus:ring-blue-500/40 shadow-sm">
+          <option value="">— Unassigned —</option>
+        </select>
+      </div>
+      <button onclick="assignRider()" id="om-assign-btn" class="bg-blue-600 text-white font-bold text-sm px-6 py-2 rounded-lg hover:bg-blue-700 transition-all shadow-sm">
+        Confirm Assignment
+      </button>
+    </div>
+
 
     <div class="grid grid-cols-2 gap-6 mb-6">
       <div class="space-y-3">
@@ -322,6 +336,9 @@ async function openModal(id) {
       </div>
     `).join('');
 
+    // Load riders and set current
+    loadRidersList(order.deliveryBoy?._id || order.deliveryBoy);
+
     document.getElementById('ord-modal').classList.remove('hidden');
   } catch(e) {
     showToast('Failed to get order details', 'error');
@@ -349,6 +366,27 @@ async function updateOrderStatus() {
   } finally {
     btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-sm">save</span> Update';
   }
+}
+
+async function assignRider() {
+  if (!modalOrderId) return;
+  const riderId = document.getElementById('om-assign-rider').value;
+  const btn = document.getElementById('om-assign-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    await api.admin.orders.assign(modalOrderId, riderId);
+    showToast('Rider assigned successfully', 'success');
+  } catch(e) { showToast('Assignment failed', 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Confirm Assignment'; }
+}
+
+async function loadRidersList(currentRiderId) {
+  const select = document.getElementById('om-assign-rider');
+  try {
+    const data = await api.admin.staff.listDeliveryBoys();
+    select.innerHTML = '<option value="">— Unassigned —</option>' + 
+      (data.users||[]).map(u => `<option value="${u._id}" ${u._id===currentRiderId?'selected':''}>${u.name || 'Staff'} (${u.phone})</option>`).join('');
+  } catch(e) { console.error('Failed to load riders'); }
 }
 
 document.getElementById('ord-status-filter').addEventListener('change', () => { currentPage=1; loadOrders(); });

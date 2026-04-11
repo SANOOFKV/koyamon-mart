@@ -107,10 +107,24 @@ const api = {
       list: (params) => { const qs = new URLSearchParams(params).toString(); return api.get(`/admin/orders?${qs}`); },
       byId: (id) => api.get(`/admin/orders/${id}`),
       updateStatus: (id, status, note) => api.patch(`/admin/orders/${id}/status`, { status, note }),
+      assign: (id, deliveryBoyId) => api.patch(`/admin/orders/${id}/assign`, { deliveryBoyId }),
+    },
+    staff: {
+      listUsers: (params) => { const qs = new URLSearchParams(params).toString(); return api.get(`/admin/users?${qs}`); },
+      updateRole: (userId, role) => api.patch(`/admin/users/${userId}/role`, { role }),
+      listDeliveryBoys: () => api.get('/admin/delivery-boys'),
     },
     notifications: {
       list: () => api.get('/admin/notifications'),
       create: (body) => api.post('/admin/notifications', body),
     },
   },
+
+  delivery: {
+    orders: {
+      my: () => api.get('/delivery/orders/my'),
+      pickup: (id) => api.patch(`/delivery/orders/${id}/pickup`),
+      deliver: (id) => api.patch(`/delivery/orders/${id}/deliver`),
+    }
+  }
 };

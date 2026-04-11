@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Rider Dashboard — Koyamon Mart</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: { "primary": "#006947", "secondary": "#fd6c00", "surface": "#f8f9fa" },
+          fontFamily: { "headline": ["Plus Jakarta Sans"], "body": ["Inter"] }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .status-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-20">
+
+  <!-- ── Login View ────────────────────────────────────────────────────────── -->
+  <div id="rider-auth-screen" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center p-8 hidden">
+    <div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white mb-6">
+      <span class="material-symbols-outlined text-3xl">delivery_dining</span>
+    </div>
+    <h1 class="text-2xl font-black font-headline text-center mb-2">Rider Portal</h1>
+    <p class="text-slate-500 text-sm text-center mb-8">Login with your registered phone number</p>
+    
+    <div class="w-full max-w-xs space-y-4">
+      <div id="phone-box">
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Phone Number</label>
+        <div class="flex items-center bg-slate-100 rounded-xl px-4 py-3 gap-2">
+          <span class="text-slate-400 font-bold">+91</span>
+          <input id="r-phone" type="tel" placeholder="9876543210" class="bg-transparent border-none p-0 w-full focus:ring-0 font-bold text-lg"/>
+        </div>
+        <button onclick="sendOTP()" id="r-send-btn" class="w-full bg-primary text-white py-4 rounded-xl font-bold mt-4 shadow-lg active:scale-95 transition-transform">Send OTP</button>
+      </div>
+
+      <div id="otp-box" class="hidden">
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Enter 6-Digit OTP</label>
+        <input id="r-otp" type="number" placeholder="000000" class="w-full bg-slate-100 border-none rounded-xl px-4 py-4 text-center text-2xl font-black tracking-[0.5em] focus:ring-2 focus:ring-primary/40"/>
+        <button onclick="verifyOTP()" id="r-verify-btn" class="w-full bg-secondary text-white py-4 rounded-xl font-bold mt-4 shadow-lg active:scale-95 transition-transform">Verify & Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Dashboard ────────────────────────────────────────────────────── -->
+  <header class="bg-white px-6 py-6 sticky top-0 z-40 border-b border-slate-100 flex justify-between items-center">
+    <div>
+      <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Hello, Partner</h2>
+      <h1 class="text-xl font-black font-headline flex items-center gap-2">
+        <span id="rider-name">Rider</span>
+        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+      </h1>
+    </div>
+    <button onclick="logout()" class="p-2 text-slate-300 hover:text-red-500"><span class="material-symbols-outlined">logout</span></button>
+  </header>
+
+  <main class="p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-bold text-lg">My Orders</h3>
+      <button onclick="loadMyOrders()" class="text-primary"><span class="material-symbols-outlined">refresh</span></button>
+    </div>
+
+    <div id="order-list" class="space-y-6">
+      <!-- Skeleton -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-pulse space-y-3">
+        <div class="h-4 bg-slate-100 rounded w-1/3"></div>
+        <div class="h-4 bg-slate-100 rounded w-full"></div>
+        <div class="h-12 bg-slate-200 rounded-xl mt-4"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script>
+    let phoneNum = '';
+
+    const checkAuth = () => {
+      const user = JSON.parse(localStorage.getItem('km_user') || '{}');
+      const token = localStorage.getItem('km_token');
+      if (!token || user.role !== 'delivery') {
+        document.getElementById('rider-auth-screen').classList.remove('hidden');
+        return false;
+      }
+      document.getElementById('rider-name').textContent = user.name || 'Rider';
+      return true;
+    };
+
+    async function sendOTP() {
+      const p = document.getElementById('r-phone').value.trim();
+      if (!/^\d{10}$/.test(p)) return alert('Valid 10-digit number required');
+      phoneNum = p;
+      try {
+        await api.auth.sendOTP(p);
+        document.getElementById('phone-box').classList.add('hidden');
+        document.getElementById('otp-box').classList.remove('hidden');
+      } catch(e) { alert('Failed to send OTP'); }
+    }
+
+    async function verifyOTP() {
+      const otp = document.getElementById('r-otp').value.trim();
+      try {
+        const res = await api.auth.verifyOTP(phoneNum, otp);
+        if (res.user.role !== 'delivery' && res.user.role !== 'admin') {
+          return alert('Not authorized as delivery partner');
+        }
+        localStorage.setItem('km_token', res.token);
+        localStorage.setItem('km_user', JSON.stringify(res.user));
+        location.reload();
+      } catch(e) { alert('Invalid OTP'); }
+    }
+
+    function logout() {
+      localStorage.removeItem('km_token');
+      localStorage.removeItem('km_user');
+      location.reload();
+    }
+
+    async function loadMyOrders() {
+      if (!checkAuth()) return;
+      const list = document.getElementById('order-list');
+      try {
+        const data = await api.delivery.orders.my();
+        if (!data.orders?.length) {
+          list.innerHTML = `<div class="text-center py-20"><span class="material-symbols-outlined text-5xl text-slate-200 mb-2">bedtime</span><p class="text-slate-400 font-medium">No active tasks</p></div>`;
+          return;
+        }
+
+        list.innerHTML = data.orders.map(o => `
+          <div class="bg-white p-6 rounded-3xl shadow-[0_12px_40px_rgba(0,0,0,0.04)] border border-slate-100 status-card">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <p class="text-primary font-black text-sm">#${o.orderId}</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">${new Date(o.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</p>
+              </div>
+              <span class="px-2 py-1 rounded-lg text-[10px] font-black uppercase ${o.status==='packed'?'bg-blue-100 text-blue-800':'bg-amber-100 text-amber-800'}">${o.status.replace(/_/g,' ')}</span>
+            </div>
+
+            <div class="mb-6 space-y-3">
+              <div class="flex gap-3 items-start">
+                <span class="material-symbols-outlined text-slate-300">location_on</span>
+                <div>
+                  <p class="text-sm font-bold leading-tight">${o.deliveryAddress.line1}</p>
+                  <p class="text-xs text-slate-500 mt-1">${o.deliveryAddress.landmark || ''} • ${o.deliveryAddress.pincode}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-slate-300">phone</span>
+                <p class="text-sm font-bold">${o.user?.phone || o.guestInfo?.phone || 'Guest'}</p>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <a href="tel:${o.user?.phone || o.guestInfo?.phone}" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold text-center text-sm">Call</a>
+              ${o.status === 'packed' 
+                ? `<button onclick="updateStatus('${o._id}', 'pickup')" class="flex-[3] bg-primary text-white py-3 rounded-xl font-bold shadow-lg shadow-emerald-900/10">Start Delivery Trip</button>`
+                : `<button onclick="updateStatus('${o._id}', 'deliver')" class="flex-[3] bg-secondary text-white py-3 rounded-xl font-bold shadow-lg shadow-amber-500/10">Mark as Delivered</button>`
+              }
+            </div>
+          </div>
+        `).join('');
+      } catch(e) { console.error('Load failed', e); }
+    }
+
+    async function updateStatus(id, type) {
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Processing...';
+      try {
+        if (type === 'pickup') await api.delivery.orders.pickup(id);
+        else await api.delivery.orders.deliver(id);
+        loadMyOrders();
+      } catch(e) { alert('Update failed'); }
+      finally { btn.disabled = false; btn.textContent = originalText; }
+    }
+
+    // Initialize
+    if (checkAuth()) loadMyOrders();
+  </script>
+</body>
+</html>

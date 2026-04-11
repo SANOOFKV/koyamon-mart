@@ -1,26 +1,66 @@
 const router = require('express').Router();
-const { calculateDeliveryFee, haversineKm, MAX_KM, FREE_DELIVERY_ABOVE } = require('../utils/delivery');
+const Order = require('../models/Order');
+const { requireDelivery } = require('../middleware/deliveryGuard');
 
-const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.0825;
-const STORE_LNG = parseFloat(process.env.STORE_LNG) || 75.9083;
+// All routes require delivery (or admin) role
+router.use(requireDelivery);
 
-// ── POST /api/delivery/fee ─────────────────────────────────────────────────────
-// Used by frontend cart page to show real-time delivery fee
-router.post('/fee', (req, res) => {
+/**
+ * GET /api/delivery/orders/my
+ * Returns orders assigned to the logged-in driver that are not yet delivered
+ */
+router.get('/orders/my', async (req, res) => {
   try {
-    const { lat, lng, subtotal, isFirstOrder } = req.body;
-    if (!lat || !lng) {
-      return res.status(400).json({ success: false, message: 'Location coordinates required' });
-    }
-    const distanceKm = haversineKm(STORE_LAT, STORE_LNG, parseFloat(lat), parseFloat(lng));
-    const result     = calculateDeliveryFee(Number(subtotal), distanceKm, !!isFirstOrder);
-    res.json({
-      success: true,
-      ...result,
-      distanceKm:          Math.round(distanceKm * 10) / 10,
-      maxDeliveryKm:       MAX_KM,
-      freeDeliveryAbove:   FREE_DELIVERY_ABOVE,
-    });
+    const orders = await Order.find({
+      deliveryBoy: req.user.userId,
+      status: { $in: ['packed', 'out_for_delivery'] }
+    }).sort({ updatedAt: -1 });
+
+    res.json({ success: true, orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+/**
+ * PATCH /api/delivery/orders/:id/pickup
+ * Marks an order as out for delivery
+ */
+router.patch('/orders/:id/pickup', async (req, res) => {
+  try {
+    const order = await Order.findOneAndUpdate(
+      { _id: req.params.id, deliveryBoy: req.user.userId, status: 'packed' },
+      {
+        status: 'out_for_delivery',
+        $push: { statusHistory: { status: 'out_for_delivery', note: 'Driver started delivery trip', updatedAt: new Date() } }
+      },
+      { new: true }
+    );
+
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found or not eligible for pickup' });
+    res.json({ success: true, order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+/**
+ * PATCH /api/delivery/orders/:id/deliver
+ * Marks an order as delivered
+ */
+router.patch('/orders/:id/deliver', async (req, res) => {
+  try {
+    const order = await Order.findOneAndUpdate(
+      { _id: req.params.id, deliveryBoy: req.user.userId, status: 'out_for_delivery' },
+      {
+        status: 'delivered',
+        $push: { statusHistory: { status: 'delivered', note: 'Delivered by rider', updatedAt: new Date() } }
+      },
+      { new: true }
+    );
+
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found or not currently out for delivery' });
+    res.json({ success: true, order });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

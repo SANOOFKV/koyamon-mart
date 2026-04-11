@@ -193,6 +193,61 @@ router.patch('/orders/:id/status', async (req, res) => {
   }
 });
 
+// ── Assign order to Delivery Boy ──────────────────────────────────────────────
+router.patch('/orders/:id/assign', async (req, res) => {
+  try {
+    const { deliveryBoyId } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { deliveryBoy: deliveryBoyId },
+      { new: true }
+    );
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+    res.json({ success: true, order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+//  STAFF & USERS
+// ════════════════════════════════════════════════════════════
+router.get('/users', async (req, res) => {
+  try {
+    const { role, search } = req.query;
+    const filter = {};
+    if (role) filter.role = role;
+    if (search) filter.phone = { $regex: search, $options: 'i' };
+    const users = await User.find(filter).sort({ createdAt: -1 });
+    res.json({ success: true, users });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+router.patch('/users/:id/role', async (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!['user', 'delivery', 'admin'].includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role' });
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, { role }, { new: true });
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+router.get('/delivery-boys', async (req, res) => {
+  try {
+    const users = await User.find({ role: 'delivery' }).select('name phone _id');
+    res.json({ success: true, users });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+
 // ════════════════════════════════════════════════════════════
 //  NOTIFICATIONS
 // ════════════════════════════════════════════════════════════

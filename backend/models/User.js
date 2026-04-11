@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
     isDefault: { type: Boolean, default: false },
   }],
   orderCount:  { type: Number, default: 0 },
+  role:        { type: String, enum: ['user', 'delivery', 'admin'], default: 'user' },
   isActive:    { type: Boolean, default: true },
 }, { timestamps: true });
 
