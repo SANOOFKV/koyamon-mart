@@ -116,6 +116,25 @@ router.patch('/products/:id/stock', async (req, res) => {
 // ════════════════════════════════════════════════════════════
 //  CATEGORIES
 // ════════════════════════════════════════════════════════════
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Category.find().sort({ sortOrder: 1 });
+    // Get product counts for each category
+    const counts = await Product.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 } } }
+    ]);
+    
+    const catsWithCounts = categories.map(c => {
+      const cnt = counts.find(x => x._id?.toString() === c._id.toString())?.count || 0;
+      return { ...c.toObject(), productCount: cnt };
+    });
+
+    res.json({ success: true, categories: catsWithCounts });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 router.post('/categories', async (req, res) => {
   try {
     const cat = await Category.create(req.body);
@@ -137,11 +156,25 @@ router.put('/categories/:id', async (req, res) => {
 router.delete('/categories/:id', async (req, res) => {
   try {
     await Category.findByIdAndUpdate(req.params.id, { isActive: false });
-    res.json({ success: true, message: 'Category deactivated' });
+    res.json({ success: true, message: 'Category hidden' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 });
+
+router.delete('/categories/:id/permanent', async (req, res) => {
+  try {
+    const productCount = await Product.countDocuments({ category: req.params.id });
+    if (productCount > 0) {
+      return res.status(400).json({ success: false, message: `Cannot delete: ${productCount} products are still in this category.` });
+    }
+    await Category.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Category permanently deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 
 // ════════════════════════════════════════════════════════════
 //  ORDERS

@@ -99,10 +99,13 @@ const api = {
       updateStock: (id, variantLabel, stock) => api.patch(`/admin/products/${id}/stock`, { variantLabel, stock }),
     },
     categories: {
+      list: () => api.get('/admin/categories'),
       create: (body) => api.post('/admin/categories', body),
       update: (id, body) => api.put(`/admin/categories/${id}`, body),
       delete: (id) => api.delete(`/admin/categories/${id}`),
+      deletePermanent: (id) => api.delete(`/admin/categories/${id}/permanent`),
     },
+
     orders: {
       list: (params) => { const qs = new URLSearchParams(params).toString(); return api.get(`/admin/orders?${qs}`); },
       byId: (id) => api.get(`/admin/orders/${id}`),
