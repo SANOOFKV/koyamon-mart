@@ -62,7 +62,17 @@ const KMAuth = {
 
   init() {
     this._updateUI();
+
+    // Login button
+    const loginBtn = document.getElementById('km-login-btn');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        window.location.href = 'login.html';
+      });
+    }
+
     // Logout button
+
     document.getElementById('km-logout-btn')?.addEventListener('click', () => {
       this.logout();
       window.location.href = '/index.html';
