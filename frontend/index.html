@@ -79,9 +79,9 @@
 
 <!-- ══ TOP NAVIGATION ══════════════════════════════════════════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0_12px_40px_rgba(25,28,29,0.06)]">
-  <nav class="flex items-center justify-between px-6 py-4 max-w-screen-2xl mx-auto">
-    <div class="flex items-center gap-8">
-      <a href="index.html" class="text-2xl font-black tracking-tight text-emerald-900 dark:text-emerald-100 font-headline">Koyamon Mart</a>
+  <nav class="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 max-w-screen-2xl mx-auto gap-2 md:gap-4">
+    <div class="flex items-center gap-4 md:gap-8">
+      <a href="index.html" class="text-xl md:text-2xl font-black tracking-tight text-emerald-900 dark:text-emerald-100 font-headline truncate">Koyamon</a>
       <div class="hidden md:flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-xl text-emerald-800 dark:text-emerald-400 font-headline font-semibold cursor-pointer hover:bg-surface-container-high transition-colors">
         <span class="material-symbols-outlined">location_on</span>
         <span data-en="Padikkal, Velimukku" data-ml="പടിക്കൽ, വേലിമുക്ക്">Padikkal, Velimukku</span>
@@ -100,17 +100,12 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="flex-1 max-w-xl mx-8 relative hidden md:block">
-      <input id="km-search-input" class="w-full h-12 bg-surface-container-highest border-none rounded-xl px-12 focus:ring-2 focus:ring-primary/40 transition-all font-body"
-        placeholder="Search for fresh fruits, groceries..." type="text"
-        data-en="Search for fresh fruits, groceries..." data-ml="പഴങ്ങൾ, പലചരക്ക് തിരയുക..."/>
-      <span class="material-symbols-outlined absolute left-4 top-3 text-outline">search</span>
-      <div id="km-search-suggestions" class="hidden absolute top-14 left-0 w-full bg-white rounded-xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto"></div>
-    </div>
-
-    <!-- Mobile Search Toggle (Optional icon) -->
-    <div class="md:hidden flex items-center gap-2">
-       <button id="km-mobile-search-toggle" class="p-2 text-emerald-800"><span class="material-symbols-outlined">search</span></button>
+    <div class="flex-1 max-w-xl mx-2 md:mx-8 relative block">
+      <input id="km-search-input" class="w-full h-10 md:h-12 bg-surface-container-highest border-none rounded-xl px-10 md:px-12 focus:ring-2 focus:ring-primary/40 transition-all font-body text-sm"
+        placeholder="Search groceries..." type="text"
+        data-en="Search groceries..." data-ml="പഴങ്ങൾ, പലചരക്ക് തിരയുക..."/>
+      <span class="material-symbols-outlined absolute left-3 md:left-4 top-2.5 md:top-3 text-outline text-[20px] md:text-[24px]">search</span>
+      <div id="km-search-suggestions" class="hidden absolute top-12 md:top-14 left-0 w-full bg-white rounded-xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto"></div>
     </div>
 
 
@@ -182,7 +177,7 @@
 </aside>
 
 <!-- ══ MAIN CONTENT ════════════════════════════════════════════════════════ -->
-<main class="xl:pl-72 pt-24 min-h-screen">
+<main class="xl:pl-72 pt-20 md:pt-24 pb-32 min-h-screen">
 
   <!-- Mobile Only Category Scroller -->
   <section class="xl:hidden px-6 pt-4">
@@ -191,15 +186,7 @@
     </div>
   </section>
 
-  <!-- Mobile Only Search Bar -->
-  <section class="md:hidden px-6 py-4">
-    <div class="relative">
-      <input id="km-search-input-mobile" class="w-full h-12 bg-surface-container-low border-2 border-emerald-50 rounded-2xl px-12 focus:ring-2 focus:ring-primary/30 transition-all font-body text-sm"
-        placeholder="Search 'fresh milk'..." type="text"
-        data-en="Search 'fresh milk'..." data-ml="പലചരക്ക് തിരയുക..."/>
-      <span class="material-symbols-outlined absolute left-4 top-3.5 text-outline text-[20px]">search</span>
-    </div>
-  </section>
+  <!-- Mobile Search Bar removed as it's now in header -->
 
   <!-- Hero Section -->
   <section class="p-4 md:p-6">
@@ -209,13 +196,13 @@
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWRgl-z4UuMJzqfbLcxV_OUQthAH4cmZZxpn8NrH6b9B6oDNrDGR-i0xHgLnNgsiQLKq_iYxIVP974j11LLcFFRPEQyltxRk2uhVGG7MJfXM4_HHNfsRORKzSnGH6y3uXGT-2TUmnT1cO5h94zmv7K1fmOJPTlry7SSVxYT64d3y-sPNAl18euzpiBhFNtTSJBd_iCFMZGNzeg2oj8rdQtkyK3bHCdzjhwfJv207EOvwmzGOJYFLGJJ2LjWEDJsW8uvavy6QJIDbBk"/>
       <div class="absolute inset-0 bg-gradient-to-r from-emerald-950/80 to-transparent flex flex-col justify-center px-12">
         <span class="bg-secondary text-white px-4 py-1 rounded-full text-xs font-bold w-fit mb-4" data-en="LIMITED OFFER" data-ml="പ്രത്യേക ഓഫർ">LIMITED OFFER</span>
-        <h1 class="text-white font-headline text-3xl md:text-6xl font-extrabold max-w-lg leading-tight mb-4" data-en="First Order Free Delivery" data-ml="ആദ്യ ഓർഡർ ഡെലിവറി ഫ്രീ">First Order Free Delivery</h1>
-        <p class="text-white/90 font-body text-base md:text-xl mb-8" data-en="Plus get ₹100 cashback on your first grocery haul." data-ml="ആദ്യ ഓർഡറിൽ ₹100 ക്യാഷ്ബാക്ക് നേടൂ.">Plus get ₹100 cashback on your first grocery haul.</p>
-        <div class="flex gap-4">
-          <a href="category.html" class="bg-white text-primary px-8 py-4 rounded-xl font-headline font-bold hover:bg-primary-fixed transition-colors" data-en="Shop Now" data-ml="ഇപ്പോൾ വാങ്ങൂ">Shop Now</a>
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 px-6 py-4 rounded-xl text-white">
-            <p class="text-xs uppercase opacity-80" data-en="Delivery Zone" data-ml="ഡെലിവറി ഏരിയ">Delivery Zone</p>
-            <p class="font-bold" data-en="Within 10KM" data-ml="10KM പരിധിയിൽ">Within 10KM</p>
+        <h1 class="text-white font-headline text-2xl md:text-6xl font-extrabold max-w-lg leading-tight mb-2 md:mb-4" data-en="First Order Free Delivery" data-ml="ആദ്യ ഓർഡർ ഡെലിവറി ഫ്രീ">First Order Free Delivery</h1>
+        <p class="text-white/90 font-body text-sm md:text-xl mb-4 md:mb-8" data-en="Plus get ₹100 cashback on your first grocery haul." data-ml="ആദ്യ ഓർഡറിൽ ₹100 ക്യാഷ്ബാക്ക് നേടൂ.">Plus get ₹100 cashback on your first grocery haul.</p>
+        <div class="flex flex-wrap gap-2 md:gap-4">
+          <a href="category.html" class="bg-white text-primary px-6 py-3 md:px-8 md:py-4 rounded-xl font-headline font-bold hover:bg-primary-fixed transition-colors text-sm md:text-base flex items-center" data-en="Shop Now" data-ml="ഇപ്പോൾ വാങ്ങൂ">Shop Now</a>
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-3 md:px-6 md:py-4 rounded-xl text-white">
+            <p class="text-[10px] md:text-xs uppercase opacity-80" data-en="Delivery Zone" data-ml="ഡെലിവറി ഏരിയ">Delivery Zone</p>
+            <p class="font-bold text-sm md:text-base" data-en="Within 10KM" data-ml="10KM പരിധിയിൽ">Within 10KM</p>
           </div>
         </div>
       </div>
@@ -321,17 +308,17 @@
 
   <!-- Free Delivery Banner -->
   <section class="p-6">
-    <div class="bg-primary text-white p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
+    <div class="bg-primary text-white p-6 md:p-8 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 overflow-hidden relative">
       <div class="relative z-10">
-        <h2 class="font-headline text-3xl font-extrabold mb-2" data-en="Free Delivery over ₹500" data-ml="₹500-ന് മുകളിൽ ഫ്രീ ഡെലിവറി">Free Delivery over ₹500</h2>
-        <p class="text-primary-fixed font-body" data-en="Stock up your kitchen and save more on every order." data-ml="കൂടുതൽ ഓർഡർ, കൂടുതൽ ലാഭം.">Stock up your kitchen and save more on every order.</p>
+        <h2 class="font-headline text-2xl md:text-3xl font-extrabold mb-2" data-en="Free Delivery over ₹500" data-ml="₹500-ന് മുകളിൽ ഫ്രീ ഡെലിവറി">Free Delivery over ₹500</h2>
+        <p class="text-primary-fixed font-body text-sm md:text-base" data-en="Stock up your kitchen and save more on every order." data-ml="കൂടുതൽ ഓർഡർ, കൂടുതൽ ലാഭം.">Stock up your kitchen and save more on every order.</p>
       </div>
-      <div class="flex gap-4 relative z-10">
-        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/20">
-          <p class="text-sm opacity-80" data-en="Save average" data-ml="ഓരോ ഓർഡറിലും ലാഭിക്കൂ">Save average</p>
-          <p class="text-2xl font-bold">₹40 / order</p>
+      <div class="flex flex-wrap gap-4 relative z-10 w-full md:w-auto">
+        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/20 flex-1 md:flex-none">
+          <p class="text-xs md:text-sm opacity-80" data-en="Save average" data-ml="ഓരോ ഓർഡറിലും ലാഭിക്കൂ">Save average</p>
+          <p class="text-xl md:text-2xl font-bold">₹40 / order</p>
         </div>
-        <a href="category.html" class="bg-secondary text-white px-8 py-4 rounded-xl font-headline font-bold shadow-lg hover:scale-105 transition-transform flex items-center" data-en="Shop Now" data-ml="ഇപ്പോൾ ഷോപ്പ് ചെയ്യൂ">Shop Now</a>
+        <a href="category.html" class="bg-secondary text-white px-6 py-4 md:px-8 md:py-4 rounded-xl font-headline font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center flex-1 md:flex-none" data-en="Shop Now" data-ml="ഇപ്പോൾ ഷോപ്പ് ചെയ്യൂ">Shop Now</a>
       </div>
       <div class="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
     </div>

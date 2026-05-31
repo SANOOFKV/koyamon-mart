@@ -70,8 +70,18 @@ orderSchema.pre('save', async function (next) {
   if (!this.orderId) {
     const date = new Date();
     const ymd = `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}`;
-    const count = await mongoose.model('Order').countDocuments();
-    this.orderId = `KM-${ymd}-${String(count + 1).padStart(4, '0')}`;
+    
+    // Ensure Counter is registered
+    require('./Counter');
+    const Counter = mongoose.model('Counter');
+    
+    const counter = await Counter.findByIdAndUpdate(
+      { _id: `orderId_${ymd}` }, // Reset sequence daily
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
+    );
+    
+    this.orderId = `KM-${ymd}-${String(counter.seq).padStart(4, '0')}`;
   }
   next();
 });

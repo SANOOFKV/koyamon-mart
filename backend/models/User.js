@@ -4,6 +4,8 @@ const userSchema = new mongoose.Schema({
   name:       { type: String, trim: true, default: '' },
   phone:      { type: String, required: true, unique: true, trim: true },
   email:      { type: String, trim: true, lowercase: true, default: '' },
+  password:   { type: String, default: null },
+  refreshTokens: [{ type: String }],
   addresses:  [{
     label:    { type: String, default: 'Home' },   // Home / Work / Other
     line1:    String,

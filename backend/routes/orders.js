@@ -20,29 +20,61 @@ router.post('/', optionalAuth, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Delivery address is required' });
     }
 
-    // Calculate subtotal from DB prices (never trust client)
+    // Calculate subtotal and atomically deduct stock
     let subtotal = 0;
     const resolvedItems = [];
+    
+    // Track successful deductions for manual rollback
+    const deductedStocks = [];
+    
+    const rollbackStock = async (stocks) => {
+      for (const st of stocks) {
+        await Product.updateOne(
+          { _id: st.productId, 'variants.label': st.variantLabel },
+          { $inc: { 'variants.$.stock': st.quantity } }
+        );
+      }
+    };
+
     for (const item of items) {
-      const product = await Product.findById(item.productId);
-      if (!product || !product.isActive) {
+      const productInfo = await Product.findById(item.productId).select('name isActive variants');
+      if (!productInfo || !productInfo.isActive) {
+        await rollbackStock(deductedStocks);
         return res.status(400).json({ success: false, message: `Product not available: ${item.productId}` });
       }
-      const variant = product.variants.find(v => v.label === item.variantLabel);
-      if (!variant) {
+      
+      const variantInfo = productInfo.variants.find(v => v.label === item.variantLabel);
+      if (!variantInfo) {
+        await rollbackStock(deductedStocks);
         return res.status(400).json({ success: false, message: `Variant not found: ${item.variantLabel}` });
       }
-      if (variant.stock < item.quantity) {
-        return res.status(400).json({ success: false, message: `Insufficient stock for ${product.name.en}` });
+      
+      // Attempt atomic deduction
+      const updatedProduct = await Product.findOneAndUpdate(
+        { 
+          _id: item.productId, 
+          'variants.label': item.variantLabel,
+          'variants.stock': { $gte: item.quantity } 
+        },
+        { $inc: { 'variants.$.stock': -item.quantity } },
+        { new: true }
+      );
+
+      if (!updatedProduct) {
+        await rollbackStock(deductedStocks);
+        return res.status(400).json({ success: false, message: `Insufficient stock for ${productInfo.name.en}` });
       }
-      const lineTotal = variant.price * item.quantity;
+
+      deductedStocks.push({ productId: item.productId, variantLabel: item.variantLabel, quantity: item.quantity });
+
+      const lineTotal = variantInfo.price * item.quantity;
       subtotal += lineTotal;
       resolvedItems.push({
-        product:     product._id,
-        productName: product.name.en,
-        variant:     { label: variant.label, price: variant.price },
+        product:     productInfo._id,
+        productName: productInfo.name.en,
+        variant:     { label: variantInfo.label, price: variantInfo.price },
         quantity:    item.quantity,
-        unitPrice:   variant.price,
+        unitPrice:   variantInfo.price,
         totalPrice:  lineTotal,
       });
     }
@@ -65,31 +97,30 @@ router.post('/', optionalAuth, async (req, res) => {
 
     const total = subtotal + fee;
 
-    const order = await Order.create({
-      user:            req.user?.userId || null,
-      isGuest:         isGuest || !req.user,
-      guestInfo:       isGuest ? guestInfo : undefined,
-      deliveryAddress,
-      distanceKm:      Math.round(distanceKm * 10) / 10,
-      items:           resolvedItems,
-      subtotal,
-      deliveryFee:     fee,
-      total,
-      isFirstOrder,
-      payment: {
-        method: payment?.method || 'cod',
-        status: payment?.method === 'cod' ? 'pending' : 'pending',
-      },
-      statusHistory: [{ status: 'placed', note: 'Order placed successfully' }],
-      notes,
-    });
-
-    // Decrement stock
-    for (const item of resolvedItems) {
-      await Product.updateOne(
-        { _id: item.product, 'variants.label': item.variant.label },
-        { $inc: { 'variants.$.stock': -item.quantity } }
-      );
+    let order;
+    try {
+      order = await Order.create({
+        user:            req.user?.userId || null,
+        isGuest:         isGuest || !req.user,
+        guestInfo:       isGuest ? guestInfo : undefined,
+        deliveryAddress,
+        distanceKm:      Math.round(distanceKm * 10) / 10,
+        items:           resolvedItems,
+        subtotal,
+        deliveryFee:     fee,
+        total,
+        isFirstOrder,
+        payment: {
+          method: payment?.method || 'cod',
+          status: payment?.method === 'cod' ? 'pending' : 'pending',
+        },
+        statusHistory: [{ status: 'placed', note: 'Order placed successfully' }],
+        notes,
+      });
+    } catch (orderErr) {
+      console.error('Order creation failed:', orderErr);
+      await rollbackStock(deductedStocks);
+      return res.status(500).json({ success: false, message: 'Failed to create order, stock refunded.' });
     }
 
     // Increment user order count

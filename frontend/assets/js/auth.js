@@ -3,21 +3,18 @@
  * Handles OTP login flow and session state
  */
 const KMAuth = {
-  _tokenKey: 'km_token',
   _userKey:  'km_user',
 
-  getToken()  { return localStorage.getItem(this._tokenKey); },
   getUser()   { try { return JSON.parse(localStorage.getItem(this._userKey)); } catch { return null; } },
-  isLoggedIn(){ return !!this.getToken(); },
+  isLoggedIn(){ return !!this.getUser(); },
 
-  saveSession(token, user) {
-    localStorage.setItem(this._tokenKey, token);
+  saveSession(user) {
     localStorage.setItem(this._userKey, JSON.stringify(user));
     this._updateUI();
   },
 
-  logout() {
-    localStorage.removeItem(this._tokenKey);
+  async logout() {
+    await fetch(KM_CONFIG.API_BASE + '/auth/logout', { method: 'POST', credentials: 'include' }).catch(()=>{});
     localStorage.removeItem(this._userKey);
     this._updateUI();
   },
@@ -46,7 +43,7 @@ const KMAuth = {
   async verifyOTP(phone, otp) {
     const res = await api.auth.verifyOTP(phone, otp);
     if (res.success) {
-      this.saveSession(res.token, res.user);
+      this.saveSession(res.user);
     }
     return res;
   },

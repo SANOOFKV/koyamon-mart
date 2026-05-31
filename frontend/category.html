@@ -87,26 +87,30 @@
   </section>
 </main>
 
-<!-- Mobile Nav -->
-<nav class="md:hidden fixed bottom-0 w-full rounded-t-3xl z-50 bg-white/90 backdrop-blur-xl shadow-[0_-8px_30px_rgba(0,105,71,0.08)] flex justify-around items-center px-4 py-3 pb-8">
-  <a href="index.html" class="flex flex-col items-center text-emerald-800/40 p-3">
+<!-- ══ MOBILE BOTTOM NAV ═══════════════════════════════════════════════════ -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-8 bg-white/95 backdrop-blur-md z-50 rounded-t-[2rem] shadow-[0_-4px_30px_rgba(0,0,0,0.08)] border-t border-slate-100">
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="index.html">
     <span class="material-symbols-outlined">home</span>
-    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Home" data-ml="ഹോം">Home</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Home" data-ml="ഹോം">Home</span>
   </a>
-  <a href="category.html" class="flex flex-col items-center bg-gradient-to-br from-emerald-800 to-emerald-600 text-white rounded-2xl p-3 shadow-lg">
-    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">grid_view</span>
-    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Categories" data-ml="വകുപ്പ്">Categories</span>
+  <a class="flex flex-col items-center justify-center text-primary px-4 py-1" href="category.html">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Categories" data-ml="വിഭാഗങ്ങൾ">Categories</span>
   </a>
-  <a href="profile.html" class="flex flex-col items-center text-emerald-800/40 p-3">
-    <span class="material-symbols-outlined">receipt_long</span>
-    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Orders" data-ml="ഓർഡർ">Orders</span>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="order-tracking.html">
+    <span class="material-symbols-outlined">local_shipping</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Tracking" data-ml="ട്രാക്കിംഗ്">Tracking</span>
   </a>
-  <a href="about.html" class="flex flex-col items-center text-emerald-800/40 p-3">
-    <span class="material-symbols-outlined">contact_support</span>
-    <span class="text-[10px] font-bold uppercase tracking-wider mt-1" data-en="Support" data-ml="സഹായം">Support</span>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1 relative" href="cart.html">
+    <span class="material-symbols-outlined">shopping_basket</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Cart" data-ml="കാർട്ട്">Cart</span>
+    <span id="km-cart-count-mobile" class="absolute top-0 right-3 hidden bg-secondary text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white">0</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="profile.html">
+    <span class="material-symbols-outlined">person</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Profile" data-ml="പ്രൊഫൈൽ">Profile</span>
   </a>
 </nav>
-<div class="h-24 md:hidden"></div>
 
 <script src="assets/js/config.js"></script>
 <script src="assets/js/api.js"></script>

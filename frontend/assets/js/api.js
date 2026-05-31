@@ -5,16 +5,13 @@
 const api = {
   _base: () => KM_CONFIG.API_BASE,
   _headers(path = '') {
-    const isAdminRoute = path.includes('/admin');
-    const token = isAdminRoute ? localStorage.getItem('km_admin_token') : localStorage.getItem('km_token');
     return {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   },
 
   async get(path) {
-    const res = await fetch(this._base() + path, { headers: this._headers(path) });
+    const res = await fetch(this._base() + path, { headers: this._headers(path), credentials: 'include' });
     return res.json();
   },
 
@@ -22,6 +19,7 @@ const api = {
     const res = await fetch(this._base() + path, {
       method: 'POST',
       headers: this._headers(path),
+      credentials: 'include',
       body: JSON.stringify(body),
     });
     return res.json();
@@ -31,6 +29,7 @@ const api = {
     const res = await fetch(this._base() + path, {
       method: 'PUT',
       headers: this._headers(path),
+      credentials: 'include',
       body: JSON.stringify(body),
     });
     return res.json();
@@ -40,6 +39,7 @@ const api = {
     const res = await fetch(this._base() + path, {
       method: 'PATCH',
       headers: this._headers(path),
+      credentials: 'include',
       body: JSON.stringify(body),
     });
     return res.json();
@@ -49,6 +49,7 @@ const api = {
     const res = await fetch(this._base() + path, {
       method: 'DELETE',
       headers: this._headers(path),
+      credentials: 'include'
     });
     return res.json();
   },
