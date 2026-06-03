@@ -14,11 +14,31 @@ const userSchema = new mongoose.Schema({
     pincode:  String,
     lat:      Number,
     lng:      Number,
+    location: {
+      type: { type: String, default: 'Point' },
+      coordinates: [Number]
+    },
     isDefault: { type: Boolean, default: false },
   }],
   orderCount:  { type: Number, default: 0 },
   role:        { type: String, enum: ['user', 'delivery', 'admin'], default: 'user' },
   isActive:    { type: Boolean, default: true },
 }, { timestamps: true });
+
+userSchema.index({ 'addresses.location': '2dsphere' });
+
+userSchema.pre('save', function (next) {
+  if (this.addresses && this.addresses.length > 0) {
+    this.addresses.forEach(addr => {
+      if (addr.lat && addr.lng) {
+        addr.location = {
+          type: 'Point',
+          coordinates: [addr.lng, addr.lat]
+        };
+      }
+    });
+  }
+  next();
+});
 
 module.exports = mongoose.model('User', userSchema);

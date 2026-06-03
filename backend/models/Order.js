@@ -27,6 +27,10 @@ const orderSchema = new mongoose.Schema({
     pincode:  String,
     lat:      Number,
     lng:      Number,
+    location: {
+      type: { type: String, default: 'Point' },
+      coordinates: [Number]
+    }
   },
   distanceKm: { type: Number, default: 0 },
 
@@ -67,6 +71,13 @@ const orderSchema = new mongoose.Schema({
 
 // Auto-generate readable orderId before save
 orderSchema.pre('save', async function (next) {
+  if (this.deliveryAddress && this.deliveryAddress.lat && this.deliveryAddress.lng) {
+    this.deliveryAddress.location = {
+      type: 'Point',
+      coordinates: [this.deliveryAddress.lng, this.deliveryAddress.lat]
+    };
+  }
+
   if (!this.orderId) {
     const date = new Date();
     const ymd = `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}`;
@@ -85,5 +96,7 @@ orderSchema.pre('save', async function (next) {
   }
   next();
 });
+
+orderSchema.index({ 'deliveryAddress.location': '2dsphere' });
 
 module.exports = mongoose.model('Order', orderSchema);
