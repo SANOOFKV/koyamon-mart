@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
 
 @theme {
   --color-surface-container: #edeeef;
