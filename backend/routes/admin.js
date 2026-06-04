@@ -353,7 +353,9 @@ router.post('/users', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid 10-digit phone number' });
     }
 
-    let user = await User.findOne({ phone: cleanPhone });
+    const normalizedPhone = '+91' + cleanPhone;
+
+    let user = await User.findOne({ phone: normalizedPhone });
     if (user) {
       // Update existing user to staff role
       user.name = name || user.name;
@@ -363,7 +365,7 @@ router.post('/users', async (req, res) => {
     }
 
     user = await User.create({
-      phone: cleanPhone,
+      phone: normalizedPhone,
       name: name || 'Staff Member',
       role: role || 'delivery'
     });

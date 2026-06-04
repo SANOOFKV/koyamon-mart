@@ -54,13 +54,17 @@ router.post('/verify', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Payment verification failed' });
     }
 
-    await Order.updateOne({ orderId }, {
+    const result = await Order.updateOne({ orderId }, {
       'payment.status':            'paid',
       'payment.razorpayPaymentId': razorpay_payment_id,
       'payment.paidAt':            new Date(),
       status:                      'confirmed',
       $push: { statusHistory: { status: 'confirmed', note: 'Payment received' } },
     });
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
 
     res.json({ success: true, message: 'Payment verified successfully' });
   } catch (err) {

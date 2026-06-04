@@ -24,9 +24,11 @@ router.post('/send-otp', otpLimiter, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid phone number' });
     }
 
+    const normalizedPhone = '+91' + cleanPhone;
+
     // Rate limit: max 3 OTPs per 10 minutes
     const recentCount = await OTP.countDocuments({
-      phone,
+      phone: normalizedPhone,
       createdAt: { $gte: new Date(Date.now() - 10 * 60 * 1000) },
     });
     if (recentCount >= 3) {
@@ -36,8 +38,8 @@ router.post('/send-otp', otpLimiter, async (req, res) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
-    await OTP.create({ phone, otp, expiresAt });
-    await sendOTP(phone, otp);
+    await OTP.create({ phone: normalizedPhone, otp, expiresAt });
+    await sendOTP(normalizedPhone, otp);
 
     res.json({ success: true, message: 'OTP sent successfully' });
   } catch (err) {
@@ -54,7 +56,10 @@ router.post('/verify-otp', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Phone and OTP are required' });
     }
 
-    const record = await OTP.findOne({ phone, verified: false })
+    const cleanPhone = phone.replace(/\s/g, '').replace(/^\+?91/, '');
+    const normalizedPhone = '+91' + cleanPhone;
+
+    const record = await OTP.findOne({ phone: normalizedPhone, verified: false })
       .sort({ createdAt: -1 });
 
     if (!record) {
@@ -74,9 +79,9 @@ router.post('/verify-otp', async (req, res) => {
     await OTP.updateOne({ _id: record._id }, { verified: true });
 
     // Find or create user
-    let user = await User.findOne({ phone });
+    let user = await User.findOne({ phone: normalizedPhone });
     if (!user) {
-      user = await User.create({ phone });
+      user = await User.create({ phone: normalizedPhone });
     }
 
     const accessToken = jwt.sign(
@@ -94,6 +99,7 @@ router.post('/verify-otp', async (req, res) => {
 
     res.json({
       success: true,
+      token: accessToken,
       user: {
         _id: user._id,
         name: user.name,
@@ -136,7 +142,7 @@ router.post('/admin-login', async (req, res) => {
     res.cookie('accessToken', accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 15 * 60 * 1000 });
     res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-    res.json({ success: true, message: 'Admin logged in' });
+    res.json({ success: true, token: accessToken, message: 'Admin logged in' });
   } catch (err) {
     console.error('admin-login error:', err);
     res.status(500).json({ success: false, message: 'Login failed' });

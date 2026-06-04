@@ -5,9 +5,19 @@
 const api = {
   _base: () => KM_CONFIG.API_BASE,
   _headers(path = '') {
-    return {
+    const headers = {
       'Content-Type': 'application/json',
     };
+    let token = null;
+    if (path.startsWith('/admin')) {
+      token = localStorage.getItem('km_admin_token');
+    } else if (path.startsWith('/delivery')) {
+      token = localStorage.getItem('km_token');
+    }
+    if (token && token !== 'undefined') {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
   },
 
   async get(path) {

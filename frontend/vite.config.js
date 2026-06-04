@@ -18,7 +18,15 @@ export default defineConfig({
         orderTracking: 'order-tracking.html',
         product: 'product.html',
         profile: 'profile.html',
-        search: 'search.html'
+        search: 'search.html',
+        adminBulkUpload: 'admin/bulk-upload.html',
+        adminCategories: 'admin/categories.html',
+        adminDashboard: 'admin/dashboard.html',
+        adminInventory: 'admin/inventory.html',
+        adminNotifications: 'admin/notifications.html',
+        adminOrders: 'admin/orders.html',
+        adminProducts: 'admin/products.html',
+        deliveryDashboard: 'delivery/dashboard.html'
       }
     }
   }
