@@ -360,18 +360,21 @@ async function loadDashboard() {
     }
 
     // Low stock alerts
-    document.getElementById('admin-low-stock-list').innerHTML = s.lowStockProducts?.length > 0
-      ? s.lowStockProducts.map(p => `
-          <div class="flex items-center gap-3 p-4 bg-error-container/30 rounded-xl border border-error/10">
-            <span class="material-symbols-outlined text-error">warning</span>
-            <div>
-              <p class="text-sm font-bold">${p.name?.en || 'Product'}</p>
-              <p class="text-xs text-slate-500">${p.variants?.filter(v=>v.stock<=5).map(v=>`${v.label}: ${v.stock} left`).join(', ')}</p>
+    const lowStockListEl = document.getElementById('admin-low-stock-list');
+    if (lowStockListEl) {
+      lowStockListEl.innerHTML = s.lowStockProducts?.length > 0
+        ? s.lowStockProducts.map(p => `
+            <div class="flex items-center gap-3 p-4 bg-error-container/30 rounded-xl border border-error/10">
+              <span class="material-symbols-outlined text-error">warning</span>
+              <div>
+                <p class="text-sm font-bold">${p.name?.en || 'Product'}</p>
+                <p class="text-xs text-slate-500">${p.variants?.filter(v=>v.stock<=5).map(v=>`${v.label}: ${v.stock} left`).join(', ')}</p>
+              </div>
+              <a href="products.html?edit=${p._id}" class="ml-auto text-primary text-xs font-bold hover:underline">Update</a>
             </div>
-            <a href="products.html?edit=${p._id}" class="ml-auto text-primary text-xs font-bold hover:underline">Update</a>
-          </div>
-        `).join('')
-      : '<p class="text-slate-400 text-sm col-span-full">✓ All products have sufficient stock</p>';
+          `).join('')
+        : '<p class="text-slate-400 text-sm col-span-full">✓ All products have sufficient stock</p>';
+    }
 
   } catch(e) { console.error('Dashboard load failed:', e); }
 
