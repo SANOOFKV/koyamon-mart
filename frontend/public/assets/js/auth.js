@@ -70,8 +70,8 @@ const KMAuth = {
 
     // Logout button
 
-    document.getElementById('km-logout-btn')?.addEventListener('click', () => {
-      this.logout();
+    document.getElementById('km-logout-btn')?.addEventListener('click', async () => {
+      await this.logout();
       window.location.href = '/index.html';
     });
   },

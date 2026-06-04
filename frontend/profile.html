@@ -274,8 +274,8 @@ function showAddressModal() {
   alert('Address management coming soon!');
 }
 
-document.getElementById('km-logout-btn').addEventListener('click', () => {
-  KMAuth.logout();
+document.getElementById('km-logout-btn').addEventListener('click', async () => {
+  await KMAuth.logout();
   window.location.reload();
 });
 
