@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     lat:      Number,
     lng:      Number,
     location: {
-      type: { type: String, default: 'Point' },
+      type: { type: String, enum: ['Point'] },
       coordinates: [Number]
     },
     isDefault: { type: Boolean, default: false },
@@ -35,6 +35,8 @@ userSchema.pre('save', function (next) {
           type: 'Point',
           coordinates: [addr.lng, addr.lat]
         };
+      } else {
+        addr.location = undefined;
       }
     });
   }

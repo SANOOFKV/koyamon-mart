@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema({
     lat:      Number,
     lng:      Number,
     location: {
-      type: { type: String, default: 'Point' },
+      type: { type: String, enum: ['Point'] },
       coordinates: [Number]
     }
   },
@@ -76,6 +76,8 @@ orderSchema.pre('save', async function (next) {
       type: 'Point',
       coordinates: [this.deliveryAddress.lng, this.deliveryAddress.lat]
     };
+  } else if (this.deliveryAddress) {
+    this.deliveryAddress.location = undefined;
   }
 
   if (!this.orderId) {
