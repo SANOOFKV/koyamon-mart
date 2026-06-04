@@ -494,8 +494,14 @@ async function loadUsers() {
   const search = document.getElementById('user-search').value;
   const role = document.getElementById('user-role-filter').value;
   try {
-    const data = await api.admin.staff.listUsers({ search, role });
-    document.getElementById('user-list-tbody').innerHTML = (data.users||[]).map(u => `
+    const apiRole = role === 'staff' ? '' : role;
+    const data = await api.admin.staff.listUsers({ search, role: apiRole });
+    let users = data.users || [];
+    if (role === 'staff') {
+      users = users.filter(u => u.role === 'delivery' || u.role === 'admin');
+    }
+    
+    document.getElementById('user-list-tbody').innerHTML = users.map(u => `
       <tr class="hover:bg-slate-50 transition-colors">
         <td class="py-4 px-2">
           <p class="text-sm font-bold">${u.phone.startsWith('+') ? u.phone : '+91 ' + u.phone}</p>
