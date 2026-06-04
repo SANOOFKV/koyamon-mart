@@ -302,9 +302,10 @@ async function openModal(id) {
     document.getElementById('om-status').value = order.status;
     
     // Customer
-    document.getElementById('om-customer').textContent = order.user?.phone ? `+91 ${order.user.phone}` : 'Guest Checkout';
-    if(order.user?.phone) {
-      document.getElementById('om-call-link').href = `tel:+91${order.user.phone}`;
+    const custPhone = order.user?.phone;
+    document.getElementById('om-customer').textContent = custPhone ? (custPhone.startsWith('+') ? custPhone : '+91 ' + custPhone) : 'Guest Checkout';
+    if (custPhone) {
+      document.getElementById('om-call-link').href = `tel:${custPhone.startsWith('+') ? custPhone : '+91' + custPhone}`;
       document.getElementById('om-call-link').style.display = 'inline-flex';
     } else {
       document.getElementById('om-call-link').style.display = 'none';

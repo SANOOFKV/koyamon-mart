@@ -92,9 +92,13 @@
       if (!/^\d{10}$/.test(p)) return alert('Valid 10-digit number required');
       phoneNum = p;
       try {
-        await api.auth.sendOTP(p);
-        document.getElementById('phone-box').classList.add('hidden');
-        document.getElementById('otp-box').classList.remove('hidden');
+        const res = await api.auth.sendOTP(p);
+        if (res.success) {
+          document.getElementById('phone-box').classList.add('hidden');
+          document.getElementById('otp-box').classList.remove('hidden');
+        } else {
+          alert(res.message || 'Failed to send OTP');
+        }
       } catch(e) { alert('Failed to send OTP'); }
     }
 
@@ -102,13 +106,16 @@
       const otp = document.getElementById('r-otp').value.trim();
       try {
         const res = await api.auth.verifyOTP(phoneNum, otp);
+        if (!res.success) {
+          return alert(res.message || 'Invalid OTP');
+        }
         if (res.user.role !== 'delivery' && res.user.role !== 'admin') {
           return alert('Not authorized as delivery partner');
         }
         localStorage.setItem('km_token', res.token);
         localStorage.setItem('km_user', JSON.stringify(res.user));
         location.reload();
-      } catch(e) { alert('Invalid OTP'); }
+      } catch(e) { alert('Verification failed. Invalid OTP.'); }
     }
 
     function logout() {

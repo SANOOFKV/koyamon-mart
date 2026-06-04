@@ -497,7 +497,7 @@ async function loadUsers() {
     document.getElementById('user-list-tbody').innerHTML = (data.users||[]).map(u => `
       <tr class="hover:bg-slate-50 transition-colors">
         <td class="py-4 px-2">
-          <p class="text-sm font-bold">+91 ${u.phone}</p>
+          <p class="text-sm font-bold">${u.phone.startsWith('+') ? u.phone : '+91 ' + u.phone}</p>
           <p class="text-[10px] text-slate-500">${u.name || 'Unnamed'}</p>
         </td>
         <td class="py-4 px-2">
@@ -517,8 +517,12 @@ async function loadUsers() {
 
 async function updateUserRole(id, role) {
   try {
-    await api.admin.staff.updateRole(id, role);
-    showToast(`Role updated to ${role} ✓`, 'success');
+    const res = await api.admin.staff.updateRole(id, role);
+    if (res.success) {
+      showToast(`Role updated to ${role} ✓`, 'success');
+    } else {
+      showToast(res.message || 'Update failed', 'error');
+    }
   } catch(e) { showToast('Update failed', 'error'); }
 }
 
@@ -532,13 +536,17 @@ async function saveNewStaff() {
 
   btn.disabled = true; btn.textContent = 'Saving...';
   try {
-    await api.admin.staff.createMember({ name, phone, role });
-    showToast('Staff member added successfully ✓', 'success');
-    toggleStaffForm(false);
-    loadUsers();
-    // Clear inputs
-    document.getElementById('new-staff-name').value = '';
-    document.getElementById('new-staff-phone').value = '';
+    const res = await api.admin.staff.createMember({ name, phone, role });
+    if (res.success) {
+      showToast('Staff member added successfully ✓', 'success');
+      toggleStaffForm(false);
+      loadUsers();
+      // Clear inputs
+      document.getElementById('new-staff-name').value = '';
+      document.getElementById('new-staff-phone').value = '';
+    } else {
+      showToast(res.message || 'Failed to add staff member', 'error');
+    }
   } catch(e) { 
     showToast(e.message || 'Failed to add staff member', 'error'); 
   } finally {
