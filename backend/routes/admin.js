@@ -317,12 +317,17 @@ router.patch('/orders/:id/assign', async (req, res) => {
 
 // ════════════════════════════════════════════════════════════
 //  STAFF & USERS
-// ════════════════════════════════════════════════════════════
 router.get('/users', async (req, res) => {
   try {
     const { role, search } = req.query;
     const filter = {};
-    if (role) filter.role = role;
+    if (role) {
+      if (role === 'staff') {
+        filter.role = { $in: ['delivery', 'admin'] };
+      } else {
+        filter.role = role;
+      }
+    }
     if (search) filter.phone = { $regex: search, $options: 'i' };
     const users = await User.find(filter).sort({ createdAt: -1 });
     res.json({ success: true, users });
