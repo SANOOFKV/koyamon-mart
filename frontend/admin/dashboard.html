@@ -514,11 +514,16 @@ async function loadUsers() {
           <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${u.role==='delivery'?'bg-blue-100 text-blue-800':u.role==='admin'?'bg-purple-100 text-purple-800':'bg-slate-100 text-slate-600'}">${u.role}</span>
         </td>
         <td class="py-4 px-2">
-          <select onchange="updateUserRole('${u._id}', this.value)" class="text-[10px] bg-white border border-slate-200 rounded px-2 py-1 focus:ring-1 focus:ring-primary">
-            <option value="user" ${u.role==='user'?'selected':''}>Customer</option>
-            <option value="delivery" ${u.role==='delivery'?'selected':''}>Rider</option>
-            <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
-          </select>
+          <div class="flex items-center gap-2">
+            <select onchange="updateUserRole('${u._id}', this.value)" class="text-[10px] bg-white border border-slate-200 rounded px-2 py-1 focus:ring-1 focus:ring-primary">
+              <option value="user" ${u.role==='user'?'selected':''}>Customer</option>
+              <option value="delivery" ${u.role==='delivery'?'selected':''}>Rider</option>
+              <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+            </select>
+            <button onclick="deleteUser('${u._id}', '${u.name || u.phone}')" class="p-1 text-slate-400 hover:text-red-500 transition-colors flex items-center" title="Delete User">
+              <span class="material-symbols-outlined text-base">delete</span>
+            </button>
+          </div>
         </td>
       </tr>
     `).join('');
@@ -534,6 +539,19 @@ async function updateUserRole(id, role) {
       showToast(res.message || 'Update failed', 'error');
     }
   } catch(e) { showToast('Update failed', 'error'); }
+}
+
+async function deleteUser(id, nameOrPhone) {
+  if (!confirm(`Are you sure you want to delete ${nameOrPhone}? This will clear order references for this account.`)) return;
+  try {
+    const res = await api.admin.staff.deleteUser(id);
+    if (res.success) {
+      showToast('User deleted successfully ✓', 'success');
+      loadUsers();
+    } else {
+      showToast(res.message || 'Failed to delete user', 'error');
+    }
+  } catch(e) { showToast('Failed to delete user', 'error'); }
 }
 
 async function saveNewStaff() {

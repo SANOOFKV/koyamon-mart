@@ -349,6 +349,30 @@ router.patch('/users/:id/role', async (req, res) => {
   }
 });
 
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (req.admin && req.admin.userId && userId.toString() === req.admin.userId.toString()) {
+      return res.status(400).json({ success: false, message: 'You cannot delete your own admin account.' });
+    }
+
+    // Update orders customer references to null
+    await Order.updateMany({ user: userId }, { $set: { user: null } });
+
+    // Update orders deliveryBoy assignments to null
+    await Order.updateMany({ deliveryBoy: userId }, { $set: { deliveryBoy: null } });
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 router.post('/users', async (req, res) => {
   try {
     const { phone, name, role } = req.body;

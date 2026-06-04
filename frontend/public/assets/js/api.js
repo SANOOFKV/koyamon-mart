@@ -127,6 +127,7 @@ const api = {
       listUsers: (params) => { const qs = new URLSearchParams(params).toString(); return api.get(`/admin/users?${qs}`); },
       createMember: (body) => api.post('/admin/users', body),
       updateRole: (userId, role) => api.patch(`/admin/users/${userId}/role`, { role }),
+      deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
       listDeliveryBoys: () => api.get('/admin/delivery-boys'),
     },
     notifications: {
