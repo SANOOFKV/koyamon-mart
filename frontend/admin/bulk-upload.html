@@ -261,13 +261,16 @@
 <script>
   const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5000/api'
-    : 'https://koyamon-mart-api.onrender.com/api';
+    : '/api';
 
-  const token = localStorage.getItem('km_admin_token');
-  if (!token) window.location.href = '../login.html';
+  // Auth is held in the httpOnly session cookie; verify it before rendering.
+  fetch(`${API}/auth/me`, { credentials: 'include' })
+    .then(r => r.json())
+    .then(r => { if (!r.success || r.user.role !== 'admin') window.location.href = 'dashboard.html'; })
+    .catch(() => { window.location.href = 'dashboard.html'; });
 
   // ── Load Category Slugs ──────────────────────────────────────────────────────
-  fetch(`${API}/categories`, { headers: { Authorization: `Bearer ${token}` } })
+  fetch(`${API}/categories`, { credentials: 'include' })
     .then(r => r.json()).then(data => {
       const list = document.getElementById('slug-list');
       if (data.categories?.length) {
@@ -377,7 +380,7 @@
 
       const res  = await fetch(`${API}/admin/products/bulk-upload`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include',
         body: form,
       });
       const data = await res.json();
@@ -426,8 +429,8 @@
   }
 
   function logout() {
-    localStorage.removeItem('km_admin_token');
-    window.location.href = '../login.html';
+    fetch(`${API}/auth/logout`, { method: 'POST', credentials: 'include' })
+      .finally(() => { window.location.href = 'dashboard.html'; });
   }
 </script>
 </body>

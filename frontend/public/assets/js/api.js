@@ -4,31 +4,21 @@
  */
 const api = {
   _base: () => KM_CONFIG.API_BASE,
-  _headers(path = '') {
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-    let token = null;
-    if (path.startsWith('/admin')) {
-      token = localStorage.getItem('km_admin_token');
-    } else if (path.startsWith('/delivery')) {
-      token = localStorage.getItem('km_token');
-    }
-    if (token && token !== 'undefined') {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    return headers;
+  // Auth travels in httpOnly cookies (sent via credentials:'include'), never in
+  // JS-readable storage — so there's no Authorization header to build here.
+  _headers() {
+    return { 'Content-Type': 'application/json' };
   },
 
   async get(path) {
-    const res = await fetch(this._base() + path, { headers: this._headers(path), credentials: 'include' });
+    const res = await fetch(this._base() + path, { headers: this._headers(), credentials: 'include' });
     return res.json();
   },
 
   async post(path, body) {
     const res = await fetch(this._base() + path, {
       method: 'POST',
-      headers: this._headers(path),
+      headers: this._headers(),
       credentials: 'include',
       body: JSON.stringify(body),
     });
@@ -38,7 +28,7 @@ const api = {
   async put(path, body) {
     const res = await fetch(this._base() + path, {
       method: 'PUT',
-      headers: this._headers(path),
+      headers: this._headers(),
       credentials: 'include',
       body: JSON.stringify(body),
     });
@@ -48,7 +38,7 @@ const api = {
   async patch(path, body) {
     const res = await fetch(this._base() + path, {
       method: 'PATCH',
-      headers: this._headers(path),
+      headers: this._headers(),
       credentials: 'include',
       body: JSON.stringify(body),
     });
@@ -58,7 +48,7 @@ const api = {
   async delete(path) {
     const res = await fetch(this._base() + path, {
       method: 'DELETE',
-      headers: this._headers(path),
+      headers: this._headers(),
       credentials: 'include'
     });
     return res.json();
@@ -89,6 +79,8 @@ const api = {
     sendOTP: (phone) => api.post('/auth/send-otp', { phone }),
     verifyOTP: (phone, otp) => api.post('/auth/verify-otp', { phone, otp }),
     adminLogin: (email, password) => api.post('/auth/admin-login', { email, password }),
+    me: () => api.get('/auth/me'),
+    logout: () => api.post('/auth/logout', {}),
   },
 
   payment: {
@@ -140,4 +132,20 @@ const api = {
       deliver: (id) => api.patch(`/delivery/orders/${id}/deliver`),
     }
   }
+};
+
+/**
+ * Cookie-based role guard. Verifies the current session (httpOnly cookie) via
+ * /auth/me and checks the user's role. Returns the user on success, or null
+ * (after invoking onFail) when unauthenticated or the role doesn't match.
+ */
+api.ensureRole = async (roles, onFail) => {
+  try {
+    const res = await api.auth.me();
+    if (res.success && res.user && roles.includes(res.user.role)) {
+      return res.user;
+    }
+  } catch { /* fall through to failure */ }
+  if (typeof onFail === 'function') onFail();
+  return null;
 };

@@ -305,15 +305,21 @@
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/api.js"></script>
 <script>
-const adminToken = () => localStorage.getItem('km_admin_token');
+let isAdminAuthed = false;
 
-function checkAdminAuth() {
-  if (adminToken()) {
-    document.getElementById('admin-login-gate').classList.add('hidden');
-    return true;
-  }
+function showLoginGate() {
+  isAdminAuthed = false;
   document.getElementById('admin-login-gate').classList.remove('hidden');
-  return false;
+}
+
+// Verify the httpOnly session cookie; show dashboard or the login gate.
+async function initAdmin() {
+  const user = await api.ensureRole(['admin'], showLoginGate);
+  if (user) {
+    isAdminAuthed = true;
+    document.getElementById('admin-login-gate').classList.add('hidden');
+    loadDashboard();
+  }
 }
 
 document.getElementById('admin-login-btn').addEventListener('click', async () => {
@@ -323,7 +329,8 @@ document.getElementById('admin-login-btn').addEventListener('click', async () =>
   btn.textContent = 'Signing in...'; btn.disabled = true;
   const res = await api.auth.adminLogin(email, password);
   if (res.success) {
-    localStorage.setItem('km_admin_token', res.token);
+    // Auth is now held in the httpOnly cookie set by the server response.
+    isAdminAuthed = true;
     document.getElementById('admin-login-gate').classList.add('hidden');
     loadDashboard();
   } else {
@@ -333,19 +340,17 @@ document.getElementById('admin-login-btn').addEventListener('click', async () =>
   btn.textContent = 'Sign In'; btn.disabled = false;
 });
 
-document.getElementById('admin-logout-btn').addEventListener('click', () => {
-  localStorage.removeItem('km_admin_token');
-  document.getElementById('admin-login-gate').classList.remove('hidden');
+document.getElementById('admin-logout-btn').addEventListener('click', async () => {
+  await api.auth.logout();
+  showLoginGate();
 });
 
 async function loadDashboard() {
-  if (!checkAdminAuth()) return;
-
   document.getElementById('admin-today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
 
   try {
     const data = await api.admin.dashboard();
-    if (!data.success) { clearAdminToken(); checkAdminAuth(); return; }
+    if (!data.success) { showLoginGate(); return; }
     const s = data.stats;
 
     document.getElementById('stat-revenue').textContent    = `₹${(s.revenue || 0).toLocaleString('en-IN')}`;
@@ -600,12 +605,10 @@ function showToast(msg, type = '') {
   setTimeout(() => el.remove(), 3000);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (checkAdminAuth()) loadDashboard();
-});
+document.addEventListener('DOMContentLoaded', initAdmin);
 
-// Auto-refresh every 30 seconds
-setInterval(() => { if (adminToken()) loadActiveOrders(); }, 30000);
+// Auto-refresh every 30 seconds (only while authenticated)
+setInterval(() => { if (isAdminAuthed) loadActiveOrders(); }, 30000);
 </script>
 </body>
 </html>

@@ -39,9 +39,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ─── Static (serve frontend in production) ────────────────────────────────────
-// app.use(express.static(path.join(__dirname, '../frontend')));
-
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth',       require('./routes/auth'));
 app.use('/api/products',   require('./routes/products'));
@@ -56,9 +53,20 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', store: 'Koyamon Mart', time: new Date() });
 });
 
+// ─── Static (serve built frontend from the same origin) ───────────────────────
+// Serving the frontend from the API's own origin keeps the auth cookies
+// sameSite=strict. Point this at the Vite build output (run `npm run build` in
+// frontend/). If the build isn't present (e.g. API-only dev), this is a no-op.
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
 // ─── 404 handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' });
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ success: false, message: 'Route not found' });
+  }
+  res.status(404).sendFile(path.join(__dirname, '../frontend/dist/index.html'), (err) => {
+    if (err) res.status(404).json({ success: false, message: 'Not found' });
+  });
 });
 
 // ─── Global error handler ─────────────────────────────────────────────────────

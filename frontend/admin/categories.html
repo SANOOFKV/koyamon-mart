@@ -59,7 +59,7 @@
       <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">A</div>
       <div class="overflow-hidden">
         <p class="text-sm font-bold truncate" id="admin-name-display">Admin</p>
-        <button id="admin-logout-btn" onclick="localStorage.removeItem('km_admin_token'); window.location.reload()" class="text-[10px] text-red-400 hover:underline">Logout</button>
+        <button id="admin-logout-btn" onclick="api.auth.logout().finally(() => window.location.reload())" class="text-[10px] text-red-400 hover:underline">Logout</button>
       </div>
     </div>
   </div>
@@ -140,8 +140,7 @@
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/api.js"></script>
 <script>
-const adminToken = () => localStorage.getItem('km_admin_token');
-if (!adminToken()) { window.location.href = 'dashboard.html'; }
+api.ensureRole(['admin'], () => { window.location.href = 'dashboard.html'; });
 
 let allCategories = [];
 
