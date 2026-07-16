@@ -85,10 +85,6 @@ const api = {
     myOrders: () => api.get('/orders/my'),
   },
 
-  delivery: {
-    fee: (body) => api.post('/delivery/fee', body),
-  },
-
   auth: {
     sendOTP: (phone) => api.post('/auth/send-otp', { phone }),
     verifyOTP: (phone, otp) => api.post('/auth/verify-otp', { phone, otp }),
@@ -137,6 +133,7 @@ const api = {
   },
 
   delivery: {
+    fee: (body) => api.post('/delivery/fee', body),
     orders: {
       my: () => api.get('/delivery/orders/my'),
       pickup: (id) => api.patch(`/delivery/orders/${id}/pickup`),

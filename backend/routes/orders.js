@@ -23,7 +23,7 @@ const trackLimiter = rateLimit({
 // ── POST /api/orders ── Place order (logged in or guest) ──────────────────────
 router.post('/', optionalAuth, async (req, res) => {
   try {
-    const { items, deliveryAddress, payment, isGuest, guestInfo, notes } = req.body;
+    const { items, deliveryAddress, payment, guestInfo, notes } = req.body;
 
     if (!items?.length) {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
@@ -31,6 +31,20 @@ router.post('/', optionalAuth, async (req, res) => {
     if (!deliveryAddress) {
       return res.status(400).json({ success: false, message: 'Delivery address is required' });
     }
+
+    // Whether this is a guest order is decided by the session, not the client.
+    const isGuestOrder = !req.user;
+    let normalizedGuestInfo;
+    if (isGuestOrder) {
+      const guestName  = guestInfo?.name?.trim();
+      const guestPhone = (guestInfo?.phone || '').replace(/\D/g, '').slice(-10);
+      if (!guestName || !/^[6-9]\d{9}$/.test(guestPhone)) {
+        return res.status(400).json({ success: false, message: 'Guest orders require a name and a valid 10-digit phone number' });
+      }
+      normalizedGuestInfo = { name: guestName, phone: '+91' + guestPhone };
+    }
+
+    const paymentMethod = ['cod', 'upi', 'card'].includes(payment?.method) ? payment.method : 'cod';
 
     // Calculate subtotal and atomically deduct stock
     let subtotal = 0;
@@ -113,8 +127,8 @@ router.post('/', optionalAuth, async (req, res) => {
     try {
       order = await Order.create({
         user:            req.user?.userId || null,
-        isGuest:         isGuest || !req.user,
-        guestInfo:       isGuest ? guestInfo : undefined,
+        isGuest:         isGuestOrder,
+        guestInfo:       normalizedGuestInfo,
         deliveryAddress,
         distanceKm:      Math.round(distanceKm * 10) / 10,
         items:           resolvedItems,
@@ -123,8 +137,10 @@ router.post('/', optionalAuth, async (req, res) => {
         total,
         isFirstOrder,
         payment: {
-          method: payment?.method || 'cod',
-          status: payment?.method === 'cod' ? 'pending' : 'pending',
+          method: paymentMethod,
+          // Always starts unpaid: COD is collected on delivery, online payments
+          // are confirmed later via /api/payment/verify.
+          status: 'pending',
         },
         statusHistory: [{ status: 'placed', note: 'Order placed successfully' }],
         notes,
