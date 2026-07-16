@@ -1,10 +1,20 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
 const Order   = require('../models/Order');
 const User    = require('../models/User');
 const Product = require('../models/Product');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 const { calculateDeliveryFee, haversineKm } = require('../utils/delivery');
 const rateLimit = require('express-rate-limit');
+
+// Signals a client-facing validation failure (bad stock, unavailable product,
+// out-of-zone) from inside a transaction so it maps to a 4xx rather than a 500.
+class OrderError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
 
 const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.0825;
 const STORE_LNG = parseFloat(process.env.STORE_LNG) || 75.9083;
@@ -46,117 +56,111 @@ router.post('/', optionalAuth, async (req, res) => {
 
     const paymentMethod = ['cod', 'upi', 'card'].includes(payment?.method) ? payment.method : 'cod';
 
-    // Calculate subtotal and atomically deduct stock
-    let subtotal = 0;
-    const resolvedItems = [];
-    
-    // Track successful deductions for manual rollback
-    const deductedStocks = [];
-    
-    const rollbackStock = async (stocks) => {
-      for (const st of stocks) {
-        await Product.updateOne(
-          { _id: st.productId, 'variants.label': st.variantLabel },
-          { $inc: { 'variants.$.stock': st.quantity } }
-        );
-      }
-    };
-
-    for (const item of items) {
-      const productInfo = await Product.findById(item.productId).select('name isActive variants');
-      if (!productInfo || !productInfo.isActive) {
-        await rollbackStock(deductedStocks);
-        return res.status(400).json({ success: false, message: `Product not available: ${item.productId}` });
-      }
-      
-      const variantInfo = productInfo.variants.find(v => v.label === item.variantLabel);
-      if (!variantInfo) {
-        await rollbackStock(deductedStocks);
-        return res.status(400).json({ success: false, message: `Variant not found: ${item.variantLabel}` });
-      }
-      
-      // Attempt atomic deduction
-      const updatedProduct = await Product.findOneAndUpdate(
-        { 
-          _id: item.productId, 
-          'variants.label': item.variantLabel,
-          'variants.stock': { $gte: item.quantity } 
-        },
-        { $inc: { 'variants.$.stock': -item.quantity } },
-        { new: true }
-      );
-
-      if (!updatedProduct) {
-        await rollbackStock(deductedStocks);
-        return res.status(400).json({ success: false, message: `Insufficient stock for ${productInfo.name.en}` });
-      }
-
-      deductedStocks.push({ productId: item.productId, variantLabel: item.variantLabel, quantity: item.quantity });
-
-      const lineTotal = variantInfo.price * item.quantity;
-      subtotal += lineTotal;
-      resolvedItems.push({
-        product:     productInfo._id,
-        productName: productInfo.name.en,
-        variant:     { label: variantInfo.label, price: variantInfo.price },
-        quantity:    item.quantity,
-        unitPrice:   variantInfo.price,
-        totalPrice:  lineTotal,
-      });
-    }
-
-    // Distance and delivery fee
+    // Distance and delivery fee (independent of stock, computed once)
     const distanceKm = deliveryAddress.lat && deliveryAddress.lng
       ? haversineKm(STORE_LAT, STORE_LNG, deliveryAddress.lat, deliveryAddress.lng)
       : 5; // default 5km if no coords
 
     let isFirstOrder = false;
     if (req.user) {
-      const user = await User.findById(req.user.userId);
-      isFirstOrder = user.orderCount === 0;
+      const user = await User.findById(req.user.userId).select('orderCount');
+      isFirstOrder = !!user && user.orderCount === 0;
     }
 
-    const { fee, reason } = calculateDeliveryFee(subtotal, distanceKm, isFirstOrder);
-    if (fee === -1) {
-      return res.status(400).json({ success: false, message: 'Delivery not available to this location (>10KM)' });
-    }
-
-    const total = subtotal + fee;
-
-    let order;
+    // Stock deduction, order creation and order-count increment all run inside a
+    // single transaction. Any failure (insufficient stock, crash mid-loop) aborts
+    // atomically, so stock can never be deducted without a matching order.
+    const session = await mongoose.startSession();
     try {
-      order = await Order.create({
-        user:            req.user?.userId || null,
-        isGuest:         isGuestOrder,
-        guestInfo:       normalizedGuestInfo,
-        deliveryAddress,
-        distanceKm:      Math.round(distanceKm * 10) / 10,
-        items:           resolvedItems,
-        subtotal,
-        deliveryFee:     fee,
-        total,
-        isFirstOrder,
-        payment: {
-          method: paymentMethod,
-          // Always starts unpaid: COD is collected on delivery, online payments
-          // are confirmed later via /api/payment/verify.
-          status: 'pending',
-        },
-        statusHistory: [{ status: 'placed', note: 'Order placed successfully' }],
-        notes,
+      let order;
+      await session.withTransaction(async () => {
+        let subtotal = 0;
+        const resolvedItems = [];
+
+        for (const item of items) {
+          const productInfo = await Product.findById(item.productId)
+            .select('name isActive variants')
+            .session(session);
+          if (!productInfo || !productInfo.isActive) {
+            throw new OrderError(400, `Product not available: ${item.productId}`);
+          }
+
+          const variantInfo = productInfo.variants.find(v => v.label === item.variantLabel);
+          if (!variantInfo) {
+            throw new OrderError(400, `Variant not found: ${item.variantLabel}`);
+          }
+
+          const updatedProduct = await Product.findOneAndUpdate(
+            {
+              _id: item.productId,
+              'variants.label': item.variantLabel,
+              'variants.stock': { $gte: item.quantity },
+            },
+            { $inc: { 'variants.$.stock': -item.quantity } },
+            { new: true, session }
+          );
+          if (!updatedProduct) {
+            throw new OrderError(400, `Insufficient stock for ${productInfo.name.en}`);
+          }
+
+          const lineTotal = variantInfo.price * item.quantity;
+          subtotal += lineTotal;
+          resolvedItems.push({
+            product:     productInfo._id,
+            productName: productInfo.name.en,
+            variant:     { label: variantInfo.label, price: variantInfo.price },
+            quantity:    item.quantity,
+            unitPrice:   variantInfo.price,
+            totalPrice:  lineTotal,
+          });
+        }
+
+        const { fee } = calculateDeliveryFee(subtotal, distanceKm, isFirstOrder);
+        if (fee === -1) {
+          throw new OrderError(400, 'Delivery not available to this location (>10KM)');
+        }
+        const total = subtotal + fee;
+
+        const [created] = await Order.create([{
+          user:            req.user?.userId || null,
+          isGuest:         isGuestOrder,
+          guestInfo:       normalizedGuestInfo,
+          deliveryAddress,
+          distanceKm:      Math.round(distanceKm * 10) / 10,
+          items:           resolvedItems,
+          subtotal,
+          deliveryFee:     fee,
+          total,
+          isFirstOrder,
+          payment: {
+            method: paymentMethod,
+            // Always starts unpaid: COD is collected on delivery, online payments
+            // are confirmed later via /api/payment/verify.
+            status: 'pending',
+          },
+          statusHistory: [{ status: 'placed', note: 'Order placed successfully' }],
+          notes,
+        }], { session });
+
+        if (req.user) {
+          await User.updateOne({ _id: req.user.userId }, { $inc: { orderCount: 1 } }, { session });
+        }
+
+        order = created;
       });
-    } catch (orderErr) {
-      console.error('Order creation failed:', orderErr);
-      await rollbackStock(deductedStocks);
-      return res.status(500).json({ success: false, message: 'Failed to create order, stock refunded.' });
-    }
 
-    // Increment user order count
-    if (req.user) {
-      await User.updateOne({ _id: req.user.userId }, { $inc: { orderCount: 1 } });
+      res.status(201).json({
+        success: true,
+        order: { _id: order._id, orderId: order.orderId, total: order.total, deliveryFee: order.deliveryFee, status: order.status },
+      });
+    } catch (err) {
+      if (err instanceof OrderError) {
+        return res.status(err.status).json({ success: false, message: err.message });
+      }
+      throw err;
+    } finally {
+      session.endSession();
     }
-
-    res.status(201).json({ success: true, order: { _id: order._id, orderId: order.orderId, total, deliveryFee: fee, status: order.status } });
   } catch (err) {
     console.error('place-order error:', err);
     res.status(500).json({ success: false, message: err.message });

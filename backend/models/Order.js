@@ -91,7 +91,7 @@ orderSchema.pre('save', async function (next) {
     const counter = await Counter.findByIdAndUpdate(
       { _id: `orderId_${ymd}` }, // Reset sequence daily
       { $inc: { seq: 1 } },
-      { new: true, upsert: true }
+      { new: true, upsert: true, session: this.$session() }
     );
     
     this.orderId = `KM-${ymd}-${String(counter.seq).padStart(4, '0')}`;
