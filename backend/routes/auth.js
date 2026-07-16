@@ -15,6 +15,13 @@ const otpLimiter = rateLimit({
   message: { success: false, message: 'Too many OTP requests from this IP, please try again after 15 minutes' }
 });
 
+// Throttle admin password login to slow down brute-force attempts.
+const adminLoginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 admin login attempts per windowMs
+  message: { success: false, message: 'Too many login attempts. Please try again after 15 minutes.' }
+});
+
 // ── POST /api/auth/send-otp ────────────────────────────────────────────────────
 router.post('/send-otp', otpLimiter, async (req, res) => {
   try {
@@ -116,7 +123,7 @@ router.post('/verify-otp', async (req, res) => {
 });
 
 // ── POST /api/auth/admin-login ────────────────────────────────────────────────
-router.post('/admin-login', async (req, res) => {
+router.post('/admin-login', adminLoginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await User.findOne({ email, role: 'admin' });

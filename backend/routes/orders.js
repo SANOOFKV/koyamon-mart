@@ -4,9 +4,21 @@ const User    = require('../models/User');
 const Product = require('../models/Product');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 const { calculateDeliveryFee, haversineKm } = require('../utils/delivery');
+const rateLimit = require('express-rate-limit');
 
 const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.0825;
 const STORE_LNG = parseFloat(process.env.STORE_LNG) || 75.9083;
+
+// Reduce a phone number to its last 10 digits so "+91 98765 43210" and
+// "9876543210" compare equal.
+const normalizePhone = (p) => (p ? String(p).replace(/\D/g, '').slice(-10) : '');
+
+// Throttle tracking lookups to make orderId enumeration impractical.
+const trackLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  message: { success: false, message: 'Too many tracking requests. Please try again later.' },
+});
 
 // ── POST /api/orders ── Place order (logged in or guest) ──────────────────────
 router.post('/', optionalAuth, async (req, res) => {
@@ -136,12 +148,37 @@ router.post('/', optionalAuth, async (req, res) => {
 });
 
 // ── GET /api/orders/track/:orderId ──── Track by orderId string ───────────────
-router.get('/track/:orderId', async (req, res) => {
+// orderIds are sequential and guessable, so this endpoint must not hand out
+// customer PII (address, phone) to anyone who enumerates IDs. Access requires
+// either an authenticated owner/staff session, or a matching phone number.
+router.get('/track/:orderId', trackLimiter, optionalAuth, async (req, res) => {
   try {
     const order = await Order.findOne({ orderId: req.params.orderId })
-      .select('-payment.razorpayOrderId -payment.razorpayPaymentId');
-    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
-    res.json({ success: true, order });
+      .select('-payment.razorpayOrderId -payment.razorpayPaymentId')
+      .populate('user', 'phone');
+
+    // Return an identical 404 for "not found" and "not authorized" so the
+    // endpoint can't be used to probe which orderIds exist.
+    const notFound = () => res.status(404).json({ success: false, message: 'Order not found' });
+    if (!order) return notFound();
+
+    const isOwner = req.user && order.user && String(order.user._id) === String(req.user.userId);
+    const isStaff = req.user && (req.user.isAdmin || req.user.role === 'admin' || req.user.role === 'delivery');
+
+    if (!isOwner && !isStaff) {
+      const provided   = normalizePhone(req.query.phone);
+      const orderPhone = normalizePhone(order.user?.phone || order.guestInfo?.phone);
+      if (!provided || !orderPhone || provided !== orderPhone) {
+        return notFound();
+      }
+    }
+
+    // Collapse the populated user back to its id so the response shape is
+    // unchanged and no extra user fields leak.
+    const orderObj = order.toObject();
+    if (orderObj.user && orderObj.user._id) orderObj.user = orderObj.user._id;
+
+    res.json({ success: true, order: orderObj });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

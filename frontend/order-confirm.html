@@ -177,12 +177,14 @@ const PAY_LABELS = { cod: 'Cash on Delivery', upi: 'UPI Payment', card: 'Card Pa
 async function loadOrderConfirm() {
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get('orderId');
+  const phone = params.get('phone') || '';
   if (!orderId) { window.location.href = 'index.html'; return; }
 
-  document.getElementById('oc-track-btn').href = `order-tracking.html?orderId=${orderId}`;
+  document.getElementById('oc-track-btn').href =
+    `order-tracking.html?orderId=${orderId}${phone ? `&phone=${encodeURIComponent(phone)}` : ''}`;
 
   try {
-    const data = await api.orders.track(orderId);
+    const data = await api.orders.track(orderId, phone);
     if (!data.success || !data.order) { window.location.href = 'index.html'; return; }
     renderConfirm(data.order);
   } catch {

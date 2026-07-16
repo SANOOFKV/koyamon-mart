@@ -45,26 +45,45 @@ router.post('/verify', async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
 
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !orderId) {
+      return res.status(400).json({ success: false, message: 'Missing payment verification fields' });
+    }
+
+    const order = await Order.findOne({ orderId });
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    // Bind the payment to THIS order's Razorpay order. Without this check a valid
+    // signature from any (e.g. cheaper) Razorpay order could be replayed to mark
+    // an arbitrary internal order as paid.
+    if (!order.payment.razorpayOrderId || order.payment.razorpayOrderId !== razorpay_order_id) {
+      return res.status(400).json({ success: false, message: 'Payment does not match this order' });
+    }
+
     const expectedSig = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex');
 
-    if (expectedSig !== razorpay_signature) {
+    const sigBuf      = Buffer.from(razorpay_signature, 'utf8');
+    const expectedBuf = Buffer.from(expectedSig, 'utf8');
+    if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
       return res.status(400).json({ success: false, message: 'Payment verification failed' });
     }
 
-    const result = await Order.updateOne({ orderId }, {
+    // Idempotent: if already verified, don't re-push status history.
+    if (order.payment.status === 'paid') {
+      return res.json({ success: true, message: 'Payment already verified' });
+    }
+
+    await Order.updateOne({ _id: order._id }, {
       'payment.status':            'paid',
       'payment.razorpayPaymentId': razorpay_payment_id,
       'payment.paidAt':            new Date(),
       status:                      'confirmed',
       $push: { statusHistory: { status: 'confirmed', note: 'Payment received' } },
     });
-
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
-    }
 
     res.json({ success: true, message: 'Payment verified successfully' });
   } catch (err) {

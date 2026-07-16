@@ -12,14 +12,19 @@ const app = express();
 // ─── Middleware ───────────────────────────────────────────────────────────────
 const rateLimit = require('express-rate-limit');
 
-const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : [];
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((o) => o.trim()).filter(Boolean)
+  : [];
+const localhostOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || origin === 'null' || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+    // Requests with no Origin header (curl, mobile apps, same-origin) are allowed.
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Dev convenience only: when CLIENT_URL is unconfigured, permit localhost.
+    // Never fall back to allowing arbitrary origins with credentials.
+    if (allowedOrigins.length === 0 && localhostOrigin.test(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 }));

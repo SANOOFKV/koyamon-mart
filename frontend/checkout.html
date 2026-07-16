@@ -419,12 +419,17 @@ document.getElementById('co-place-order-btn').addEventListener('click', async ()
     guestInfo: isGuest ? { name: guestName, phone: guestPhone } : undefined,
   };
 
+  // Phone used to authorize order tracking (guests aren't cookie-authenticated).
+  const trackPhone = (user?.phone || guestPhone || '').replace(/\D/g, '').slice(-10);
+  const confirmUrl = (orderId) =>
+    `order-confirm.html?orderId=${orderId}${trackPhone ? `&phone=${trackPhone}` : ''}`;
+
   try {
     const res = await api.orders.place(body);
     if (res.success) {
       if (paymentMethod === 'cod') {
         KMCart.clear();
-        window.location.href = `order-confirm.html?orderId=${res.order.orderId}`;
+        window.location.href = confirmUrl(res.order.orderId);
       } else {
         // Razorpay flow
         const rzpRes = await api.payment.createOrder(res.order.orderId);
@@ -437,7 +442,7 @@ document.getElementById('co-place-order-btn').addEventListener('click', async ()
           handler: async (response) => {
             await api.payment.verify({ ...response, orderId: res.order.orderId });
             KMCart.clear();
-            window.location.href = `order-confirm.html?orderId=${res.order.orderId}`;
+            window.location.href = confirmUrl(res.order.orderId);
           },
           modal: {
             ondismiss: function() {

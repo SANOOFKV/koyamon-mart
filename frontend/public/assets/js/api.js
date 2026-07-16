@@ -81,7 +81,7 @@ const api = {
 
   orders: {
     place: (body) => api.post('/orders', body),
-    track: (orderId) => api.get(`/orders/track/${orderId}`),
+    track: (orderId, phone) => api.get(`/orders/track/${orderId}${phone ? `?phone=${encodeURIComponent(phone)}` : ''}`),
     myOrders: () => api.get('/orders/my'),
   },
 
