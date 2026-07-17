@@ -218,8 +218,7 @@
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/api.js"></script>
 <script>
-const adminToken = () => localStorage.getItem('km_admin_token');
-if (!adminToken()) { window.location.href = 'dashboard.html'; }
+api.ensureRole(['admin'], () => { window.location.href = 'dashboard.html'; });
 
 let allProducts = [];
 let allCategories = [];
@@ -447,8 +446,8 @@ async function deleteProduct(id) {
 document.getElementById('prod-search').addEventListener('input', () => { setTimeout(loadProducts, 400); });
 document.getElementById('prod-cat-filter').addEventListener('change', () => { currentPage=1; loadProducts(); });
 
-document.getElementById('admin-logout').addEventListener('click', () => {
-  localStorage.removeItem('km_admin_token');
+document.getElementById('admin-logout').addEventListener('click', async () => {
+  await api.auth.logout();
   window.location.href = 'dashboard.html';
 });
 

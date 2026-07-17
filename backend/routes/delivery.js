@@ -1,8 +1,44 @@
 const router = require('express').Router();
 const Order = require('../models/Order');
+const User = require('../models/User');
 const { requireDelivery } = require('../middleware/deliveryGuard');
+const { optionalAuth } = require('../middleware/auth');
+const { calculateDeliveryFee, haversineKm } = require('../utils/delivery');
 
-// All routes require delivery (or admin) role
+const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.0825;
+const STORE_LNG = parseFloat(process.env.STORE_LNG) || 75.9083;
+
+/**
+ * POST /api/delivery/fee  (public — preview only)
+ * Returns the delivery fee for a given location + subtotal so the cart/checkout
+ * can show it live. The authoritative fee is still recomputed at order creation.
+ * Declared BEFORE the requireDelivery guard below so it stays public.
+ */
+router.post('/fee', optionalAuth, async (req, res) => {
+  try {
+    const { lat, lng, subtotal } = req.body;
+    const sub = Number(subtotal) || 0;
+    const distanceKm = (lat != null && lng != null)
+      ? haversineKm(STORE_LAT, STORE_LNG, Number(lat), Number(lng))
+      : 5; // default 5km when no coords, mirrors order placement
+
+    let isFirstOrder = false;
+    if (req.user) {
+      const user = await User.findById(req.user.userId).select('orderCount');
+      isFirstOrder = !!user && user.orderCount === 0;
+    }
+
+    const { fee, reason } = calculateDeliveryFee(sub, distanceKm, isFirstOrder);
+    if (fee === -1) {
+      return res.status(400).json({ success: false, message: 'Delivery not available to this location (>10KM)', reason });
+    }
+    res.json({ success: true, fee, reason, distanceKm: Math.round(distanceKm * 10) / 10 });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// All routes below require delivery (or admin) role
 router.use(requireDelivery);
 
 /**

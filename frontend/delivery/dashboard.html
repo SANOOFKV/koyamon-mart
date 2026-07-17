@@ -76,13 +76,12 @@
   <script>
     let phoneNum = '';
 
-    const checkAuth = () => {
-      const user = JSON.parse(localStorage.getItem('km_user') || '{}');
-      const token = localStorage.getItem('km_token');
-      if (!token || user.role !== 'delivery') {
+    const checkAuth = async () => {
+      const user = await api.ensureRole(['delivery', 'admin'], () => {
         document.getElementById('rider-auth-screen').classList.remove('hidden');
-        return false;
-      }
+      });
+      if (!user) return false;
+      document.getElementById('rider-auth-screen').classList.add('hidden');
       document.getElementById('rider-name').textContent = user.name || 'Rider';
       return true;
     };
@@ -112,20 +111,17 @@
         if (res.user.role !== 'delivery' && res.user.role !== 'admin') {
           return alert('Not authorized as delivery partner');
         }
-        localStorage.setItem('km_token', res.token);
-        localStorage.setItem('km_user', JSON.stringify(res.user));
+        // Session is held in the httpOnly cookie set by the server; just reload.
         location.reload();
       } catch(e) { alert('Verification failed. Invalid OTP.'); }
     }
 
     function logout() {
-      localStorage.removeItem('km_token');
-      localStorage.removeItem('km_user');
-      location.reload();
+      api.auth.logout().finally(() => location.reload());
     }
 
     async function loadMyOrders() {
-      if (!checkAuth()) return;
+      if (!(await checkAuth())) return;
       const list = document.getElementById('order-list');
       try {
         const data = await api.delivery.orders.my();
@@ -182,8 +178,8 @@
       finally { btn.disabled = false; btn.textContent = originalText; }
     }
 
-    // Initialize
-    if (checkAuth()) loadMyOrders();
+    // Initialize (checkAuth runs inside loadMyOrders and gates on the cookie)
+    loadMyOrders();
   </script>
 </body>
 </html>

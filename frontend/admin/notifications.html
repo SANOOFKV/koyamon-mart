@@ -226,8 +226,7 @@
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/api.js"></script>
 <script>
-const adminToken = () => localStorage.getItem('km_admin_token');
-if (!adminToken()) { window.location.href = 'dashboard.html'; }
+api.ensureRole(['admin'], () => { window.location.href = 'dashboard.html'; });
 
 let selectedType = 'broadcast';
 const TEMPLATES = {
@@ -359,8 +358,8 @@ function showToast(msg, type='') {
   setTimeout(() => el.remove(), 3000);
 }
 
-document.getElementById('notif-logout').addEventListener('click', () => {
-  localStorage.removeItem('km_admin_token');
+document.getElementById('notif-logout').addEventListener('click', async () => {
+  await api.auth.logout();
   window.location.href = 'dashboard.html';
 });
 

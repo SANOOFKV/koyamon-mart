@@ -34,11 +34,14 @@
   <span class="material-symbols-outlined text-6xl text-emerald-600 block mb-4">package_2</span>
   <h1 class="text-3xl font-extrabold text-emerald-900 font-headline mb-2" data-en="Track Your Order" data-ml="ഓർഡർ ട്രാക്ക് ചെയ്യൂ">Track Your Order</h1>
   <p class="text-slate-500 mb-8" data-en="Enter your Order ID to see live status" data-ml="ലൈവ് സ്ടേറ്റസ് കാണാൻ ഓർഡർ ID നൽകൂ">Enter your Order ID to see live status</p>
-  <div class="flex gap-3">
+  <div class="space-y-3">
     <input id="km-track-input" type="text" placeholder="e.g. KM-20240411-0001"
-      class="flex-1 bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
-    <button id="km-track-btn" class="bg-primary text-white px-6 py-4 rounded-xl font-bold hover:brightness-110 transition-all" data-en="Track" data-ml="ട്രാക്ക്">Track</button>
+      class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+    <input id="km-track-phone" type="tel" maxlength="10" placeholder="Mobile number on the order"
+      class="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-emerald-500/40"/>
+    <button id="km-track-btn" class="w-full bg-primary text-white px-6 py-4 rounded-xl font-bold hover:brightness-110 transition-all" data-en="Track" data-ml="ട്രാക്ക്">Track</button>
   </div>
+  <p class="text-slate-400 text-xs mt-3" data-en="Enter the mobile number used when placing the order." data-ml="ഓർഡർ ചെയ്യുമ്പോൾ ഉപയോഗിച്ച മൊബൈൽ നമ്പർ നൽകൂ.">Enter the mobile number used when placing the order.</p>
   <p id="km-track-error" class="text-red-500 text-sm mt-3 hidden"></p>
 </div>
 
@@ -154,7 +157,7 @@ function showSearch() {
   document.getElementById('km-track-error-state').classList.add('hidden');
 }
 
-async function loadOrder(orderId, silent = false) {
+async function loadOrder(orderId, phone = '', silent = false) {
   if (!silent) {
     document.getElementById('km-track-search').classList.add('hidden');
     document.getElementById('km-track-content').classList.add('hidden');
@@ -163,7 +166,7 @@ async function loadOrder(orderId, silent = false) {
   }
 
   try {
-    const data = await api.orders.track(orderId);
+    const data = await api.orders.track(orderId, phone);
     if (!data.success || !data.order) { if (!silent) showError(); return; }
     renderOrder(data.order);
   } catch {
@@ -321,22 +324,29 @@ function updateBikeMarker(order, storeCoords, destCoords) {
 
 // ── Search button ──────────────────────────────────────────────────────────
 document.getElementById('km-track-btn')?.addEventListener('click', () => {
+  const errEl = document.getElementById('km-track-error');
   const val = document.getElementById('km-track-input').value.trim();
-  if (!val) { document.getElementById('km-track-error').textContent = 'Please enter an Order ID'; document.getElementById('km-track-error').classList.remove('hidden'); return; }
-  loadOrder(val);
+  const phone = document.getElementById('km-track-phone').value.trim();
+  if (!val) { errEl.textContent = 'Please enter an Order ID'; errEl.classList.remove('hidden'); return; }
+  if (!phone) { errEl.textContent = 'Please enter the mobile number on the order'; errEl.classList.remove('hidden'); return; }
+  errEl.classList.add('hidden');
+  loadOrder(val, phone);
 });
 
-document.getElementById('km-track-input')?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') document.getElementById('km-track-btn')?.click();
+document.querySelectorAll('#km-track-input, #km-track-phone').forEach((el) => {
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('km-track-btn')?.click();
+  });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get('orderId');
+  const phone = params.get('phone') || '';
   if (orderId) {
-    loadOrder(orderId);
+    loadOrder(orderId, phone);
     // Poll for updates every 15 seconds silently
-    setInterval(() => loadOrder(orderId, true), 15000);
+    setInterval(() => loadOrder(orderId, phone, true), 15000);
   } else {
 
     showSearch();

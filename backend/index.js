@@ -12,14 +12,19 @@ const app = express();
 // ─── Middleware ───────────────────────────────────────────────────────────────
 const rateLimit = require('express-rate-limit');
 
-const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : [];
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((o) => o.trim()).filter(Boolean)
+  : [];
+const localhostOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || origin === 'null' || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+    // Requests with no Origin header (curl, mobile apps, same-origin) are allowed.
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Dev convenience only: when CLIENT_URL is unconfigured, permit localhost.
+    // Never fall back to allowing arbitrary origins with credentials.
+    if (allowedOrigins.length === 0 && localhostOrigin.test(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 }));
@@ -33,9 +38,6 @@ app.use('/api', globalLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// ─── Static (serve frontend in production) ────────────────────────────────────
-// app.use(express.static(path.join(__dirname, '../frontend')));
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth',       require('./routes/auth'));
@@ -51,9 +53,20 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', store: 'Koyamon Mart', time: new Date() });
 });
 
+// ─── Static (serve built frontend from the same origin) ───────────────────────
+// Serving the frontend from the API's own origin keeps the auth cookies
+// sameSite=strict. Point this at the Vite build output (run `npm run build` in
+// frontend/). If the build isn't present (e.g. API-only dev), this is a no-op.
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
 // ─── 404 handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' });
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ success: false, message: 'Route not found' });
+  }
+  res.status(404).sendFile(path.join(__dirname, '../frontend/dist/index.html'), (err) => {
+    if (err) res.status(404).json({ success: false, message: 'Not found' });
+  });
 });
 
 // ─── Global error handler ─────────────────────────────────────────────────────

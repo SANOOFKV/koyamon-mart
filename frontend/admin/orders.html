@@ -205,8 +205,7 @@
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/api.js"></script>
 <script>
-const adminToken = () => localStorage.getItem('km_admin_token');
-if (!adminToken()) { window.location.href = 'dashboard.html'; }
+api.ensureRole(['admin'], () => { window.location.href = 'dashboard.html'; });
 
 let allOrders = [];
 let currentPage = 1;
@@ -398,7 +397,7 @@ async function loadRidersList(currentRiderId) {
 }
 
 document.getElementById('ord-status-filter').addEventListener('change', () => { currentPage=1; loadOrders(); });
-document.getElementById('admin-logout').addEventListener('click', () => { localStorage.removeItem('km_admin_token'); window.location.href = 'dashboard.html'; });
+document.getElementById('admin-logout').addEventListener('click', async () => { await api.auth.logout(); window.location.href = 'dashboard.html'; });
 document.addEventListener('DOMContentLoaded', loadOrders);
 </script>
 </body>
