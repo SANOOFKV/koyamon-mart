@@ -163,7 +163,7 @@ function productCard(p, lang) {
     <div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       <a href="product.html?id=${p._id}" class="block h-48 overflow-hidden relative bg-surface-container">
         <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-          src="${p.images?.[0] || 'assets/images/placeholder.png'}" alt="${name}" loading="lazy"/>
+          src="${p.images?.[0] || 'assets/images/placeholder.svg'}" alt="${name}" loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'"/>
         ${disc > 0 ? `<span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold px-2 py-0.5 rounded-full">${disc}% OFF</span>` : ''}
       </a>
       <div class="p-4">

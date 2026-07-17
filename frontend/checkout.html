@@ -260,7 +260,7 @@ function renderOrderSummary() {
   document.getElementById('co-items').innerHTML = items.map(i => `
     <div class="flex items-center gap-4">
       <div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
-        <img class="w-full h-full object-cover" src="${i.image || 'assets/images/placeholder.png'}" alt="${i.productName}" loading="lazy"/>
+        <img class="w-full h-full object-cover" src="${i.image || 'assets/images/placeholder.svg'}" alt="${i.productName}" loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'"/>
       </div>
       <div class="flex-grow">
         <h3 class="font-semibold text-emerald-900 text-sm font-headline">${i.productName}</h3>

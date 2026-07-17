@@ -196,7 +196,7 @@ function renderCart() {
     <div class="flex items-center gap-4 group" data-pid="${item.productId}" data-vl="${item.variantLabel}">
       <div class="w-20 h-20 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
         <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          src="${item.image || 'assets/images/placeholder.png'}" alt="${item.productName}" loading="lazy"/>
+          src="${item.image || 'assets/images/placeholder.svg'}" alt="${item.productName}" loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'"/>
       </div>
       <div class="flex-grow">
         <h3 class="font-semibold text-emerald-900 font-headline">${item.productName}</h3>
