@@ -216,6 +216,8 @@ function setLang(lang) {
     : 'py-2 rounded-lg text-on-surface-variant text-sm font-medium hover:bg-white/50';
 }
 
+let loadedOrders = [];
+
 async function loadOrders() {
   document.getElementById('km-orders-loading').classList.remove('hidden');
   document.getElementById('km-orders-list').classList.add('hidden');
@@ -225,6 +227,7 @@ async function loadOrders() {
     const data = await api.orders.myOrders();
     document.getElementById('km-orders-loading').classList.add('hidden');
     const orders = data.orders || [];
+    loadedOrders = orders;
     if (!orders.length) { document.getElementById('km-orders-empty').classList.remove('hidden'); return; }
 
     document.getElementById('km-orders-list').classList.remove('hidden');
@@ -259,14 +262,17 @@ async function loadOrders() {
   }
 }
 
-async function reorder(orderId) {
-  try {
-    const data = await api.orders.byId(orderId);
-    if (data.order) {
-      data.order.items.forEach(item => KMCart.add({ _id: item.productId, name: { en: item.productName }, images: [] }, { label: item.variant?.label, price: item.variant?.price, mrp: item.variant?.mrp }, item.quantity));
-      window.location.href = 'cart.html';
-    }
-  } catch { alert('Could not reorder. Please try again.'); }
+function reorder(orderId) {
+  // The order (with its items) is already loaded via myOrders(); no fetch needed
+  // — there is no customer endpoint to fetch a single order by id.
+  const order = loadedOrders.find(o => o._id === orderId);
+  if (!order || !order.items?.length) { alert('Could not reorder. Please try again.'); return; }
+  order.items.forEach(item => KMCart.add(
+    { _id: item.product, name: { en: item.productName }, images: [] },
+    { label: item.variant?.label, price: item.variant?.price, mrp: item.variant?.mrp || item.variant?.price },
+    item.quantity
+  ));
+  window.location.href = 'cart.html';
 }
 
 function showAddressModal() {
