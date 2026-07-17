@@ -273,7 +273,8 @@ function renderProduct(p) {
 
   // Images
   const mainImg = document.getElementById('km-main-image');
-  mainImg.src = p.images?.[0] || 'assets/images/placeholder.png';
+  mainImg.onerror = () => { mainImg.onerror = null; mainImg.src = 'assets/images/placeholder.svg'; };
+  mainImg.src = p.images?.[0] || 'assets/images/placeholder.svg';
   mainImg.alt = name;
 
   const thumbs = document.getElementById('km-thumbnails');
@@ -365,7 +366,7 @@ function renderRelated(products, lang) {
       <div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
         <a href="product.html?id=${p._id}" class="h-48 overflow-hidden relative block">
           <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            src="${p.images?.[0] || 'assets/images/placeholder.png'}" alt="${n}" loading="lazy"/>
+            src="${p.images?.[0] || 'assets/images/placeholder.svg'}" alt="${n}" loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'"/>
         </a>
         <div class="p-4">
           <h3 class="font-bold text-on-surface mb-1 font-headline">${n}</h3>

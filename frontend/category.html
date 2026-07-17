@@ -125,7 +125,7 @@ function getCatStyle(cat) {
   for (const [key, style] of Object.entries(CAT_FALLBACK)) {
     if (name.includes(key)) return style;
   }
-  return { img: cat.image || 'assets/images/placeholder.png', badge: '', badgeClass: '', gradient: 'from-black/60 to-transparent', sub: '' };
+  return { img: cat.image || 'assets/images/placeholder.svg', badge: '', badgeClass: '', gradient: 'from-black/60 to-transparent', sub: '' };
 }
 
 async function loadCategories() {

@@ -5,6 +5,13 @@ const Order    = require('../models/Order');
 const User     = require('../models/User');
 const Notification = require('../models/Notification');
 const { requireAdmin } = require('../middleware/adminGuard');
+const { pick } = require('../utils/pick');
+const { parseCsvLine } = require('../utils/csv');
+
+// Fields a client is allowed to set when creating/updating documents. Anything
+// else in the request body is dropped to prevent mass-assignment.
+const PRODUCT_FIELDS  = ['name', 'description', 'category', 'images', 'variants', 'tags', 'unit', 'isFeatured', 'isActive', 'sortOrder'];
+const CATEGORY_FIELDS = ['name', 'slug', 'icon', 'image', 'sortOrder', 'isActive'];
 
 // All admin routes require admin JWT
 router.use(requireAdmin);
@@ -73,7 +80,7 @@ router.get('/products', async (req, res) => {
 
 router.post('/products', async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const product = await Product.create(pick(req.body, PRODUCT_FIELDS));
     res.status(201).json({ success: true, product });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -92,8 +99,8 @@ router.post('/products/bulk-upload', upload.single('csv'), async (req, res) => {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (lines.length < 2) return res.status(400).json({ success: false, message: 'CSV must have a header row and at least one data row' });
 
-    // Parse header
-    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    // Parse header (same quote-aware parser as the data rows)
+    const headers = parseCsvLine(lines[0]);
     const required = ['name_en', 'category_slug', 'variant_label', 'variant_price', 'variant_stock'];
     const missing  = required.filter(r => !headers.includes(r));
     if (missing.length) return res.status(400).json({ success: false, message: `Missing columns: ${missing.join(', ')}` });
@@ -101,7 +108,7 @@ router.post('/products/bulk-upload', upload.single('csv'), async (req, res) => {
     // Parse rows — group multi-variant rows by name_en + category_slug
     const rowMap = new Map();
     for (let i = 1; i < lines.length; i++) {
-      const cols  = lines[i].split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ''));
+      const cols  = parseCsvLine(lines[i]);
       if (cols.length < headers.length && cols.every(c => !c)) continue;
       const row   = {};
       headers.forEach((h, idx) => { row[h] = cols[idx] || ''; });
@@ -155,7 +162,7 @@ router.post('/products/bulk-upload', upload.single('csv'), async (req, res) => {
 
 router.put('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const product = await Product.findByIdAndUpdate(req.params.id, pick(req.body, PRODUCT_FIELDS), { new: true, runValidators: true });
     if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
     res.json({ success: true, product });
   } catch (err) {
@@ -210,7 +217,7 @@ router.get('/categories', async (req, res) => {
 
 router.post('/categories', async (req, res) => {
   try {
-    const cat = await Category.create(req.body);
+    const cat = await Category.create(pick(req.body, CATEGORY_FIELDS));
     res.status(201).json({ success: true, category: cat });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -219,7 +226,7 @@ router.post('/categories', async (req, res) => {
 
 router.put('/categories/:id', async (req, res) => {
   try {
-    const cat = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const cat = await Category.findByIdAndUpdate(req.params.id, pick(req.body, CATEGORY_FIELDS), { new: true });
     res.json({ success: true, category: cat });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });

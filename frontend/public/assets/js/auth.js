@@ -51,7 +51,7 @@ const KMAuth = {
   // Redirect to login page and come back after
   requireLogin(redirectPath) {
     if (!this.isLoggedIn()) {
-      window.location.href = `/checkout.html?redirect=${encodeURIComponent(redirectPath || window.location.pathname)}`;
+      window.location.href = `login.html?redirect=${encodeURIComponent(redirectPath || window.location.pathname)}`;
       return false;
     }
     return true;
