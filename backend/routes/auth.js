@@ -46,9 +46,17 @@ router.post('/send-otp', otpLimiter, async (req, res) => {
     const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
     await OTP.create({ phone: normalizedPhone, otp, expiresAt });
-    await sendOTP(normalizedPhone, otp);
+    const result = await sendOTP(normalizedPhone, otp);
 
-    res.json({ success: true, message: 'OTP sent successfully' });
+    const payload = { success: true, message: 'OTP sent successfully' };
+    // In dev/stub mode there is no real SMS gateway, so return the OTP to the
+    // client so login is usable. This is skipped the moment a real provider
+    // (msg91/twilio) is configured, keeping the OTP off the wire in production.
+    if (result && result.devMode) {
+      payload.devMode = true;
+      payload.devOtp = otp;
+    }
+    res.json(payload);
   } catch (err) {
     console.error('send-otp error:', err);
     res.status(500).json({ success: false, message: 'Failed to send OTP' });

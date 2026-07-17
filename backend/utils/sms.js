@@ -13,9 +13,11 @@ async function sendOTP(phone, otp) {
   const provider = process.env.SMS_PROVIDER || 'console'; // 'msg91' | 'twilio' | 'console'
 
   if (provider === 'console') {
-    // DEV mode: just log the OTP
+    // DEV mode: no real SMS gateway is wired up. Log the OTP for the server
+    // operator and flag devMode so the caller can surface it to the client
+    // (there is no other way for the user to obtain it in this mode).
     console.log(`📱 [DEV OTP] Phone: ${phone} | OTP: ${otp}`);
-    return { success: true, messageId: 'dev-' + Date.now() };
+    return { success: true, messageId: 'dev-' + Date.now(), devMode: true };
   }
 
   if (provider === 'msg91') {
