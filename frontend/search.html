@@ -116,11 +116,29 @@
 </main>
 
 <!-- Mobile Nav -->
-<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-lg z-50 flex justify-around items-center h-16 border-t border-surface-container-high">
-  <a href="index.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined text-xl" style="font-variation-settings:'FILL' 1;">home</span><span class="text-[10px] font-bold">Home</span></a>
-  <a href="search.html" class="flex flex-col items-center gap-1 text-primary"><span class="material-symbols-outlined text-xl">search</span><span class="text-[10px]">Search</span></a>
-  <a href="cart.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined text-xl">shopping_cart</span><span class="text-[10px]">Cart</span></a>
-  <a href="profile.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined text-xl">person</span><span class="text-[10px]">Profile</span></a>
+<!-- ══ MOBILE BOTTOM NAV ═══════════════════════════════════════════════════ -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-8 glass z-50 rounded-t-[2rem]">
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="index.html">
+    <span class="material-symbols-outlined">home</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Home" data-ml="ഹോം">Home</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="category.html">
+    <span class="material-symbols-outlined">grid_view</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Categories" data-ml="വിഭാഗങ്ങൾ">Categories</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="order-tracking.html">
+    <span class="material-symbols-outlined">local_shipping</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Tracking" data-ml="ട്രാക്കിംഗ്">Tracking</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1 relative" href="cart.html">
+    <span class="material-symbols-outlined">shopping_basket</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Cart" data-ml="കാർട്ട്">Cart</span>
+    <span id="km-cart-count-mobile" class="absolute top-0 right-3 hidden bg-secondary text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white">0</span>
+  </a>
+  <a class="flex flex-col items-center justify-center text-slate-400 px-4 py-1" href="profile.html">
+    <span class="material-symbols-outlined">person</span>
+    <span class="text-[10px] font-bold mt-0.5" data-en="Profile" data-ml="പ്രൊഫൈൽ">Profile</span>
+  </a>
 </nav>
 
 <!-- Footer -->
