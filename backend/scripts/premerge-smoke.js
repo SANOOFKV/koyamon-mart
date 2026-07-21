@@ -67,7 +67,9 @@ async function main() {
   const stock = async () => (await Product.findById(productId)).variants[0].stock;
 
   const guestInfo = { name: 'Smoke Guest', phone: '9876543210' };
-  const deliveryAddress = { line1: 'Test address' };
+  // Coordinates are required (see [#9] below) — a couple KM from the default
+  // STORE_LAT/STORE_LNG so it lands safely inside the 10KM radius.
+  const deliveryAddress = { line1: 'Test address', lat: 11.09, lng: 75.92 };
   const line = (qty, label = '1kg') => ({ productId, variantLabel: label, quantity: qty });
 
   // ── #7 transaction ──────────────────────────────────────────────────────────
@@ -115,6 +117,11 @@ async function main() {
     });
     ok(r.status === 400, 'verify with a razorpay order that does not match → 400 (no forced "paid")');
   }
+
+  // ── #9 delivery coordinates required (10KM radius can't be bypassed) ───────────
+  console.log('\n[#9] Delivery address requires lat/lng');
+  r = await post('/api/orders', { items: [line(1)], deliveryAddress: { line1: 'No coords here' }, payment: { method: 'cod' }, guestInfo });
+  ok(r.status === 400, 'order without lat/lng → 400 (radius check cannot be skipped)');
 
   // ── cleanup ─────────────────────────────────────────────────────────────────
   await Order.deleteMany({ 'guestInfo.name': 'Smoke Guest' });

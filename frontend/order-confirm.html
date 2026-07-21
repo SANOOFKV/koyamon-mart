@@ -210,7 +210,7 @@ function renderConfirm(order) {
   document.getElementById('oc-total').textContent = `₹${order.total}`;
 
   const addr = order.deliveryAddress || {};
-  document.getElementById('oc-address').innerHTML = [addr.line1, addr.line2, addr.landmark, addr.pincode].filter(Boolean).join('<br/>');
+  document.getElementById('oc-address').innerHTML = [addr.line1, addr.line2, addr.landmark, addr.pincode].filter(Boolean).map(escapeHtml).join('<br/>');
   document.getElementById('oc-payment').textContent = PAY_LABELS[order.payment?.method] || 'COD';
 
   // Progress bar
@@ -229,7 +229,7 @@ function renderConfirm(order) {
         <span class="material-symbols-outlined text-slate-300 w-full h-full flex items-center justify-center text-3xl">set_meal</span>
       </div>
       <div class="flex-1">
-        <p class="font-semibold text-on-surface text-sm">${item.productName}</p>
+        <p class="font-semibold text-on-surface text-sm">${escapeHtml(item.productName)}</p>
         <p class="text-xs text-on-surface-variant">${item.variant?.label || ''} × ${item.quantity}</p>
       </div>
       <p class="font-bold text-primary">₹${item.totalPrice}</p>

@@ -19,4 +19,14 @@ function pick(source, allowed) {
   return out;
 }
 
-module.exports = { pick };
+/**
+ * Escape regex metacharacters so a raw user-supplied string can be safely
+ * embedded in a $regex filter (prevents ReDoS and unintended pattern syntax).
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+module.exports = { pick, escapeRegex };

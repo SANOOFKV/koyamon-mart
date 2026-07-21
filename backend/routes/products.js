@@ -8,6 +8,8 @@ const Category = require('../models/Category');
 router.get('/', async (req, res) => {
   try {
     const { category, search, sort, minPrice, maxPrice, page = 1, limit = 20, inStock } = req.query;
+    const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const safePage = Math.max(Number(page) || 1, 1);
     const filter = { isActive: true };
 
     if (category) {
@@ -42,15 +44,15 @@ router.get('/', async (req, res) => {
     };
     const sortQuery = sortMap[sort] || sortMap['default'];
 
-    const skip  = (Number(page) - 1) * Number(limit);
+    const skip  = (safePage - 1) * safeLimit;
     const total = await Product.countDocuments(filter);
     const products = await Product.find(filter)
       .populate('category', 'name slug icon')
       .sort(sortQuery)
       .skip(skip)
-      .limit(Number(limit));
+      .limit(safeLimit);
 
-    res.json({ success: true, products, total, page: Number(page), pages: Math.ceil(total / limit) });
+    res.json({ success: true, products, total, page: safePage, pages: Math.ceil(total / safeLimit) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

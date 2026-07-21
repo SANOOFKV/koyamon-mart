@@ -232,7 +232,7 @@ function renderOrder(order) {
         <span class="material-symbols-outlined text-slate-400">set_meal</span>
       </div>
       <div class="flex-1">
-        <h5 class="text-sm font-bold text-on-surface font-headline">${item.productName}</h5>
+        <h5 class="text-sm font-bold text-on-surface font-headline">${escapeHtml(item.productName)}</h5>
         <p class="text-xs text-slate-500">${item.variant?.label || ''} × ${item.quantity} · ₹${item.totalPrice}</p>
       </div>
     </div>
@@ -247,7 +247,7 @@ function renderOrder(order) {
 
   // Address
   const addr = order.deliveryAddress || {};
-  document.getElementById('km-delivery-address').innerHTML = [addr.line1, addr.line2, addr.landmark, addr.pincode].filter(Boolean).join('<br/>');
+  document.getElementById('km-delivery-address').innerHTML = [addr.line1, addr.line2, addr.landmark, addr.pincode].filter(Boolean).map(escapeHtml).join('<br/>');
 
   // Payment
   const pMethod = { cod: 'Cash on Delivery', upi: 'UPI Payment', card: 'Card Payment' };

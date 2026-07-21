@@ -1,11 +1,13 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
 const Product  = require('../models/Product');
 const Category = require('../models/Category');
 const Order    = require('../models/Order');
 const User     = require('../models/User');
 const Notification = require('../models/Notification');
 const { requireAdmin } = require('../middleware/adminGuard');
-const { pick } = require('../utils/pick');
+const { pick, escapeRegex } = require('../utils/pick');
+const { toIndianPhone } = require('../utils/phone');
 const { parseCsvLine } = require('../utils/csv');
 
 // Fields a client is allowed to set when creating/updating documents. Anything
@@ -63,14 +65,16 @@ router.get('/dashboard', async (req, res) => {
 router.get('/products', async (req, res) => {
   try {
     const { page = 1, limit = 30, category, search } = req.query;
+    const safeLimit = Math.min(Math.max(Number(limit) || 30, 1), 100);
+    const safePage = Math.max(Number(page) || 1, 1);
     const filter = {};
     if (category) filter.category = category;
     if (search) filter.$text = { $search: search };
     const products = await Product.find(filter)
       .populate('category', 'name')
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .skip((safePage - 1) * safeLimit)
+      .limit(safeLimit);
     const total = await Product.countDocuments(filter);
     res.json({ success: true, products, total });
   } catch (err) {
@@ -262,11 +266,13 @@ router.delete('/categories/:id/permanent', async (req, res) => {
 router.get('/orders', async (req, res) => {
   try {
     const { page = 1, limit = 20, status } = req.query;
+    const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const safePage = Math.max(Number(page) || 1, 1);
     const filter = status ? { status } : {};
     const orders = await Order.find(filter)
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .skip((safePage - 1) * safeLimit)
+      .limit(safeLimit);
     const total = await Order.countDocuments(filter);
     res.json({ success: true, orders, total });
   } catch (err) {
@@ -310,9 +316,18 @@ router.patch('/orders/:id/status', async (req, res) => {
 router.patch('/orders/:id/assign', async (req, res) => {
   try {
     const { deliveryBoyId } = req.body;
+    if (deliveryBoyId) {
+      if (!mongoose.Types.ObjectId.isValid(deliveryBoyId)) {
+        return res.status(400).json({ success: false, message: 'Invalid deliveryBoyId' });
+      }
+      const rider = await User.findOne({ _id: deliveryBoyId, role: 'delivery' }).select('_id');
+      if (!rider) {
+        return res.status(400).json({ success: false, message: 'deliveryBoyId must be an existing user with the delivery role' });
+      }
+    }
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { deliveryBoy: deliveryBoyId },
+      { deliveryBoy: deliveryBoyId || null },
       { new: true }
     );
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
@@ -335,7 +350,7 @@ router.get('/users', async (req, res) => {
         filter.role = role;
       }
     }
-    if (search) filter.phone = { $regex: search, $options: 'i' };
+    if (search) filter.phone = { $regex: escapeRegex(search), $options: 'i' };
     const users = await User.find(filter).sort({ createdAt: -1 });
     res.json({ success: true, users });
   } catch (err) {
@@ -383,13 +398,10 @@ router.delete('/users/:id', async (req, res) => {
 router.post('/users', async (req, res) => {
   try {
     const { phone, name, role } = req.body;
-    const cleanPhone = phone.replace(/\s/g, '').replace(/^\+?91/, '');
-    
-    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+    const normalizedPhone = toIndianPhone(phone);
+    if (!normalizedPhone) {
       return res.status(400).json({ success: false, message: 'Invalid 10-digit phone number' });
     }
-
-    const normalizedPhone = '+91' + cleanPhone;
 
     let user = await User.findOne({ phone: normalizedPhone });
     if (user) {
