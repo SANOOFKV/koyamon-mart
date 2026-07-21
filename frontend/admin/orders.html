@@ -252,7 +252,7 @@ function renderTable(total) {
       </td>
       <td class="px-6 py-4">
         <p class="font-semibold text-sm">${o.user?.phone || 'Guest'}</p>
-        <p class="text-xs text-slate-500 mt-0.5 truncate max-w-[200px]">${[o.deliveryAddress?.line1, o.deliveryAddress?.line2].filter(Boolean).join(', ') || 'No Address'}</p>
+        <p class="text-xs text-slate-500 mt-0.5 truncate max-w-[200px]">${[o.deliveryAddress?.line1, o.deliveryAddress?.line2].filter(Boolean).map(escapeHtml).join(', ') || 'No Address'}</p>
       </td>
       <td class="px-6 py-4">
         <p class="font-bold text-sm text-on-surface">₹${o.total}</p>
@@ -312,7 +312,7 @@ async function openModal(id) {
     
     // Address
     const a = order.deliveryAddress || {};
-    document.getElementById('om-address').innerHTML = [a.line1, a.line2, a.landmark, `${a.city} ${a.pincode}`].filter(Boolean).join(', ');
+    document.getElementById('om-address').innerHTML = [a.line1, a.line2, a.landmark, `${a.city || ''} ${a.pincode || ''}`.trim()].filter(Boolean).map(escapeHtml).join(', ');
     document.getElementById('om-dist').textContent = order.deliveryDistanceKm ? `${order.deliveryDistanceKm.toFixed(1)} km` : '??';
     
     // Payment
@@ -334,7 +334,7 @@ async function openModal(id) {
       <div class="flex items-center justify-between text-sm py-1.5 border-b border-slate-50 last:border-0">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full ${i.product ? 'bg-primary' : 'bg-slate-300'}"></span>
-          <span class="font-medium text-slate-700">${i.productName} <span class="text-slate-400 text-xs ml-1">(${i.variant?.label || ''})</span></span>
+          <span class="font-medium text-slate-700">${escapeHtml(i.productName)} <span class="text-slate-400 text-xs ml-1">(${escapeHtml(i.variant?.label || '')})</span></span>
         </div>
         <div class="text-right">
           <span class="text-xs text-slate-500 mr-2">${i.quantity} x ₹${i.price}</span>

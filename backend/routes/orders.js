@@ -5,6 +5,7 @@ const User    = require('../models/User');
 const Product = require('../models/Product');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 const { calculateDeliveryFee, haversineKm } = require('../utils/delivery');
+const { toIndianPhone, last10Digits: normalizePhone } = require('../utils/phone');
 const rateLimit = require('express-rate-limit');
 
 // Signals a client-facing validation failure (bad stock, unavailable product,
@@ -18,10 +19,6 @@ class OrderError extends Error {
 
 const STORE_LAT = parseFloat(process.env.STORE_LAT) || 11.0825;
 const STORE_LNG = parseFloat(process.env.STORE_LNG) || 75.9083;
-
-// Reduce a phone number to its last 10 digits so "+91 98765 43210" and
-// "9876543210" compare equal.
-const normalizePhone = (p) => (p ? String(p).replace(/\D/g, '').slice(-10) : '');
 
 // Throttle tracking lookups to make orderId enumeration impractical.
 const trackLimiter = rateLimit({
@@ -47,19 +44,23 @@ router.post('/', optionalAuth, async (req, res) => {
     let normalizedGuestInfo;
     if (isGuestOrder) {
       const guestName  = guestInfo?.name?.trim();
-      const guestPhone = (guestInfo?.phone || '').replace(/\D/g, '').slice(-10);
-      if (!guestName || !/^[6-9]\d{9}$/.test(guestPhone)) {
+      const guestPhone = toIndianPhone(guestInfo?.phone);
+      if (!guestName || !guestPhone) {
         return res.status(400).json({ success: false, message: 'Guest orders require a name and a valid 10-digit phone number' });
       }
-      normalizedGuestInfo = { name: guestName, phone: '+91' + guestPhone };
+      normalizedGuestInfo = { name: guestName, phone: guestPhone };
     }
 
     const paymentMethod = ['cod', 'upi', 'card'].includes(payment?.method) ? payment.method : 'cod';
 
-    // Distance and delivery fee (independent of stock, computed once)
-    const distanceKm = deliveryAddress.lat && deliveryAddress.lng
-      ? haversineKm(STORE_LAT, STORE_LNG, deliveryAddress.lat, deliveryAddress.lng)
-      : 5; // default 5km if no coords
+    // Coordinates are required so the 10KM service-radius check (below, via
+    // calculateDeliveryFee) can't be bypassed by simply omitting them.
+    const lat = Number(deliveryAddress.lat);
+    const lng = Number(deliveryAddress.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return res.status(400).json({ success: false, message: 'Delivery address must include a valid location (lat/lng)' });
+    }
+    const distanceKm = haversineKm(STORE_LAT, STORE_LNG, lat, lng);
 
     let isFirstOrder = false;
     if (req.user) {

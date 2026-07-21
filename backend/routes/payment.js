@@ -1,6 +1,16 @@
 const router = require('express').Router();
 const crypto   = require('crypto');
+const rateLimit = require('express-rate-limit');
 const Order    = require('../models/Order');
+const { optionalAuth } = require('../middleware/auth');
+
+// orderIds (KM-YYYYMMDD-NNNN) are sequential/guessable, so throttle both
+// endpoints to make enumeration/abuse against the Razorpay account impractical.
+const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: { success: false, message: 'Too many payment requests. Please try again later.' },
+});
 
 function getRazorpay() {
   if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
@@ -11,11 +21,17 @@ function getRazorpay() {
 }
 
 // ── POST /api/payment/create-order ────────────────────────────────────────────
-router.post('/create-order', async (req, res) => {
+router.post('/create-order', paymentLimiter, optionalAuth, async (req, res) => {
   try {
     const { orderId } = req.body;  // our internal orderId (KM-...)
     const order = await Order.findOne({ orderId });
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+
+    // Account orders can only be paid for by their owner. Guest orders have no
+    // session to check against, but the rate limiter above bounds abuse there.
+    if (order.user && (!req.user || String(order.user) !== String(req.user.userId))) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this order' });
+    }
 
     const razorpay = getRazorpay();
     const rzpOrder = await razorpay.orders.create({
@@ -40,8 +56,8 @@ router.post('/create-order', async (req, res) => {
   }
 });
 
-// ── POST /api/payment/verify ──────────────────────────────────────────────────
-router.post('/verify', async (req, res) => {
+// ── POST /api/payment/verify ───────────────────────────────────────────────────
+router.post('/verify', paymentLimiter, async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
 

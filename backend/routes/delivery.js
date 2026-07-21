@@ -18,9 +18,12 @@ router.post('/fee', optionalAuth, async (req, res) => {
   try {
     const { lat, lng, subtotal } = req.body;
     const sub = Number(subtotal) || 0;
-    const distanceKm = (lat != null && lng != null)
-      ? haversineKm(STORE_LAT, STORE_LNG, Number(lat), Number(lng))
-      : 5; // default 5km when no coords, mirrors order placement
+    const numLat = Number(lat);
+    const numLng = Number(lng);
+    if (!Number.isFinite(numLat) || !Number.isFinite(numLng)) {
+      return res.status(400).json({ success: false, message: 'A valid location (lat/lng) is required for a delivery fee quote' });
+    }
+    const distanceKm = haversineKm(STORE_LAT, STORE_LNG, numLat, numLng);
 
     let isFirstOrder = false;
     if (req.user) {

@@ -255,10 +255,10 @@ function renderOrderSummary() {
   document.getElementById('co-items').innerHTML = items.map(i => `
     <div class="flex items-center gap-4">
       <div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
-        <img class="w-full h-full object-cover" src="${i.image || 'assets/images/placeholder.svg'}" alt="${i.productName}" loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'"/>
+        <img class="w-full h-full object-cover" src="${i.image || 'assets/images/placeholder.svg'}" alt="${escapeHtml(i.productName)}" loading="lazy" onerror="this.onerror=null;this.src='assets/images/placeholder.svg'"/>
       </div>
       <div class="flex-grow">
-        <h3 class="font-semibold text-emerald-900 text-sm font-headline">${i.productName}</h3>
+        <h3 class="font-semibold text-emerald-900 text-sm font-headline">${escapeHtml(i.productName)}</h3>
         <p class="text-xs text-slate-500">${i.variantLabel} × ${i.quantity}</p>
       </div>
       <span class="font-bold text-emerald-900">₹${i.variantPrice * i.quantity}</span>
@@ -391,6 +391,10 @@ document.getElementById('co-place-order-btn').addEventListener('click', async ()
 
   const line1 = document.getElementById('co-addr-line1').value.trim();
   if (!line1) { KMToast.show('Please enter your delivery address', 'error'); return; }
+  if (!deliveryCoords) {
+    KMToast.show('Please detect your location so we can confirm you\'re within our delivery zone', 'error');
+    return;
+  }
 
   const paymentMethod = document.querySelector('input[name="km-payment"]:checked')?.value || 'cod';
   const btn = document.getElementById('co-place-order-btn');

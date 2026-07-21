@@ -1,4 +1,16 @@
 /**
+ * Escape a value for safe interpolation into innerHTML. Use this for any
+ * user-supplied string (delivery address, guest name, product name, etc.)
+ * before it's inserted via template literals — those fields are free text
+ * from checkout/admin forms and are not sanitized server-side.
+ */
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[ch]));
+}
+
+/**
  * Koyamon Mart — API Wrapper
  * Thin fetch wrapper around all backend endpoints
  */

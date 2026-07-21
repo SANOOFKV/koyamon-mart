@@ -5,9 +5,24 @@ const bcrypt = require('bcryptjs');
 const User   = require('../models/User');
 const OTP    = require('../models/OTP');
 const { sendOTP } = require('../utils/sms');
+const { toIndianPhone } = require('../utils/phone');
 const rateLimit = require('express-rate-limit');
 
 const OTP_EXPIRY_MINUTES = 10;
+const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // matches the refreshToken cookie's maxAge
+const MAX_REFRESH_TOKENS_PER_USER = 10; // cap concurrent sessions/devices
+
+// Drops expired tokens and, if still over the cap, the oldest ones, then
+// appends a freshly issued token. Mutates and returns the trimmed array.
+function issueRefreshToken(user) {
+  const now = new Date();
+  const token = crypto.randomBytes(40).toString('hex');
+  const live = (user.refreshTokens || []).filter((t) => t.expiresAt > now);
+  while (live.length >= MAX_REFRESH_TOKENS_PER_USER) live.shift();
+  live.push({ token, expiresAt: new Date(now.getTime() + REFRESH_TOKEN_TTL_MS) });
+  user.refreshTokens = live;
+  return token;
+}
 
 const otpLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -26,12 +41,10 @@ const adminLoginLimiter = rateLimit({
 router.post('/send-otp', otpLimiter, async (req, res) => {
   try {
     const { phone } = req.body;
-    const cleanPhone = phone.replace(/\s/g, '').replace(/^\+?91/, '');
-    if (!phone || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+    const normalizedPhone = toIndianPhone(phone);
+    if (!normalizedPhone) {
       return res.status(400).json({ success: false, message: 'Invalid phone number' });
     }
-
-    const normalizedPhone = '+91' + cleanPhone;
 
     // Rate limit: max 3 OTPs per 10 minutes
     const recentCount = await OTP.countDocuments({
@@ -63,8 +76,10 @@ router.post('/verify-otp', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Phone and OTP are required' });
     }
 
-    const cleanPhone = phone.replace(/\s/g, '').replace(/^\+?91/, '');
-    const normalizedPhone = '+91' + cleanPhone;
+    const normalizedPhone = toIndianPhone(phone);
+    if (!normalizedPhone) {
+      return res.status(400).json({ success: false, message: 'Invalid phone number' });
+    }
 
     const record = await OTP.findOne({ phone: normalizedPhone, verified: false })
       .sort({ createdAt: -1 });
@@ -96,13 +111,11 @@ router.post('/verify-otp', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '15m' }
     );
-    const refreshToken = crypto.randomBytes(40).toString('hex');
-    
-    user.refreshTokens.push(refreshToken);
+    const refreshToken = issueRefreshToken(user);
     await user.save();
 
     res.cookie('accessToken', accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 15 * 60 * 1000 });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: REFRESH_TOKEN_TTL_MS });
 
     res.json({
       success: true,
@@ -141,13 +154,11 @@ router.post('/admin-login', adminLoginLimiter, async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '15m' }
     );
-    const refreshToken = crypto.randomBytes(40).toString('hex');
-    
-    admin.refreshTokens.push(refreshToken);
+    const refreshToken = issueRefreshToken(admin);
     await admin.save();
 
     res.cookie('accessToken', accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 15 * 60 * 1000 });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: REFRESH_TOKEN_TTL_MS });
 
     res.json({ success: true, token: accessToken, message: 'Admin logged in' });
   } catch (err) {
@@ -162,8 +173,15 @@ router.post('/refresh', async (req, res) => {
     const { refreshToken } = req.cookies;
     if (!refreshToken) return res.status(401).json({ success: false, message: 'No refresh token' });
 
-    const user = await User.findOne({ refreshTokens: refreshToken });
+    const user = await User.findOne({ 'refreshTokens.token': refreshToken });
     if (!user) return res.status(401).json({ success: false, message: 'Invalid refresh token' });
+
+    const stored = user.refreshTokens.find((t) => t.token === refreshToken);
+    if (!stored || stored.expiresAt <= new Date()) {
+      // Expired token found on record — drop it so it can't be replayed again.
+      await User.updateOne({ _id: user._id }, { $pull: { refreshTokens: { token: refreshToken } } });
+      return res.status(401).json({ success: false, message: 'Refresh token expired' });
+    }
 
     const accessToken = jwt.sign(
       { userId: user._id, phone: user.phone, email: user.email, role: user.role, isAdmin: user.role === 'admin' },
@@ -183,7 +201,7 @@ router.post('/logout', async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
     if (refreshToken) {
-      await User.updateOne({ refreshTokens: refreshToken }, { $pull: { refreshTokens: refreshToken } });
+      await User.updateOne({ 'refreshTokens.token': refreshToken }, { $pull: { refreshTokens: { token: refreshToken } } });
     }
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
