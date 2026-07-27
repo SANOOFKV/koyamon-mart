@@ -21,7 +21,8 @@
 <body class="bg-gray-50 min-h-screen">
 
 <!-- Sidebar -->
-<aside class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 shadow-sm flex flex-col z-30">
+<div id="admin-sidebar-backdrop" class="hidden md:hidden fixed inset-0 bg-black/40 z-30" onclick="closeAdminSidebar()"></div>
+<aside id="admin-sidebar" class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 shadow-sm flex flex-col z-40 -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
   <div class="p-6 border-b border-gray-100">
     <h1 class="font-headline text-xl font-extrabold text-green-900">🛒 KM Admin</h1>
     <p class="text-xs text-gray-400 mt-1">Koyamon Mart</p>
@@ -57,7 +58,13 @@
 </aside>
 
 <!-- Main Content -->
-<main class="pl-64 min-h-screen p-8">
+<main class="md:pl-64 min-h-screen p-4 md:p-8">
+
+  <!-- Mobile top bar -->
+  <div class="md:hidden -m-4 mb-6 sticky top-0 z-20 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
+    <button onclick="toggleAdminSidebar()" class="p-2 -ml-2 text-gray-600"><span class="material-symbols-outlined">menu</span></button>
+    <h1 class="font-bold text-sm text-green-900">KM Admin</h1>
+  </div>
 
   <!-- Header -->
   <div class="mb-8">
@@ -70,10 +77,10 @@
     <p class="text-gray-500 ml-9">Import multiple products at once using a CSV spreadsheet.</p>
   </div>
 
-  <div class="grid grid-cols-3 gap-6 max-w-6xl">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl">
 
     <!-- Left Column: Upload + Instructions -->
-    <div class="col-span-2 space-y-6">
+    <div class="lg:col-span-2 min-w-0 space-y-6">
 
       <!-- Step 1: Download Template -->
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -169,7 +176,7 @@
             <span class="material-symbols-outlined text-green-600 text-4xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
             <div>
               <h3 class="font-headline font-bold text-xl text-green-900 mb-2">Import Complete!</h3>
-              <div class="flex gap-6 mb-4">
+              <div class="flex flex-wrap gap-6 mb-4">
                 <div><p class="text-3xl font-extrabold text-green-700" id="res-created">0</p><p class="text-sm text-gray-500">Products created</p></div>
                 <div><p class="text-3xl font-extrabold text-amber-600" id="res-skipped">0</p><p class="text-sm text-gray-500">Skipped (exists)</p></div>
                 <div><p class="text-3xl font-extrabold text-red-500" id="res-errors">0</p><p class="text-sm text-gray-500">Errors</p></div>
@@ -258,6 +265,7 @@
   </div>
 </main>
 
+<script src="../assets/js/admin-nav.js"></script>
 <script>
   const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5000/api'
