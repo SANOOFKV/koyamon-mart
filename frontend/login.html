@@ -109,6 +109,13 @@
         <header class="mb-8">
           <h2 class="text-3xl font-headline font-bold text-on-surface mb-2" data-en="Enter OTP" data-ml="OTP നൽകൂ">Enter OTP</h2>
           <p class="text-on-surface-variant font-medium" id="otp-sent-msg">OTP sent to +91 XXXXXXXXXX</p>
+          <div id="dev-otp-notice" class="hidden mt-4 flex items-start gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
+            <span class="material-symbols-outlined text-amber-600 text-lg">info</span>
+            <p class="text-xs text-amber-800 leading-relaxed">
+              <span class="font-bold">Demo mode</span> — no SMS gateway is configured, so your code is shown here:
+              <span id="dev-otp-value" class="font-black tracking-widest text-amber-900"></span>
+            </p>
+          </div>
         </header>
 
         <div class="space-y-6">
@@ -182,6 +189,17 @@ function showStep(step) {
   });
 }
 
+// In demo/dev mode the backend returns the OTP (no SMS gateway wired up).
+// Surface it on screen and pre-fill the cells so the user can log in.
+function applyDevOtp(res) {
+  const notice = document.getElementById('dev-otp-notice');
+  if (!res || !res.devOtp) { notice.classList.add('hidden'); return; }
+  document.getElementById('dev-otp-value').textContent = res.devOtp;
+  notice.classList.remove('hidden');
+  const cells = document.querySelectorAll('.otp-cell');
+  String(res.devOtp).slice(0, cells.length).split('').forEach((d, i) => { cells[i].value = d; });
+}
+
 // Check existing session
 document.addEventListener('DOMContentLoaded', () => {
   const user = KMAuth.getUser?.();
@@ -229,17 +247,15 @@ document.getElementById('send-otp-btn').addEventListener('click', async () => {
       sentToPhone = '+91' + phone;
       document.getElementById('otp-sent-msg').textContent = `OTP sent to +91 ${phone}`;
       showStep('step-otp');
+      applyDevOtp(res);
       startResendTimer();
     } else {
       errEl.textContent = res.message || 'Failed to send OTP';
       errEl.classList.remove('hidden');
     }
   } catch {
-    // Dev mode — allow anyway
-    sentToPhone = '+91' + phone;
-    document.getElementById('otp-sent-msg').textContent = `OTP sent to +91 ${phone} (check server console in dev mode)`;
-    showStep('step-otp');
-    startResendTimer();
+    errEl.textContent = 'Could not reach the server. Please try again.';
+    errEl.classList.remove('hidden');
   }
   btn.innerHTML = 'Send OTP <span class="material-symbols-outlined text-lg">arrow_forward</span>';
   btn.disabled = false;
@@ -294,10 +310,11 @@ function startResendTimer() {
 
 document.getElementById('resend-otp-btn').addEventListener('click', async () => {
   if (!sentToPhone) return;
-  await api.auth.sendOTP(sentToPhone);
-  startResendTimer();
   document.getElementById('otp-error').classList.add('hidden');
   document.querySelectorAll('.otp-cell').forEach(c => c.value = '');
+  const res = await api.auth.sendOTP(sentToPhone);
+  applyDevOtp(res);
+  startResendTimer();
   document.querySelectorAll('.otp-cell')[0].focus();
 });
 
